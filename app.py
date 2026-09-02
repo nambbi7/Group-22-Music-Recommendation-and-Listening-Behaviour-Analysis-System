@@ -17,6 +17,11 @@ supabase = create_client(supabase_url, supabase_key)
 def home():
     return "Music Recommendation System Backend is Running!"
 
+@app.route("/test-users")
+def test_users():
+    response = supabase.table("users").select("*").execute()
+    return str(response.data)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
