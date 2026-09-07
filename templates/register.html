@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register - CHERI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+
+    <div class="floating-logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             alt="Cheri Logo">
+    </div>
+
+    <div class="login-container">
+
+        <h1>🎵 Cheri</h1>
+
+        <p class="subtitle">Create your account</p>
+
+        <form method="POST" action="/register">
+
+            <label>Username</label>
+            <input
+                type="text"
+                name="username"
+                placeholder="Choose a username"
+                required
+            >
+
+            <label>Email</label>
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label>Password</label>
+            <input
+                type="password"
+                name="password"
+                placeholder="Create a password"
+                required
+            >
+
+            <button type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="register">
+            Already have an account?
+            <a href="/login">Login</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

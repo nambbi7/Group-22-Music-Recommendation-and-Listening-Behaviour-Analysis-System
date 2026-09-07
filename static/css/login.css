@@ -1,67 +1,241 @@
+* {
+    box-sizing: border-box;
+}
 body {
     margin: 0;
+    min-height: 100vh;
+
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.45),
+            rgba(0, 0, 0, 0.55)
+        ),
+        url("../images/background.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    color: #ffffff;
+
+    overflow: hidden;
 }
 
-.login-container {
-    background: white;
-    width: 350px;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+.floating-logo {
+    position: fixed;
+
+    top: 30px;
+    left: 35px;
+
+    width: 110px;
+    height: 110px;
+
+    border-radius: 25px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.12),
+        0 0 45px rgba(255, 255, 255, 0.05);
+
+    animation: rotateLogo 12s linear infinite;
 }
+
+.floating-logo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+
+@keyframes rotateLogo {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+
+
+.login-container {
+    width: 420px;
+
+    padding: 45px;
+
+    background: rgba(17, 17, 17, 0.96);
+
+    border: 1px solid #333333;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.8),
+        0 0 35px rgba(255, 255, 255, 0.04);
+}
+
+
 
 h1 {
     text-align: center;
-    margin-bottom: 10px;
+
+    margin: 0 0 10px;
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    color: #ffffff;
 }
+
+
+
 
 .subtitle {
     text-align: center;
-    color: #777;
+
+    color: #a8a8a8;
+
     margin-bottom: 30px;
+
+    font-size: 15px;
 }
 
+
 label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #dddddd;
+
+    font-size: 14px;
+
     font-weight: bold;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    margin-top: 8px;
+
+    padding: 14px 16px;
+
     margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
+
+    border: 1px solid #333333;
+
+    border-radius: 10px;
+
+    background: #080808;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.3s;
 }
+
+input::placeholder {
+    color: #666666;
+}
+
+input:focus {
+    border-color: #ffffff;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+
+
 
 button {
     width: 100%;
-    padding: 12px;
+
+    padding: 14px;
+
     border: none;
-    border-radius: 6px;
-    background: #222;
-    color: white;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #050505;
+
     font-size: 16px;
+
+    font-weight: bold;
+
     cursor: pointer;
+
+    transition: 0.3s;
 }
 
 button:hover {
-    background: #444;
+    background: #dcdcdc;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(255, 255, 255, 0.15);
 }
+
+
 
 .register {
     text-align: center;
-    margin-top: 20px;
+
+    margin-top: 25px;
+
+    color: #777777;
+
+    font-size: 14px;
 }
 
 .register a {
+    color: #ffffff;
+
     text-decoration: none;
+
     font-weight: bold;
+
+    transition: 0.3s;
+}
+
+.register a:hover {
+    color: #aaaaaa;
+}
+
+
+@media (max-width: 600px) {
+
+    .login-container {
+        width: 90%;
+
+        padding: 30px;
+    }
+
+    .floating-logo {
+        width: 75px;
+        height: 75px;
+
+        top: 20px;
+        left: 20px;
+    }
 }

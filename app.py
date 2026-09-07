@@ -53,7 +53,38 @@ def logout():
     supabase.auth.sign_out()
     session.clear()
     return "Logged out successfully!"
+@app.route("/register", methods=["GET", "POST"])
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        email = request.form["email"]
+        password = request.form["password"]
+
+        try:
+            response = supabase.auth.sign_up({
+                "email": email,
+                "password": password
+            })
+
+            if response.session:
+                supabase.auth.set_session(
+                    response.session.access_token,
+                    response.session.refresh_token
+                )
+
+            supabase.table("users").insert({
+                "username": username,
+                "email": email
+            }).execute()
+
+            return redirect(url_for("login"))
+
+        except Exception as e:
+            return f"Registration failed: {str(e)}"
+
+    return render_template("register.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
