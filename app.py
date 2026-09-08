@@ -93,5 +93,12 @@ def dashboard():
 
     return render_template("dashboard.html")
 
+@app.route("/music-player")
+def music_player():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("music_player.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

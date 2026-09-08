@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CHERI - Music Player</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/music_player.css') }}">
+</head>
+
+<body>
+
+    <div class="player-page">
+
+        <div class="player">
+
+            <div class="player-header">
+
+                <div class="player-brand">
+
+                    <img
+                        src="{{ url_for('static', filename='images/logo.png') }}"
+                        alt="CHERI Logo"
+                    >
+
+                    <span>CHERI</span>
+
+                </div>
+
+            </div>
+
+            <div class="album-art">
+                🎵
+            </div>
+
+            <div class="song-info">
+
+                <h1 id="song-title">
+                    Song 1
+                </h1>
+
+                <p id="artist">
+                    CHERI Artist
+                </p>
+
+            </div>
+
+
+           
+            <audio id="audio"></audio>
+
+
+            
+            <div class="progress-container">
+
+                <input
+                    type="range"
+                    id="progress"
+                    value="0"
+                    min="0"
+                    max="100"
+                >
+
+                <div class="time">
+
+                    <span id="current-time">
+                        0:00
+                    </span>
+
+                    <span id="duration">
+                        0:00
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="controls">
+
+                <button onclick="previousSong()">
+                    ⏮
+                </button>
+
+                <button
+                    class="play-btn"
+                    id="playButton"
+                    onclick="togglePlay()"
+                >
+                    ▶
+                </button>
+
+                <button onclick="nextSong()">
+                    ⏭
+                </button>
+
+            </div>
+
+
+            <div class="volume">
+
+                <span>🔊</span>
+
+                <input
+                    type="range"
+                    id="volume"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="1"
+                >
+
+            </div>
+
+
+            
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="back"
+            >
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+
+        const songs = [
+
+            {
+                title: "Song 1",
+                artist: "CHERI Artist",
+                file: "song1.mp3"
+            },
+
+            {
+                title: "Song 2",
+                artist: "CHERI Artist",
+                file: "song2.mp3"
+            },
+
+            {
+                title: "Song 3",
+                artist: "CHERI Artist",
+                file: "song3.mp3"
+            },
+
+            {
+                title: "Song 4",
+                artist: "CHERI Artist",
+                file: "song4.mp3"
+            },
+
+            {
+                title: "Song 5",
+                artist: "CHERI Artist",
+                file: "song5.mp3"
+            }
+
+        ];
+
+
+        let currentSong = 0;
+
+
+        const audio =
+            document.getElementById("audio");
+
+        const playButton =
+            document.getElementById("playButton");
+
+        const title =
+            document.getElementById("song-title");
+
+        const artist =
+            document.getElementById("artist");
+
+        const progress =
+            document.getElementById("progress");
+
+        const currentTime =
+            document.getElementById("current-time");
+
+        const duration =
+            document.getElementById("duration");
+
+        const volume =
+            document.getElementById("volume");
+
+
+        function loadSong(index) {
+
+            const song = songs[index];
+
+            title.textContent =
+                song.title;
+
+            artist.textContent =
+                song.artist;
+
+            audio.src =
+                "{{ url_for('static', filename='audio/') }}"
+                + song.file;
+
+            audio.load();
+
+            progress.value = 0;
+
+            currentTime.textContent =
+                "0:00";
+
+            duration.textContent =
+                "0:00";
+
+            playButton.textContent =
+                "▶";
+        }
+
+
+        function togglePlay() {
+
+            if (audio.paused) {
+
+                audio.play();
+
+                playButton.textContent =
+                    "⏸";
+
+            } else {
+
+                audio.pause();
+
+                playButton.textContent =
+                    "▶";
+            }
+        }
+
+
+        function nextSong() {
+
+            currentSong++;
+
+            if (currentSong >= songs.length) {
+
+                currentSong = 0;
+
+            }
+
+            loadSong(currentSong);
+
+            audio.play();
+
+            playButton.textContent =
+                "⏸";
+        }
+
+
+        function previousSong() {
+
+            currentSong--;
+
+            if (currentSong < 0) {
+
+                currentSong =
+                    songs.length - 1;
+
+            }
+
+            loadSong(currentSong);
+
+            audio.play();
+
+            playButton.textContent =
+                "⏸";
+        }
+
+
+
+        audio.addEventListener(
+            "timeupdate",
+            function () {
+
+                if (audio.duration) {
+
+                    const percentage =
+                        (audio.currentTime /
+                        audio.duration) * 100;
+
+                    progress.value =
+                        percentage;
+
+                    currentTime.textContent =
+                        formatTime(
+                            audio.currentTime
+                        );
+                }
+
+            }
+        );
+
+
+
+        audio.addEventListener(
+            "loadedmetadata",
+            function () {
+
+                duration.textContent =
+                    formatTime(
+                        audio.duration
+                    );
+
+            }
+        );
+
+
+
+        audio.addEventListener(
+            "ended",
+            function () {
+
+                nextSong();
+
+            }
+        );
+
+
+        progress.addEventListener(
+            "input",
+            function () {
+
+                if (audio.duration) {
+
+                    audio.currentTime =
+                        (progress.value / 100)
+                        * audio.duration;
+
+                }
+
+            }
+        );
+
+
+
+        volume.addEventListener(
+            "input",
+            function () {
+
+                audio.volume =
+                    volume.value;
+
+            }
+        );
+
+        function formatTime(seconds) {
+
+            if (isNaN(seconds)) {
+
+                return "0:00";
+
+            }
+
+            const minutes =
+                Math.floor(seconds / 60);
+
+            const secondsRemaining =
+                Math.floor(seconds % 60);
+
+            return minutes + ":" +
+                String(secondsRemaining)
+                    .padStart(2, "0");
+        }
+
+
+        loadSong(currentSong);
+
+    </script>
+
+</body>
+
+</html>
