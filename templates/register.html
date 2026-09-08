@@ -27,6 +27,7 @@
         <form method="POST" action="/register">
 
             <label>Username</label>
+
             <input
                 type="text"
                 name="username"
@@ -35,6 +36,7 @@
             >
 
             <label>Email</label>
+
             <input
                 type="email"
                 name="email"
@@ -43,14 +45,30 @@
             >
 
             <label>Password</label>
+
             <input
                 type="password"
                 name="password"
+                id="password"
                 placeholder="Create a password"
                 required
             >
 
-            <button type="submit">
+            <div class="password-requirements">
+
+                <p id="length">✗ At least 8 characters</p>
+
+                <p id="uppercase">✗ At least 1 uppercase letter</p>
+
+                <p id="lowercase">✗ At least 1 lowercase letter</p>
+
+                <p id="number">✗ At least 1 number</p>
+
+                <p id="special">✗ At least 1 special character</p>
+
+            </div>
+
+            <button type="submit" id="register-button" disabled>
                 Create Account
             </button>
 
@@ -63,5 +81,96 @@
 
     </div>
 
+
+    <script>
+
+        const password = document.getElementById("password");
+        const registerButton = document.getElementById("register-button");
+
+
+        password.addEventListener("input", function () {
+
+            const value = password.value;
+
+
+            // Check password requirements
+
+            const hasLength = value.length >= 8;
+            const hasUppercase = /[A-Z]/.test(value);
+            const hasLowercase = /[a-z]/.test(value);
+            const hasNumber = /[0-9]/.test(value);
+            const hasSpecial = /[^A-Za-z0-9]/.test(value);
+
+
+            // Update the ticks
+
+            updateRequirement(
+                "length",
+                hasLength,
+                "At least 8 characters"
+            );
+
+            updateRequirement(
+                "uppercase",
+                hasUppercase,
+                "At least 1 uppercase letter"
+            );
+
+            updateRequirement(
+                "lowercase",
+                hasLowercase,
+                "At least 1 lowercase letter"
+            );
+
+            updateRequirement(
+                "number",
+                hasNumber,
+                "At least 1 number"
+            );
+
+            updateRequirement(
+                "special",
+                hasSpecial,
+                "At least 1 special character"
+            );
+
+
+            // Enable button only when ALL requirements are satisfied
+
+            const strongPassword =
+                hasLength &&
+                hasUppercase &&
+                hasLowercase &&
+                hasNumber &&
+                hasSpecial;
+
+
+            registerButton.disabled = !strongPassword;
+
+        });
+
+
+        function updateRequirement(id, valid, text) {
+
+            const requirement = document.getElementById(id);
+
+
+            if (valid) {
+
+                requirement.textContent = "✓ " + text;
+                requirement.classList.add("valid");
+
+            } else {
+
+                requirement.textContent = "✗ " + text;
+                requirement.classList.remove("valid");
+
+            }
+
+        }
+
+    </script>
+
 </body>
+
 </html>

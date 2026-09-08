@@ -29,35 +29,21 @@ body {
 
 .floating-logo {
     position: fixed;
-
-    top: 30px;
-    left: 35px;
-
+    top: 35px;
+    right: 45px;
     width: 110px;
     height: 110px;
-
-    border-radius: 25px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 0 20px rgba(255, 255, 255, 0.12),
-        0 0 45px rgba(255, 255, 255, 0.05);
-
-    animation: rotateLogo 12s linear infinite;
+    z-index: 10;
+    animation: spinLogo 6s linear infinite;
 }
 
 .floating-logo img {
     width: 100%;
     height: 100%;
-
-    object-fit: cover;
+    object-fit: contain;
 }
 
-
-
-@keyframes rotateLogo {
-
+@keyframes spinLogo {
     from {
         transform: rotate(0deg);
     }
@@ -65,7 +51,6 @@ body {
     to {
         transform: rotate(360deg);
     }
-
 }
 
 
@@ -238,4 +223,29 @@ button:hover {
         top: 20px;
         left: 20px;
     }
+}
+
+.password-requirements {
+    margin-top: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.password-requirements p {
+    margin: 5px 0;
+    color: #777;
+    transition: 0.2s;
+}
+
+.password-requirements p.valid {
+    color: #00ff88;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:not(:disabled) {
+    cursor: pointer;
 }

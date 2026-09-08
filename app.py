@@ -40,8 +40,8 @@ def login():
             session["user_id"] = response.user.id
             session["email"] = response.user.email
 
-            return "Login successful!"
-
+            return redirect(url_for("dashboard"))
+        
         except Exception as e:
             return f"Login failed: {str(e)}"
 
@@ -53,7 +53,6 @@ def logout():
     supabase.auth.sign_out()
     session.clear()
     return "Logged out successfully!"
-@app.route("/register", methods=["GET", "POST"])
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -80,11 +79,19 @@ def register():
             }).execute()
 
             return redirect(url_for("login"))
-
+        
         except Exception as e:
-            return f"Registration failed: {str(e)}"
+            print("REGISTRATION ERROR:", repr(e))
+            raise
 
     return render_template("register.html")
+
+@app.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("dashboard.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CHERI - Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Top Navigation -->
+        <header class="topbar">
+
+            <div class="brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}"
+                     alt="Cheri Logo">
+
+                <span>CHERI</span>
+            </div>
+
+            <div class="user-section">
+                <span>Welcome, {{ session.get("email") }}</span>
+
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    Logout
+                </a>
+            </div>
+
+        </header>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <section class="welcome-section">
+
+                <h1>Welcome to CHERI 🎵</h1>
+
+                <p>
+                    Cheri where music is cherished
+                </p>
+
+            </section>
+
+
+            <!-- Dashboard Cards -->
+            <section class="dashboard-grid">
+
+                <div class="dashboard-card">
+                    <div class="card-icon">🎵</div>
+
+                    <h2>Browse Songs</h2>
+
+                    <p>
+                        Explore songs, artists and genres.
+                    </p>
+
+                    <button>Explore Music</button>
+                </div>
+
+
+                <div class="dashboard-card">
+                    <div class="card-icon">❤️</div>
+
+                    <h2>My Favourites</h2>
+
+                    <p>
+                        View and manage your favourite songs.
+                    </p>
+
+                    <button>View Favourites</button>
+                </div>
+
+
+                <div class="dashboard-card">
+                    <div class="card-icon">🕘</div>
+
+                    <h2>Listening History</h2>
+
+                    <p>
+                        See the songs you have listened to.
+                    </p>
+
+                    <button>View History</button>
+                </div>
+
+
+                <div class="dashboard-card">
+                    <div class="card-icon">✨</div>
+
+                    <h2>Recommendations</h2>
+
+                    <p>
+                        Discover music recommended for you.
+                    </p>
+
+                    <button>Get Recommendations</button>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>
