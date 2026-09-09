@@ -1,0 +1,48 @@
+CHERI FRONTEND UI DESIGN GUIDE
+
+Theme:
+Modern premium music application
+
+Style:
+Dark, clean and futuristic
+
+Background:
+Dark / black
+
+Accent:
+Neon purple and pink
+
+Text:
+White headings
+Light grey secondary text
+
+Cards:
+Rounded corners
+Music artwork
+Song title
+Artist name
+
+Buttons:
+Rounded with simple icons
+
+Navigation:
+Simple and consistent navigation
+
+Search:
+Search bar with genre, artist and year filters
+
+Music Display:
+Album artwork
+Song title
+Artist
+Duration
+Play button
+
+Analytics:
+Statistics cards
+Charts
+Simple labels
+Clean layout
+
+Responsive:
+The interface should work on desktop and smaller screens.
