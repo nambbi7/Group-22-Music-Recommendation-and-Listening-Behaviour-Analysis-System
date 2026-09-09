@@ -100,5 +100,21 @@ def music_player():
 
     return render_template("music_player.html")
 
+@app.route("/api/songs", methods=["GET"])
+def get_songs():
+    try:
+        response = supabase.table("Songs").select("*").execute()
+
+        return {
+            "success": True,
+            "songs": response.data
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }, 500
+
 if __name__ == "__main__":
     app.run(debug=True)
