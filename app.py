@@ -100,5 +100,12 @@ def music_player():
 
     return render_template("music_player.html")
 
+@app.route("/favourites")
+def favourites():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("favourites.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
