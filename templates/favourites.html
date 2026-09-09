@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Favourites - CHERI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/favourites.css') }}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            CHERI
+        </div>
+
+        <nav>
+            <a href="/dashboard">Home</a>
+            <a href="/search">Search</a>
+            <a href="/library">Library</a>
+            <a href="/favourites" class="active">Favourites</a>
+            <a href="/profile">Profile</a>
+        </nav>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="page-header">
+            <h1>My Favourites</h1>
+            <p>Your favourite songs in one place.</p>
+        </section>
+
+
+        <section class="favourite-section">
+
+            <div class="section-title">
+                <h2>Liked Songs</h2>
+                <span>5 Songs</span>
+            </div>
+
+
+            <div class="song-list">
+
+                <div class="song-card">
+
+                    <img src="{{ url_for('static', filename='images/album1.jpg') }}"
+                         alt="Album">
+
+                    <div class="song-info">
+                        <h3>Midnight Drive</h3>
+                        <p>Nova Ray</p>
+                    </div>
+
+                    <span class="duration">3:42</span>
+
+                    <button class="play-button">▶</button>
+
+                    <button class="heart-button">♥</button>
+
+                </div>
+
+
+                <div class="song-card">
+
+                    <img src="{{ url_for('static', filename='images/album2.jpg') }}"
+                         alt="Album">
+
+                    <div class="song-info">
+                        <h3>After Dark</h3>
+                        <p>Kai Rivers</p>
+                    </div>
+
+                    <span class="duration">3:28</span>
+
+                    <button class="play-button">▶</button>
+
+                    <button class="heart-button">♥</button>
+
+                </div>
+
+
+                <div class="song-card">
+
+                    <img src="{{ url_for('static', filename='images/album3.jpg') }}"
+                         alt="Album">
+
+                    <div class="song-info">
+                        <h3>Neon Dreams</h3>
+                        <p>Luna Vale</p>
+                    </div>
+
+                    <span class="duration">4:01</span>
+
+                    <button class="play-button">▶</button>
+
+                    <button class="heart-button">♥</button>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

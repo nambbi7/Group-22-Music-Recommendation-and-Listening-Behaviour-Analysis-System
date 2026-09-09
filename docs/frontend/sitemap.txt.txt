@@ -1,0 +1,16 @@
+CHERI MUSIC RECOMMENDATION SYSTEM
+
+Home
+│
+├── Music Search
+├── Music Library
+├── Recommendations
+│
+├── Analytics
+│   ├── Genre Analysis
+│   ├── Artist Analysis
+│   └── Listening Behaviour
+│
+├── User Profile
+├── Ratings
+└── About / Help
