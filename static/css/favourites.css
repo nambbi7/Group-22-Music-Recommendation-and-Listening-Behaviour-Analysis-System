@@ -22,7 +22,7 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    background: rgba(15, 16, 22, 0.95);
+    background: url("../images/Background.png");;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
