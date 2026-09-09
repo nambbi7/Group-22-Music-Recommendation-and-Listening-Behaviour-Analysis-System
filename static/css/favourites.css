@@ -7,8 +7,14 @@
 body {
     min-height: 100vh;
     font-family: Arial, sans-serif;
-    background: #08090d;
     color: white;
+
+    /* Main page background */
+    background-image: url("../images/Dashboard.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 
@@ -22,19 +28,13 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    background: url("../images/Background.png");;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-    body {
-    margin: 0;
-    min-height: 100vh;
-
+    /* Navbar background */
     background-image: url("../images/Background.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .logo {
@@ -107,7 +107,7 @@ body {
 }
 
 
-/* Song card */
+/* Song list */
 
 .song-list {
     display: flex;
@@ -115,13 +115,16 @@ body {
     gap: 12px;
 }
 
+
+/* Song card */
+
 .song-card {
     display: flex;
     align-items: center;
 
     padding: 12px 18px;
 
-    background: #13151c;
+    background: rgba(19, 21, 28, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.06);
 
     border-radius: 14px;
@@ -131,7 +134,7 @@ body {
 
 .song-card:hover {
     transform: translateY(-2px);
-    background: #191b24;
+    background: rgba(25, 27, 36, 0.95);
 }
 
 
@@ -161,7 +164,7 @@ body {
 }
 
 .song-info p {
-    color: #888;
+    color: #aaa;
     font-size: 14px;
 }
 
@@ -169,7 +172,7 @@ body {
 /* Duration */
 
 .duration {
-    color: #888;
+    color: #aaa;
     margin-right: 25px;
 }
 
