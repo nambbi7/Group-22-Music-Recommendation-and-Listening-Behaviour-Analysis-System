@@ -11,7 +11,7 @@ body {
     background:
         linear-gradient(
             rgba(0, 0, 0, 0.30),
-            rgba(0, 0, 0, 0.45)
+            rgba(0, 0, 0, 0.50)
         ),
         url("../images/Dashboard.jpg");
 
@@ -23,6 +23,10 @@ body {
 }
 
 
+/* =========================================
+   PLAYER PAGE
+========================================= */
+
 .player-page {
     min-height: 100vh;
 
@@ -30,17 +34,21 @@ body {
     justify-content: center;
     align-items: center;
 
-    padding: 40px;
+    padding: 40px 20px;
 }
 
 
+/* =========================================
+   PLAYER CARD
+========================================= */
 
 .player {
-    width: 450px;
+    width: 500px;
+    max-width: 100%;
 
-    padding: 32px 35px 30px;
+    padding: 30px 35px 30px;
 
-    background: rgba(8, 13, 12, 0.72);
+    background: rgba(8, 13, 12, 0.78);
 
     border: 1px solid rgba(220, 255, 240, 0.16);
 
@@ -49,11 +57,13 @@ body {
     backdrop-filter: blur(18px);
 
     box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.35);
+        0 15px 45px rgba(0, 0, 0, 0.45);
 }
 
 
-
+/* =========================================
+   HEADER
+========================================= */
 
 .player-header {
     display: flex;
@@ -61,7 +71,7 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: 25px;
+    margin-bottom: 22px;
 }
 
 .player-brand {
@@ -88,14 +98,247 @@ body {
 }
 
 
+/* =========================================
+   SPOTIFY CONNECTION
+========================================= */
+
+.spotify-connection {
+    text-align: center;
+
+    margin-top: 5px;
+
+    margin-bottom: 18px;
+}
+
+#spotifyStatus {
+    margin: 0 0 10px;
+
+    color: #aebbb5;
+
+    font-size: 12px;
+}
+
+.connect-spotify-btn {
+    display: inline-block;
+
+    padding: 10px 18px;
+
+    border-radius: 12px;
+
+    background: #e9f5ef;
+
+    color: #101412;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.connect-spotify-btn:hover {
+    background: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================
+   CHERI SEARCH
+========================================= */
+
+.CHERI {
+    display: flex;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+}
+
+.CHERI input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 12px 15px;
+
+    border: 1px solid rgba(233, 245, 239, 0.18);
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    backdrop-filter: blur(10px);
+}
+
+.CHERI input::placeholder {
+    color: #9da8a3;
+}
+
+.CHERI input:focus {
+    border-color: rgba(233, 245, 239, 0.45);
+
+    background: rgba(255, 255, 255, 0.11);
+}
+
+.CHERI button {
+    padding: 0 17px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #e9f5ef;
+
+    color: #101412;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.CHERI button:hover {
+    background: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   SEARCH RESULTS
+========================================= */
+
+.search-results {
+    width: 100%;
+
+    max-height: 220px;
+
+    overflow-y: auto;
+
+    margin-bottom: 18px;
+
+    border-radius: 14px;
+}
+
+
+/* Individual search result */
+
+.search-result {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 9px;
+
+    margin-bottom: 6px;
+
+    border: 1px solid rgba(233, 245, 239, 0.08);
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.055);
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.search-result:hover {
+    background: rgba(233, 245, 239, 0.12);
+
+    border-color: rgba(233, 245, 239, 0.20);
+
+    transform: translateX(3px);
+}
+
+.search-result img {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+}
+
+.search-result div {
+    min-width: 0;
+}
+
+.search-result strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.search-result p {
+    margin: 4px 0 0;
+
+    color: #aebbb5;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* Search scrollbar */
+
+.search-results::-webkit-scrollbar {
+    width: 5px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: rgba(233, 245, 239, 0.25);
+
+    border-radius: 10px;
+}
+
+
+/* =========================================
+   ALBUM ART
+========================================= */
 
 .album-art {
     width: 270px;
     height: 270px;
 
-    margin: 0 auto 28px;
+    margin: 5px auto 25px;
 
     border-radius: 24px;
+
+    overflow: hidden;
 
     background:
         linear-gradient(
@@ -111,13 +354,26 @@ body {
     justify-content: center;
     align-items: center;
 
-    font-size: 75px;
-
     box-shadow:
         0 15px 35px rgba(0, 0, 0, 0.40);
 }
 
 
+/* Spotify album image */
+
+.album-art img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+/* =========================================
+   SONG INFO
+========================================= */
 
 .song-info {
     text-align: left;
@@ -133,6 +389,12 @@ body {
     font-weight: 600;
 
     letter-spacing: 0.3px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 .song-info p {
@@ -141,9 +403,18 @@ body {
     color: #b9c5bf;
 
     font-size: 14px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 
+/* =========================================
+   PROGRESS
+========================================= */
 
 .progress-container {
     margin-top: 18px;
@@ -163,8 +434,6 @@ body {
     cursor: pointer;
 }
 
-
-
 #progress::-webkit-slider-thumb {
     appearance: none;
 
@@ -181,8 +450,6 @@ body {
         0 0 8px rgba(233, 245, 239, 0.35);
 }
 
-
-
 #progress::-moz-range-thumb {
     width: 13px;
     height: 13px;
@@ -197,6 +464,9 @@ body {
 }
 
 
+/* =========================================
+   TIME
+========================================= */
 
 .time {
     display: flex;
@@ -210,6 +480,10 @@ body {
     font-size: 11px;
 }
 
+
+/* =========================================
+   CONTROLS
+========================================= */
 
 .controls {
     display: flex;
@@ -249,6 +523,10 @@ body {
 }
 
 
+/* =========================================
+   PLAY BUTTON
+========================================= */
+
 .play-btn {
     width: 62px !important;
     height: 62px !important;
@@ -268,6 +546,11 @@ body {
 
     transform: scale(1.08) !important;
 }
+
+
+/* =========================================
+   VOLUME
+========================================= */
 
 .volume {
     display: flex;
@@ -322,12 +605,16 @@ body {
 }
 
 
+/* =========================================
+   BACK BUTTON
+========================================= */
+
 .back {
     display: block;
 
     width: fit-content;
 
-    margin: 25px auto 0;
+    margin: 20px auto 0;
 
     color: #9fa9a4;
 
@@ -345,16 +632,20 @@ body {
 }
 
 
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 600px) {
 
     .player-page {
-        padding: 20px;
+        padding: 20px 15px;
     }
 
     .player {
         width: 100%;
 
-        padding: 25px;
+        padding: 25px 20px;
     }
 
     .album-art {
@@ -366,5 +657,17 @@ body {
         font-size: 17px;
 
         letter-spacing: 4px;
+    }
+
+    .CHERI {
+        flex-direction: column;
+    }
+
+    .CHERI button {
+        height: 42px;
+    }
+
+    .search-results {
+        max-height: 180px;
     }
 }

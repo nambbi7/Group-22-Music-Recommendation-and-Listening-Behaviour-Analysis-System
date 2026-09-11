@@ -2,385 +2,1023 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>CHERI - Music Player</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/music_player.css') }}">
+
 </head>
 
 <body>
 
-    <div class="player-page">
+<div class="player-page">
 
-        <div class="player">
+    <div class="player">
 
-            <div class="player-header">
+        <!-- HEADER -->
 
-                <div class="player-brand">
+        <div class="player-header">
 
-                    <img
-                        src="{{ url_for('static', filename='images/logo.png') }}"
-                        alt="CHERI Logo"
-                    >
+            <div class="player-brand">
 
-                    <span>CHERI</span>
-
-                </div>
-
-            </div>
-
-            <div class="album-art">
-                🎵
-            </div>
-
-            <div class="song-info">
-
-                <h1 id="song-title">
-                    Song 1
-                </h1>
-
-                <p id="artist">
-                    CHERI Artist
-                </p>
-
-            </div>
-
-
-           
-            <audio id="audio"></audio>
-
-
-            
-            <div class="progress-container">
-
-                <input
-                    type="range"
-                    id="progress"
-                    value="0"
-                    min="0"
-                    max="100"
+                <img
+                    src="{{ url_for('static', filename='images/logo.png') }}"
+                    alt="CHERI Logo"
                 >
 
-                <div class="time">
-
-                    <span id="current-time">
-                        0:00
-                    </span>
-
-                    <span id="duration">
-                        0:00
-                    </span>
-
-                </div>
+                <span>CHERI</span>
 
             </div>
 
-
-            <div class="controls">
-
-                <button onclick="previousSong()">
-                    ⏮
-                </button>
-
-                <button
-                    class="play-btn"
-                    id="playButton"
-                    onclick="togglePlay()"
-                >
-                    ▶
-                </button>
-
-                <button onclick="nextSong()">
-                    ⏭
-                </button>
-
-            </div>
+        </div>
 
 
-            <div class="volume">
+        <!-- SPOTIFY CONNECTION -->
 
-                <span>🔊</span>
+        <div class="spotify-connection">
 
-                <input
-                    type="range"
-                    id="volume"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value="1"
-                >
+            <p id="spotifyStatus">
+                Checking Spotify connection...
+            </p>
 
-            </div>
-
-
-            
             <a
-                href="{{ url_for('dashboard') }}"
-                class="back"
+                href="{{ url_for('spotify_login') }}"
+                id="connectSpotifyButton"
+                class="connect-spotify-btn"
             >
-                ← Back to Dashboard
+               Connect Spotify
             </a>
 
         </div>
 
+
+        <!-- SPOTIFY SEARCH -->
+
+        <div class="CHERI">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search CHERI..."
+            >
+
+            <button onclick="searchCHERI()">
+                🔍 Search
+            </button>
+
+        </div>
+
+
+        <!-- SEARCH RESULTS -->
+
+        <div
+            id="searchResults"
+            class="search-results">
+        </div>
+
+
+        <!-- ALBUM ART -->
+
+        <div class="album-art">
+
+            <img
+                id="albumImage"
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="Album Art"
+            >
+
+        </div>
+
+
+        <!-- SONG INFORMATION -->
+
+        <div class="song-info">
+
+            <h1 id="song-title">
+                No Song Selected
+            </h1>
+
+            <p id="artist">
+                Search Spotify to start listening
+            </p>
+
+        </div>
+
+
+        <!-- PROGRESS -->
+
+        <div class="progress-container">
+
+            <input
+                type="range"
+                id="progress"
+                value="0"
+                min="0"
+                max="100"
+            >
+
+            <div class="time">
+
+                <span id="current-time">
+                    0:00
+                </span>
+
+                <span id="duration">
+                    0:00
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+            <button
+                onclick="previousSong()"
+                title="Previous Song"
+            >
+                ⏮
+            </button>
+
+            <button
+                class="play-btn"
+                id="playButton"
+                onclick="togglePlay()"
+            >
+                ▶
+            </button>
+
+            <button
+                onclick="nextSong()"
+                title="Next Song"
+            >
+                ⏭
+            </button>
+
+        </div>
+
+
+        <!-- VOLUME -->
+
+        <div class="volume">
+
+            <span>🔊</span>
+
+            <input
+                type="range"
+                id="volume"
+                min="0"
+                max="1"
+                step="0.01"
+                value="1"
+            >
+
+        </div>
+
+
+        <!-- BACK -->
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="back"
+        >
+            ← Back to Dashboard
+        </a>
+
     </div>
 
-
-    <script>
-
-
-        const songs = [
-
-            {
-                title: "Song 1",
-                artist: "CHERI Artist",
-                file: "song1.mp3"
-            },
-
-            {
-                title: "Song 2",
-                artist: "CHERI Artist",
-                file: "song2.mp3"
-            },
-
-            {
-                title: "Song 3",
-                artist: "CHERI Artist",
-                file: "song3.mp3"
-            },
-
-            {
-                title: "Song 4",
-                artist: "CHERI Artist",
-                file: "song4.mp3"
-            },
-
-            {
-                title: "Song 5",
-                artist: "CHERI Artist",
-                file: "song5.mp3"
-            }
-
-        ];
+</div>
 
 
-        let currentSong = 0;
+<!-- SPOTIFY WEB PLAYBACK SDK -->
+
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
 
 
-        const audio =
-            document.getElementById("audio");
+<script>
 
-        const playButton =
-            document.getElementById("playButton");
+/* =========================================
+   VARIABLES
+========================================= */
 
-        const title =
-            document.getElementById("song-title");
+let spotifyPlayer = null;
 
-        const artist =
-            document.getElementById("artist");
+let deviceId = null;
 
-        const progress =
-            document.getElementById("progress");
+let spotifyTracks = [];
 
-        const currentTime =
-            document.getElementById("current-time");
+let currentTrackIndex = -1;
 
-        const duration =
-            document.getElementById("duration");
-
-        const volume =
-            document.getElementById("volume");
+let currentState = null;
 
 
-        function loadSong(index) {
+/* =========================================
+   HTML ELEMENTS
+========================================= */
 
-            const song = songs[index];
+const title =
+    document.getElementById("song-title");
 
-            title.textContent =
-                song.title;
+const artist =
+    document.getElementById("artist");
 
-            artist.textContent =
-                song.artist;
+const albumImage =
+    document.getElementById("albumImage");
 
-            audio.src =
-                "{{ url_for('static', filename='audio/') }}"
-                + song.file;
+const playButton =
+    document.getElementById("playButton");
 
-            audio.load();
+const progress =
+    document.getElementById("progress");
 
-            progress.value = 0;
+const currentTime =
+    document.getElementById("current-time");
 
-            currentTime.textContent =
-                "0:00";
+const duration =
+    document.getElementById("duration");
 
-            duration.textContent =
-                "0:00";
+const volume =
+    document.getElementById("volume");
 
-            playButton.textContent =
-                "▶";
+const searchInput =
+    document.getElementById("searchInput");
+
+const searchResults =
+    document.getElementById("searchResults");
+
+const spotifyStatus =
+    document.getElementById("spotifyStatus");
+
+const connectSpotifyButton =
+    document.getElementById("connectSpotifyButton");
+
+
+/* =========================================
+   ENTER KEY SEARCH
+========================================= */
+
+searchInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            searchSpotify();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   SPOTIFY SDK READY
+========================================= */
+
+window.onSpotifyWebPlaybackSDKReady = async function() {
+
+    try {
+
+        const response =
+            await fetch("/spotify/token");
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            spotifyStatus.textContent =
+                "Spotify is not connected.";
+
+            connectSpotifyButton.style.display =
+                "inline-block";
+
+            return;
+
         }
 
 
-        function togglePlay() {
+        spotifyPlayer =
+            new Spotify.Player({
 
-            if (audio.paused) {
+                name: "CHERI Music Player",
 
-                audio.play();
+                getOAuthToken: callback => {
 
-                playButton.textContent =
-                    "⏸";
-
-            } else {
-
-                audio.pause();
-
-                playButton.textContent =
-                    "▶";
-            }
-        }
-
-
-        function nextSong() {
-
-            currentSong++;
-
-            if (currentSong >= songs.length) {
-
-                currentSong = 0;
-
-            }
-
-            loadSong(currentSong);
-
-            audio.play();
-
-            playButton.textContent =
-                "⏸";
-        }
-
-
-        function previousSong() {
-
-            currentSong--;
-
-            if (currentSong < 0) {
-
-                currentSong =
-                    songs.length - 1;
-
-            }
-
-            loadSong(currentSong);
-
-            audio.play();
-
-            playButton.textContent =
-                "⏸";
-        }
-
-
-
-        audio.addEventListener(
-            "timeupdate",
-            function () {
-
-                if (audio.duration) {
-
-                    const percentage =
-                        (audio.currentTime /
-                        audio.duration) * 100;
-
-                    progress.value =
-                        percentage;
-
-                    currentTime.textContent =
-                        formatTime(
-                            audio.currentTime
-                        );
-                }
-
-            }
-        );
-
-
-
-        audio.addEventListener(
-            "loadedmetadata",
-            function () {
-
-                duration.textContent =
-                    formatTime(
-                        audio.duration
+                    callback(
+                        data.access_token
                     );
 
+                },
+
+                volume: 1.0
+
+            });
+
+
+        /* READY */
+
+        spotifyPlayer.addListener(
+            "ready",
+            ({ device_id }) => {
+
+                deviceId =
+                    device_id;
+
+                spotifyStatus.textContent =
+                    "Spotify connected ✓";
+
+                connectSpotifyButton.style.display =
+                    "none";
+
+                console.log(
+                    "CHERI Spotify Device:",
+                    device_id
+                );
+
             }
         );
 
 
+        /* NOT READY */
 
-        audio.addEventListener(
-            "ended",
-            function () {
+        spotifyPlayer.addListener(
+            "not_ready",
+            ({ device_id }) => {
 
-                nextSong();
+                spotifyStatus.textContent =
+                    "Spotify player is offline.";
+
+                console.log(
+                    "Device offline:",
+                    device_id
+                );
 
             }
         );
 
 
-        progress.addEventListener(
-            "input",
-            function () {
+        /* PLAYER STATE */
 
-                if (audio.duration) {
+        spotifyPlayer.addListener(
+            "player_state_changed",
+            state => {
 
-                    audio.currentTime =
-                        (progress.value / 100)
-                        * audio.duration;
+                if (!state) {
+
+                    return;
 
                 }
 
-            }
-        );
+                currentState =
+                    state;
 
-
-
-        volume.addEventListener(
-            "input",
-            function () {
-
-                audio.volume =
-                    volume.value;
+                updatePlayerState(
+                    state
+                );
 
             }
         );
 
-        function formatTime(seconds) {
 
-            if (isNaN(seconds)) {
+        /* INITIALIZATION ERROR */
 
-                return "0:00";
+        spotifyPlayer.addListener(
+            "initialization_error",
+            ({ message }) => {
+
+                console.error(message);
+
+                spotifyStatus.textContent =
+                    "Spotify initialization error.";
 
             }
+        );
 
-            const minutes =
-                Math.floor(seconds / 60);
 
-            const secondsRemaining =
-                Math.floor(seconds % 60);
+        /* AUTH ERROR */
 
-            return minutes + ":" +
-                String(secondsRemaining)
-                    .padStart(2, "0");
+        spotifyPlayer.addListener(
+            "authentication_error",
+            ({ message }) => {
+
+                console.error(message);
+
+                spotifyStatus.textContent =
+                    "Spotify authentication error.";
+
+                connectSpotifyButton.style.display =
+                    "inline-block";
+
+            }
+        );
+
+
+        /* ACCOUNT ERROR */
+
+        spotifyPlayer.addListener(
+            "account_error",
+            ({ message }) => {
+
+                console.error(message);
+
+                spotifyStatus.textContent =
+                    "Spotify Premium is required.";
+
+            }
+        );
+
+
+        await spotifyPlayer.connect();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        spotifyStatus.textContent =
+            "Unable to connect to Spotify.";
+
+    }
+
+};
+
+
+/* =========================================
+   SEARCH SPOTIFY
+========================================= */
+
+async function searchSpotify() {
+
+    const query =
+        searchInput.value.trim();
+
+
+    if (!query) {
+
+        return;
+
+    }
+
+
+    searchResults.innerHTML =
+        "Searching Spotify...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/spotify/search?q="
+                + encodeURIComponent(query)
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            searchResults.innerHTML =
+                "Spotify search failed.";
+
+            return;
+
         }
 
 
-        loadSong(currentSong);
+        spotifyTracks =
+            data.tracks;
 
-    </script>
+
+        displaySearchResults(
+            spotifyTracks
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        searchResults.innerHTML =
+            "Search error.";
+
+    }
+
+}
+
+
+/* =========================================
+   DISPLAY SEARCH RESULTS
+========================================= */
+
+function displaySearchResults(tracks) {
+
+    searchResults.innerHTML =
+        "";
+
+
+    if (tracks.length === 0) {
+
+        searchResults.innerHTML =
+            "No songs found.";
+
+        return;
+
+    }
+
+
+    tracks.forEach(
+        (track, index) => {
+
+            const result =
+                document.createElement("div");
+
+
+            result.className =
+                "search-result";
+
+
+            result.innerHTML = `
+
+                <img
+                    src="${track.image || ''}"
+                    alt="Album"
+                >
+
+                <div>
+
+                    <strong>
+                        ${escapeHtml(track.name)}
+                    </strong>
+
+                    <p>
+                        ${escapeHtml(track.artist)}
+                    </p>
+
+                </div>
+
+            `;
+
+
+            result.addEventListener(
+                "click",
+                function() {
+
+                    playTrack(
+                        track,
+                        index
+                    );
+
+                }
+            );
+
+
+            searchResults.appendChild(
+                result
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   PLAY SELECTED TRACK
+========================================= */
+
+async function playTrack(
+    track,
+    index
+) {
+
+    if (!deviceId) {
+
+        alert(
+            "Please connect Spotify first."
+        );
+
+        return;
+
+    }
+
+
+    currentTrackIndex =
+        index;
+
+
+    title.textContent =
+        track.name;
+
+
+    artist.textContent =
+        track.artist;
+
+
+    if (track.image) {
+
+        albumImage.src =
+            track.image;
+
+    }
+
+
+    try {
+
+        const tokenResponse =
+            await fetch(
+                "/spotify/token"
+            );
+
+
+        const tokenData =
+            await tokenResponse.json();
+
+
+        if (!tokenData.success) {
+
+            alert(
+                "Please connect Spotify again."
+            );
+
+            return;
+
+        }
+
+
+        const playResponse =
+            await fetch(
+                "https://api.spotify.com/v1/me/player/play?device_id="
+                + encodeURIComponent(deviceId),
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer "
+                            + tokenData.access_token,
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        uris: [
+
+                            "spotify:track:"
+                            + track.id
+
+                        ]
+
+                    })
+
+                }
+            );
+
+
+        if (!playResponse.ok) {
+
+            const errorText =
+                await playResponse.text();
+
+            console.error(
+                errorText
+            );
+
+            spotifyStatus.textContent =
+                "Unable to play this song.";
+
+            return;
+
+        }
+
+
+        playButton.textContent =
+            "⏸";
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =========================================
+   PLAY / PAUSE
+========================================= */
+
+async function togglePlay() {
+
+    if (!spotifyPlayer) {
+
+        return;
+
+    }
+
+
+    await spotifyPlayer.togglePlay();
+
+}
+
+
+/* =========================================
+   NEXT SONG
+========================================= */
+
+async function nextSong() {
+
+    if (
+        currentTrackIndex >= 0 &&
+        currentTrackIndex <
+        spotifyTracks.length - 1
+    ) {
+
+        currentTrackIndex++;
+
+        const nextTrack =
+            spotifyTracks[
+                currentTrackIndex
+            ];
+
+
+        await playTrack(
+            nextTrack,
+            currentTrackIndex
+        );
+
+        return;
+
+    }
+
+
+    if (spotifyPlayer) {
+
+        await spotifyPlayer.nextTrack();
+
+    }
+
+}
+
+
+/* =========================================
+   PREVIOUS SONG
+========================================= */
+
+async function previousSong() {
+
+    if (
+        currentTrackIndex > 0
+    ) {
+
+        currentTrackIndex--;
+
+        const previousTrack =
+            spotifyTracks[
+                currentTrackIndex
+            ];
+
+
+        await playTrack(
+            previousTrack,
+            currentTrackIndex
+        );
+
+        return;
+
+    }
+
+
+    if (spotifyPlayer) {
+
+        await spotifyPlayer.previousTrack();
+
+    }
+
+}
+
+
+/* =========================================
+   PLAYER STATE
+========================================= */
+
+function updatePlayerState(state) {
+
+    const track =
+        state.track_window.current_track;
+
+
+    if (!track) {
+
+        return;
+
+    }
+
+
+    title.textContent =
+        track.name;
+
+
+    artist.textContent =
+        track.artists
+            .map(
+                artist => artist.name
+            )
+            .join(", ");
+
+
+    if (
+        track.album &&
+        track.album.images &&
+        track.album.images.length > 0
+    ) {
+
+        albumImage.src =
+            track.album.images[0].url;
+
+    }
+
+
+    const position =
+        state.position;
+
+
+    const trackDuration =
+        state.duration;
+
+
+    if (trackDuration > 0) {
+
+        progress.value =
+            (position / trackDuration) * 100;
+
+    }
+
+
+    currentTime.textContent =
+        formatTime(
+            position / 1000
+        );
+
+
+    duration.textContent =
+        formatTime(
+            trackDuration / 1000
+        );
+
+
+    if (state.paused) {
+
+        playButton.textContent =
+            "▶";
+
+    }
+
+    else {
+
+        playButton.textContent =
+            "⏸";
+
+    }
+
+}
+
+
+/* =========================================
+   PROGRESS BAR
+========================================= */
+
+progress.addEventListener(
+    "input",
+    async function() {
+
+        if (!currentState) {
+
+            return;
+
+        }
+
+
+        const newPosition =
+            (
+                progress.value / 100
+            ) * currentState.duration;
+
+
+        await spotifyPlayer.seek(
+            newPosition
+        );
+
+    }
+);
+
+
+/* =========================================
+   VOLUME
+========================================= */
+
+volume.addEventListener(
+    "input",
+    async function() {
+
+        if (!spotifyPlayer) {
+
+            return;
+
+        }
+
+
+        await spotifyPlayer.setVolume(
+            parseFloat(volume.value)
+        );
+
+    }
+);
+
+
+/* =========================================
+   FORMAT TIME
+========================================= */
+
+function formatTime(
+    milliseconds
+) {
+
+    const seconds =
+        Math.floor(
+            milliseconds
+        );
+
+
+    if (
+        isNaN(seconds) ||
+        seconds < 0
+    ) {
+
+        return "0:00";
+
+    }
+
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+
+    const remainingSeconds =
+        seconds % 60;
+
+
+    return (
+        minutes
+        + ":"
+        + String(
+            remainingSeconds
+        ).padStart(2, "0")
+    );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+</script>
 
 </body>
 
