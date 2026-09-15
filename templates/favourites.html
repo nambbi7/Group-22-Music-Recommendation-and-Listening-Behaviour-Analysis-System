@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Favourites - CHERI</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/favourites.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/favourites.css') }}">
+
 </head>
 
 <body>
@@ -18,11 +24,28 @@
         </div>
 
         <nav>
-            <a href="/dashboard">Home</a>
-            <a href="/search">Search</a>
-            <a href="/library">Library</a>
-            <a href="/favourites" class="active">Favourites</a>
-            <a href="/profile">Profile</a>
+
+            <a href="/dashboard">
+                Home
+            </a>
+
+            <a href="/search">
+                Search
+            </a>
+
+            <a href="/library">
+                Library
+            </a>
+
+            <a href="/favourites"
+               class="active">
+                Favourites
+            </a>
+
+            <a href="/profile">
+                Profile
+            </a>
+
         </nav>
 
     </header>
@@ -30,78 +53,91 @@
 
     <main class="container">
 
-        <section class="page-header">
-            <h1>My Favourites</h1>
-            <p>Your favourite songs in one place.</p>
+        <section class="hero-section">
+
+            <div class="hero-glow"></div>
+
+            <div class="hero-content">
+
+                <div class="hero-icon">
+                    &#9829;
+                </div>
+
+                <div class="hero-text">
+
+                    <p class="hero-label">
+                        YOUR COLLECTION
+                    </p>
+
+                    <h1>
+                        My Favourites
+                    </h1>
+
+                    <p class="hero-description">
+                        Your favourite music, all in one place.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="hero-right">
+
+                <div
+                    class="hero-count"
+                    id="favouriteCount"
+                >
+                    0
+                </div>
+
+                <div class="hero-count-label">
+                    SAVED SONGS
+                </div>
+
+            </div>
+
         </section>
 
 
         <section class="favourite-section">
 
-            <div class="section-title">
-                <h2>Liked Songs</h2>
-                <span>5 Songs</span>
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Liked Songs
+                    </h2>
+
+                    <p>
+                        Your personal collection
+                    </p>
+
+                </div>
+
+                <span id="songCount">
+                    0 Songs
+                </span>
+
             </div>
 
 
-            <div class="song-list">
+            <div
+                id="songList"
+                class="song-list"
+            >
 
-                <div class="song-card">
+                <div class="loading">
 
-                    <img src="{{ url_for('static', filename='images/album1.jpg') }}"
-                         alt="Album">
-
-                    <div class="song-info">
-                        <h3>Midnight Drive</h3>
-                        <p>Nova Ray</p>
+                    <div class="loading-icon">
+                        &#9835;
                     </div>
 
-                    <span class="duration">3:42</span>
-
-                    <button class="play-button">▶</button>
-
-                    <button class="heart-button">♥</button>
+                    <p>
+                        Loading your favourites...
+                    </p>
 
                 </div>
-
-
-                <div class="song-card">
-
-                    <img src="{{ url_for('static', filename='images/album2.jpg') }}"
-                         alt="Album">
-
-                    <div class="song-info">
-                        <h3>After Dark</h3>
-                        <p>Kai Rivers</p>
-                    </div>
-
-                    <span class="duration">3:28</span>
-
-                    <button class="play-button">▶</button>
-
-                    <button class="heart-button">♥</button>
-
-                </div>
-
-
-                <div class="song-card">
-
-                    <img src="{{ url_for('static', filename='images/album3.jpg') }}"
-                         alt="Album">
-
-                    <div class="song-info">
-                        <h3>Neon Dreams</h3>
-                        <p>Luna Vale</p>
-                    </div>
-
-                    <span class="duration">4:01</span>
-
-                    <button class="play-button">▶</button>
-
-                    <button class="heart-button">♥</button>
-
-                </div>
-
 
             </div>
 
@@ -109,5 +145,408 @@
 
     </main>
 
+
+    <script>
+
+    const songList =
+        document.getElementById("songList");
+
+    const songCount =
+        document.getElementById("songCount");
+
+    const favouriteCount =
+        document.getElementById("favouriteCount");
+
+
+    async function loadFavourites() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/favourites"
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                songList.innerHTML =
+                    `
+                    <div class="empty-message">
+
+                        <div class="empty-icon">
+                            &#9888;
+                        </div>
+
+                        <h3>
+                            Unable to load favourites
+                        </h3>
+
+                        <p>
+                            Please refresh the page and try again.
+                        </p>
+
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            const favourites =
+                data.favourites;
+
+
+            songCount.textContent =
+                favourites.length
+                + (
+                    favourites.length === 1
+                    ? " Song"
+                    : " Songs"
+                );
+
+
+            favouriteCount.textContent =
+                favourites.length;
+
+
+            if (favourites.length === 0) {
+
+                songList.innerHTML =
+                    `
+                    <div class="empty-message">
+
+                        <div class="empty-heart">
+                            &#9825;
+                        </div>
+
+                        <h3>
+                            No Favourite Songs
+                        </h3>
+
+                        <p>
+                            Start liking songs and they will appear here.
+                        </p>
+
+                        <a
+                            href="/search"
+                            class="browse-button"
+                        >
+                            Find Music
+                        </a>
+
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            songList.innerHTML =
+                "";
+
+
+            favourites.forEach(
+                (song, index) => {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "song-card";
+
+
+                    const image =
+                        song.image
+                        || "https://placehold.co/500x500/15151d/ffffff?text=%E2%99%AA";
+
+
+                    let songDuration =
+                        "--:--";
+
+
+                    if (
+                        song.duration
+                        &&
+                        song.duration > 0
+                    ) {
+
+                        songDuration =
+                            formatTime(
+                                song.duration
+                            );
+
+                    }
+
+
+                    card.innerHTML =
+                        `
+
+                        <div class="song-number">
+                            ${index + 1}
+                        </div>
+
+                        <div class="album-wrapper">
+
+                            <img
+                                src="${escapeHtml(image)}"
+                                alt="Album artwork"
+                                class="album-image"
+                            >
+
+                            <button
+                                class="image-play-button"
+                                onclick="playSong('${escapeHtml(song.spotify_track_id)}')"
+                                title="Play"
+                            >
+                                &#9654;
+                            </button>
+
+                        </div>
+
+                        <div class="song-info">
+
+                            <h3>
+                                ${escapeHtml(
+                                    song.title
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHtml(
+                                    song.artist
+                                )}
+                            </p>
+
+                        </div>
+
+                        <span class="duration">
+                            ${songDuration}
+                        </span>
+
+                        <button
+                            class="play-button"
+                            onclick="playSong('${escapeHtml(song.spotify_track_id)}')"
+                            title="Play song"
+                        >
+                            &#9654;
+                        </button>
+
+                        <button
+                            class="heart-button"
+                            onclick="removeFavourite('${escapeHtml(song.spotify_track_id)}', this)"
+                            title="Remove from favourites"
+                        >
+                            &#9829;
+                        </button>
+
+                        `;
+
+
+                    songList.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Favourite loading error:",
+                error
+            );
+
+
+            songList.innerHTML =
+                `
+                <div class="empty-message">
+
+                    <div class="empty-icon">
+                        &#9888;
+                    </div>
+
+                    <h3>
+                        Connection Error
+                    </h3>
+
+                    <p>
+                        Unable to connect to the server.
+                    </p>
+
+                </div>
+                `;
+
+        }
+
+    }
+
+
+    async function removeFavourite(
+        spotifyTrackId,
+        button
+    ) {
+
+        try {
+
+            button.disabled =
+                true;
+
+
+            const response =
+                await fetch(
+                    "/api/favourites/remove",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            spotify_track_id:
+                                spotifyTrackId
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                alert(
+                    data.error
+                    || "Unable to remove favourite."
+                );
+
+
+                button.disabled =
+                    false;
+
+                return;
+
+            }
+
+
+            loadFavourites();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Remove favourite error:",
+                error
+            );
+
+
+            button.disabled =
+                false;
+
+        }
+
+    }
+
+
+    function playSong(
+        spotifyTrackId
+    ) {
+
+        if (!spotifyTrackId) {
+
+            return;
+
+        }
+
+
+        window.location.href =
+            "/music-player?track="
+            + encodeURIComponent(
+                spotifyTrackId
+            );
+
+    }
+
+
+    function formatTime(
+        seconds
+    ) {
+
+        const totalSeconds =
+            Math.floor(
+                seconds
+            );
+
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+
+        const remainingSeconds =
+            totalSeconds % 60;
+
+
+        return (
+            minutes
+            + ":"
+            + String(
+                remainingSeconds
+            ).padStart(
+                2,
+                "0"
+            )
+        );
+
+    }
+
+
+    function escapeHtml(
+        text
+    ) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            text
+            || "";
+
+
+        return div.innerHTML;
+
+    }
+
+
+    loadFavourites();
+
+    </script>
+
 </body>
+
 </html>
