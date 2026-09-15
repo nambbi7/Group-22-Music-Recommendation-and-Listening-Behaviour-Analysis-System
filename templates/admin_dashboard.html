@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - CHERI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            CHERI
+        </div>
+
+        <p class="admin-label">ADMIN PANEL</p>
+
+        <nav>
+
+            <a href="#" class="active">
+                Dashboard
+            </a>
+
+            <a href="#">
+                Users
+            </a>
+
+            <a href="#">
+                Songs
+            </a>
+
+            <a href="#">
+                Artists
+            </a>
+
+            <a href="#">
+                Genres
+            </a>
+
+            <a href="#">
+                Ratings
+            </a>
+
+            <a href="#">
+                Analytics
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="#">
+                Settings
+            </a>
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Manage and monitor the CHERI music system.</p>
+            </div>
+
+            <div class="admin-profile">
+                <div class="avatar">
+                    A
+                </div>
+
+                <div>
+                    <strong>Administrator</strong>
+                    <span>Admin</span>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- Statistics -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <div>
+                    <p>Total Users</p>
+                    <h2>150</h2>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🎵
+                </div>
+
+                <div>
+                    <p>Total Songs</p>
+                    <h2>500</h2>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⭐
+                </div>
+
+                <div>
+                    <p>Total Ratings</p>
+                    <h2>1,250</h2>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ▶
+                </div>
+
+                <div>
+                    <p>Total Plays</p>
+                    <h2>8,420</h2>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Dashboard Content -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- Popular Genres -->
+
+            <div class="panel genre-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h2>Popular Genres</h2>
+                        <p>Most listened genres</p>
+                    </div>
+
+                    <button>View All</button>
+
+                </div>
+
+                <div class="chart-placeholder">
+
+                    <div class="bar">
+                        <span>Pop</span>
+                        <div class="bar-line">
+                            <div class="bar-fill" style="width: 85%;"></div>
+                        </div>
+                        <strong>85%</strong>
+                    </div>
+
+                    <div class="bar">
+                        <span>Hip-Hop</span>
+                        <div class="bar-line">
+                            <div class="bar-fill" style="width: 72%;"></div>
+                        </div>
+                        <strong>72%</strong>
+                    </div>
+
+                    <div class="bar">
+                        <span>R&B</span>
+                        <div class="bar-line">
+                            <div class="bar-fill" style="width: 64%;"></div>
+                        </div>
+                        <strong>64%</strong>
+                    </div>
+
+                    <div class="bar">
+                        <span>Rock</span>
+                        <div class="bar-line">
+                            <div class="bar-fill" style="width: 48%;"></div>
+                        </div>
+                        <strong>48%</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Popular Artists -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h2>Popular Artists</h2>
+                        <p>Most played artists</p>
+                    </div>
+
+                    <button>View All</button>
+
+                </div>
+
+
+                <div class="artist-list">
+
+                    <div class="artist-row">
+                        <span class="rank">01</span>
+                        <div class="artist-avatar">NR</div>
+                        <div class="artist-info">
+                            <strong>Nova Ray</strong>
+                            <span>1,240 plays</span>
+                        </div>
+                    </div>
+
+
+                    <div class="artist-row">
+                        <span class="rank">02</span>
+                        <div class="artist-avatar">KR</div>
+                        <div class="artist-info">
+                            <strong>Kai Rivers</strong>
+                            <span>980 plays</span>
+                        </div>
+                    </div>
+
+
+                    <div class="artist-row">
+                        <span class="rank">03</span>
+                        <div class="artist-avatar">LV</div>
+                        <div class="artist-info">
+                            <strong>Luna Vale</strong>
+                            <span>850 plays</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Recent Users -->
+
+        <section class="panel table-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>Recent Users</h2>
+                    <p>Recently registered users</p>
+                </div>
+
+                <button>View All</button>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+                            <td>Alex</td>
+                            <td>alex@example.com</td>
+                            <td>
+                                <span class="status active-status">
+                                    Active
+                                </span>
+                            </td>
+                            <td>Today</td>
+                        </tr>
+
+
+                        <tr>
+                            <td>Daniel</td>
+                            <td>daniel@example.com</td>
+                            <td>
+                                <span class="status active-status">
+                                    Active
+                                </span>
+                            </td>
+                            <td>Yesterday</td>
+                        </tr>
+
+
+                        <tr>
+                            <td>Sarah</td>
+                            <td>sarah@example.com</td>
+                            <td>
+                                <span class="status inactive-status">
+                                    Inactive
+                                </span>
+                            </td>
+                            <td>2 days ago</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</body>
+
+</html>
