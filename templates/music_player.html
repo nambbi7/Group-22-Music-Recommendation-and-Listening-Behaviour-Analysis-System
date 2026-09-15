@@ -63,7 +63,7 @@
             >
 
             <button onclick="searchSpotify()">
-                🔍 Search
+                &#128269; Search
             </button>
 
         </div>
@@ -108,12 +108,25 @@
                 disabled
                 title="Add to favourites"
             >
-                ♡
+                &#9825;
             </button>
 
             <span id="favouriteStatus">
                 Add to favourites
             </span>
+
+        </div>
+
+
+        <div class="recommendation-control">
+
+            <a
+                id="recommendationButton"
+                class="recommendation-button"
+                href="/recommendations"
+            >
+                &#9835; Get Recommendations
+            </a>
 
         </div>
 
@@ -150,7 +163,7 @@
                 onclick="previousSong()"
                 title="Previous Song"
             >
-                ⏮
+                &#9198;
             </button>
 
             <button
@@ -158,14 +171,14 @@
                 id="playButton"
                 onclick="togglePlay()"
             >
-                ▶
+                &#9654;
             </button>
 
             <button
                 onclick="nextSong()"
                 title="Next Song"
             >
-                ⏭
+                &#9197;
             </button>
 
         </div>
@@ -173,7 +186,7 @@
 
         <div class="volume">
 
-            <span>🔊</span>
+            <span>&#128266;</span>
 
             <input
                 type="range"
@@ -191,7 +204,7 @@
             href="{{ url_for('dashboard') }}"
             class="back"
         >
-            ← Back to Dashboard
+            &#8592; Back to Dashboard
         </a>
 
     </div>
@@ -271,6 +284,9 @@ const favouriteButton =
 const favouriteStatus =
     document.getElementById("favouriteStatus");
 
+const recommendationButton =
+    document.getElementById("recommendationButton");
+
 
 searchInput.addEventListener(
     "keydown",
@@ -336,7 +352,7 @@ window.onSpotifyWebPlaybackSDKReady = async function() {
                     device_id;
 
                 spotifyStatus.textContent =
-                    "Spotify connected ✓";
+                    "Spotify connected \u2713";
 
                 connectSpotifyButton.style.display =
                     "none";
@@ -619,11 +635,18 @@ async function playTrack(
 
 
     favouriteButton.textContent =
-        "♡";
+        "\u2661";
 
 
     favouriteStatus.textContent =
         "Add to favourites";
+
+
+    recommendationButton.href =
+        "/recommendations?track="
+        + encodeURIComponent(
+            track.id
+        );
 
 
     lastStatePosition =
@@ -747,7 +770,7 @@ async function playTrack(
 
 
         playButton.textContent =
-            "⏸";
+            "\u23F8";
 
     }
 
@@ -787,7 +810,13 @@ async function saveListeningHistory(track) {
                             track.name,
 
                         artist:
-                            track.artist
+                            track.artist,
+
+                        image_url:
+                            track.image,
+
+                        duration:
+                            track.duration
 
                     })
 
@@ -874,7 +903,7 @@ async function checkFavourite(
                 true;
 
             favouriteButton.textContent =
-                "♥";
+                "\u2665";
 
             favouriteStatus.textContent =
                 "Added to favourites";
@@ -887,7 +916,7 @@ async function checkFavourite(
                 false;
 
             favouriteButton.textContent =
-                "♡";
+                "\u2661";
 
             favouriteStatus.textContent =
                 "Add to favourites";
@@ -951,7 +980,13 @@ async function toggleFavourite() {
                                 currentTrack.name,
 
                             artist:
-                                currentTrack.artist
+                                currentTrack.artist,
+
+                            image_url:
+                                currentTrack.image,
+
+                            duration:
+                                currentTrack.duration
 
                         })
 
@@ -1018,7 +1053,7 @@ async function toggleFavourite() {
         if (isFavourite) {
 
             favouriteButton.textContent =
-                "♥";
+                "\u2665";
 
             favouriteStatus.textContent =
                 "Added to favourites";
@@ -1028,7 +1063,7 @@ async function toggleFavourite() {
         else {
 
             favouriteButton.textContent =
-                "♡";
+                "\u2661";
 
             favouriteStatus.textContent =
                 "Removed from favourites";
@@ -1318,6 +1353,44 @@ function updatePlayerState(state) {
     }
 
 
+    currentTrack =
+        {
+            id:
+                track.id,
+
+            name:
+                track.name,
+
+            artist:
+                track.artists
+                    .map(
+                        artist => artist.name
+                    )
+                    .join(", "),
+
+            image:
+                track.album
+                    &&
+                track.album.images
+                    &&
+                track.album.images.length > 0
+                    ? track.album.images[0].url
+                    : null,
+
+            duration:
+                track.duration_ms
+                ? track.duration_ms / 1000
+                : null
+        };
+
+
+    recommendationButton.href =
+        "/recommendations?track="
+        + encodeURIComponent(
+            track.id
+        );
+
+
     const position =
         state.position;
 
@@ -1360,7 +1433,7 @@ function updatePlayerState(state) {
     if (state.paused) {
 
         playButton.textContent =
-            "▶";
+            "\u25B6";
 
         stopProgressTimer();
 
@@ -1369,7 +1442,7 @@ function updatePlayerState(state) {
     else {
 
         playButton.textContent =
-            "⏸";
+            "\u23F8";
 
         startProgressTimer();
 
@@ -1615,7 +1688,8 @@ function escapeHtml(text) {
 
 
     div.textContent =
-        text;
+        text
+        || "";
 
 
     return div.innerHTML;
@@ -1628,6 +1702,7 @@ window.addEventListener(
     function() {
 
         stopProgressTimer();
+
 
         if (historyTimer) {
 

@@ -22,11 +22,6 @@ body {
     color: #ffffff;
 }
 
-
-/* =========================================
-   PLAYER PAGE
-========================================= */
-
 .player-page {
     min-height: 100vh;
 
@@ -37,18 +32,13 @@ body {
     padding: 40px 20px;
 }
 
-
-/* =========================================
-   PLAYER CARD
-========================================= */
-
 .player {
     width: 500px;
     max-width: 100%;
 
     padding: 30px 35px 30px;
 
-    background: rgba(8, 13, 12, 0.78);
+    background: rgba(8, 13, 12, 0.84);
 
     border: 1px solid rgba(220, 255, 240, 0.16);
 
@@ -57,13 +47,8 @@ body {
     backdrop-filter: blur(18px);
 
     box-shadow:
-        0 15px 45px rgba(0, 0, 0, 0.45);
+        0 15px 45px rgba(0, 0, 0, 0.50);
 }
-
-
-/* =========================================
-   HEADER
-========================================= */
 
 .player-header {
     display: flex;
@@ -96,11 +81,6 @@ body {
 
     letter-spacing: 5px;
 }
-
-
-/* =========================================
-   SPOTIFY CONNECTION
-========================================= */
 
 .spotify-connection {
     text-align: center;
@@ -143,11 +123,6 @@ body {
 
     transform: translateY(-2px);
 }
-
-
-/* =========================================
-   CHERI SEARCH
-========================================= */
 
 .CHERI {
     display: flex;
@@ -215,11 +190,6 @@ body {
     transform: translateY(-1px);
 }
 
-
-/* =========================================
-   SEARCH RESULTS
-========================================= */
-
 .search-results {
     width: 100%;
 
@@ -231,9 +201,6 @@ body {
 
     border-radius: 14px;
 }
-
-
-/* Individual search result */
 
 .search-result {
     display: flex;
@@ -308,9 +275,6 @@ body {
     text-overflow: ellipsis;
 }
 
-
-/* Search scrollbar */
-
 .search-results::-webkit-scrollbar {
     width: 5px;
 }
@@ -324,11 +288,6 @@ body {
 
     border-radius: 10px;
 }
-
-
-/* =========================================
-   ALBUM ART
-========================================= */
 
 .album-art {
     width: 270px;
@@ -358,9 +317,6 @@ body {
         0 15px 35px rgba(0, 0, 0, 0.40);
 }
 
-
-/* Spotify album image */
-
 .album-art img {
     width: 100%;
     height: 100%;
@@ -370,15 +326,10 @@ body {
     display: block;
 }
 
-
-/* =========================================
-   SONG INFO
-========================================= */
-
 .song-info {
     text-align: left;
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .song-info h1 {
@@ -411,10 +362,115 @@ body {
     text-overflow: ellipsis;
 }
 
+.favourite-control {
+    display: flex;
 
-/* =========================================
-   PROGRESS
-========================================= */
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 8px 0 12px;
+}
+
+.favourite-button {
+    width: 40px;
+    height: 40px;
+
+    border: 1px solid rgba(255, 105, 170, 0.25);
+
+    border-radius: 50%;
+
+    background: rgba(255, 79, 163, 0.08);
+
+    color: #ff5ca8;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.favourite-button:hover:not(:disabled) {
+    background: rgba(255, 79, 163, 0.18);
+
+    border-color: rgba(255, 105, 170, 0.45);
+
+    transform: scale(1.08);
+}
+
+.favourite-button:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
+#favouriteStatus {
+    color: #aebbb5;
+
+    font-size: 12px;
+}
+
+.recommendation-control {
+    display: flex;
+
+    justify-content: center;
+
+    margin: 12px 0 20px;
+}
+
+.recommendation-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 11px 20px;
+
+    border: 1px solid rgba(197, 140, 255, 0.28);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(142, 72, 180, 0.35),
+            rgba(188, 70, 137, 0.25)
+        );
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.25);
+
+    transition: 0.25s ease;
+}
+
+.recommendation-button:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(211, 161, 255, 0.55);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(161, 83, 204, 0.55),
+            rgba(211, 79, 151, 0.40)
+        );
+
+    box-shadow:
+        0 9px 25px rgba(156, 75, 204, 0.25);
+}
 
 .progress-container {
     margin-top: 18px;
@@ -463,11 +519,6 @@ body {
     cursor: pointer;
 }
 
-
-/* =========================================
-   TIME
-========================================= */
-
 .time {
     display: flex;
 
@@ -479,11 +530,6 @@ body {
 
     font-size: 11px;
 }
-
-
-/* =========================================
-   CONTROLS
-========================================= */
 
 .controls {
     display: flex;
@@ -522,11 +568,6 @@ body {
     transform: scale(1.08);
 }
 
-
-/* =========================================
-   PLAY BUTTON
-========================================= */
-
 .play-btn {
     width: 62px !important;
     height: 62px !important;
@@ -546,11 +587,6 @@ body {
 
     transform: scale(1.08) !important;
 }
-
-
-/* =========================================
-   VOLUME
-========================================= */
 
 .volume {
     display: flex;
@@ -604,11 +640,6 @@ body {
     background: #e9f5ef;
 }
 
-
-/* =========================================
-   BACK BUTTON
-========================================= */
-
 .back {
     display: block;
 
@@ -630,11 +661,6 @@ body {
 
     transform: translateX(-2px);
 }
-
-
-/* =========================================
-   MOBILE
-========================================= */
 
 @media (max-width: 600px) {
 
@@ -669,5 +695,9 @@ body {
 
     .search-results {
         max-height: 180px;
+    }
+
+    .recommendation-button {
+        width: 100%;
     }
 }

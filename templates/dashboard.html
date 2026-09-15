@@ -15,7 +15,6 @@
 
     <div class="dashboard">
 
-        <!-- Top Navigation -->
         <header class="topbar">
 
             <div class="brand">
@@ -28,7 +27,6 @@
                 <span>CHERI</span>
 
             </div>
-
 
             <div class="user-section">
 
@@ -48,15 +46,12 @@
         </header>
 
 
-        <!-- Main Content -->
         <main class="main-content">
 
-
-            <!-- Welcome Section -->
             <section class="welcome-section">
 
                 <h1>
-                    Welcome to CHERI 🎵
+                    Welcome to CHERI &#127925;
                 </h1>
 
                 <p>
@@ -66,15 +61,13 @@
             </section>
 
 
-            <!-- Dashboard Cards -->
             <section class="dashboard-grid">
 
 
-                <!-- Browse Songs -->
                 <div class="dashboard-card">
 
                     <div class="card-icon">
-                        🎵
+                        &#127925;
                     </div>
 
                     <h2>
@@ -95,11 +88,10 @@
                 </div>
 
 
-                <!-- Favourites -->
                 <div class="dashboard-card">
 
                     <div class="card-icon">
-                        ❤️
+                        &#9829;
                     </div>
 
                     <h2>
@@ -110,53 +102,12 @@
                         View and manage your favourite songs.
                     </p>
 
-                   <a href="{{ url_for('favourites') }}" class="dashboard-btn">
-    View Favourites
-</a>
-
-                </div>
-
-
-                <!-- Listening History -->
-                <div class="dashboard-card">
-
-                    <div class="card-icon">
-                        🕘
-                    </div>
-
-                    <h2>
-                        Listening History
-                    </h2>
-
-                    <p>
-                        See the songs you have listened to.
-                    </p>
-
-                    <button type="button">
-                        View History
-                    </button>
-
-                </div>
-
-
-                <!-- Recommendations -->
-                <div class="dashboard-card">
-
-                    <div class="card-icon">
-                        ✨
-                    </div>
-
-                    <h2>
-                        Recommendations
-                    </h2>
-
-                    <p>
-                        Discover music recommended for you.
-                    </p>
-
-                    <button type="button">
-                        Get Recommendations
-                    </button>
+                    <a
+                        href="{{ url_for('favourites') }}"
+                        class="dashboard-btn"
+                    >
+                        View Favourites
+                    </a>
 
                 </div>
 

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Recommendations - CHERI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/recommendations.css') }}">
+
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            CHERI
+        </div>
+
+        <nav>
+
+            <a href="/dashboard">
+                Home
+            </a>
+
+            <a href="/search">
+                Search
+            </a>
+
+            <a href="/library">
+                Library
+            </a>
+
+            <a href="/favourites">
+                Favourites
+            </a>
+
+            <a href="/recommendations"
+               class="active">
+                Recommendations
+            </a>
+
+            <a href="/profile">
+                Profile
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="recommendation-hero">
+
+            <div class="hero-content">
+
+                <div class="hero-icon">
+                    &#9835;
+                </div>
+
+                <div>
+
+                    <p class="hero-label">
+                        MADE FOR YOU
+                    </p>
+
+                    <h1>
+                        Recommended For You
+                    </h1>
+
+                    <p class="hero-description">
+                        Discover songs that match your listening style.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="recommendation-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <p class="section-label">
+                        PERSONALIZED PICKS
+                    </p>
+
+                    <h2>
+                        Songs You Might Like
+                    </h2>
+
+                    <p class="section-description">
+                        Based on the music you listen to.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="recommendationList"
+                class="recommendation-list"
+            >
+
+                <div class="recommendation-loading">
+
+                    <div class="loading-icon">
+                        &#9835;
+                    </div>
+
+                    <h3>
+                        Preparing your recommendations
+                    </h3>
+
+                    <p>
+                        Play a song to generate recommendations.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+    const recommendationList =
+        document.getElementById(
+            "recommendationList"
+        );
+
+
+    async function loadRecommendations(
+        trackId
+    ) {
+
+        if (!trackId) {
+
+            showEmptyState();
+
+            return;
+
+        }
+
+
+        try {
+
+            recommendationList.innerHTML =
+                `
+                <div class="recommendation-loading">
+
+                    <div class="loading-icon">
+                        &#9835;
+                    </div>
+
+                    <h3>
+                        Finding similar music
+                    </h3>
+
+                    <p>
+                        CHERI is analysing your music preferences.
+                    </p>
+
+                </div>
+                `;
+
+
+            const response =
+                await fetch(
+                    "/api/recommendations/"
+                    + encodeURIComponent(
+                        trackId
+                    )
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok
+                ||
+                !data.success
+            ) {
+
+                showEmptyState();
+
+                return;
+
+            }
+
+
+            displayRecommendations(
+                data.recommendations
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Recommendation error:",
+                error
+            );
+
+            showEmptyState();
+
+        }
+
+    }
+
+
+    function displayRecommendations(
+        recommendations
+    ) {
+
+        if (
+            !recommendations
+            ||
+            recommendations.length === 0
+        ) {
+
+            showEmptyState();
+
+            return;
+
+        }
+
+
+        recommendationList.innerHTML =
+            "";
+
+
+        recommendations.forEach(
+            (song, index) => {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "recommendation-card";
+
+
+                const similarity =
+                    Math.round(
+                        Number(
+                            song.similarity
+                        ) * 100
+                    );
+
+
+                card.innerHTML =
+                    `
+
+                    <div class="recommendation-number">
+                        ${index + 1}
+                    </div>
+
+                    <div class="recommendation-art">
+
+                        <div class="art-placeholder">
+                            &#9835;
+                        </div>
+
+                        <button
+                            class="recommendation-play"
+                            onclick="playSong('${escapeHtml(song.track_id)}')"
+                            title="Play song"
+                        >
+                            &#9654;
+                        </button>
+
+                    </div>
+
+                    <div class="recommendation-info">
+
+                        <h3>
+                            ${escapeHtml(
+                                song.track_name
+                            )}
+                        </h3>
+
+                        <p>
+                            ${escapeHtml(
+                                song.artists
+                            )}
+                        </p>
+
+                        <span>
+                            ${escapeHtml(
+                                song.album_name
+                            )}
+                        </span>
+
+                    </div>
+
+                    <div class="similarity">
+
+                        <strong>
+                            ${similarity}%
+                        </strong>
+
+                        <small>
+                            MATCH
+                        </small>
+
+                    </div>
+
+                    <button
+                        class="play-button"
+                        onclick="playSong('${escapeHtml(song.track_id)}')"
+                        title="Play song"
+                    >
+                        &#9654;
+                    </button>
+
+                    `;
+
+
+                recommendationList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+
+
+    function showEmptyState() {
+
+        recommendationList.innerHTML =
+            `
+            <div class="recommendation-loading">
+
+                <div class="loading-icon">
+                    &#9835;
+                </div>
+
+                <h3>
+                    No recommendations yet
+                </h3>
+
+                <p>
+                    Play a song first and CHERI will find music similar to it.
+                </p>
+
+                <a
+                    href="/search"
+                    class="browse-button"
+                >
+                    Find Music
+                </a>
+
+            </div>
+            `;
+
+    }
+
+
+    function playSong(
+        trackId
+    ) {
+
+        if (!trackId) {
+
+            return;
+
+        }
+
+
+        window.location.href =
+            "/music-player?track="
+            + encodeURIComponent(
+                trackId
+            );
+
+    }
+
+
+    function escapeHtml(
+        text
+    ) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            text
+            || "";
+
+
+        return div.innerHTML;
+
+    }
+
+
+    const urlParams =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const trackId =
+        urlParams.get(
+            "track"
+        );
+
+
+    loadRecommendations(
+        trackId
+    );
+
+    </script>
+
+</body>
+
+</html>

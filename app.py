@@ -6,6 +6,7 @@ import requests
 from flask import Flask, render_template, request, redirect, url_for, session
 from dotenv import load_dotenv
 from supabase import create_client
+from week4_recommendation.recommendation import recommend_songs_by_id
 
 load_dotenv()
 
@@ -219,6 +220,19 @@ def favourites():
         "favourites.html"
     )
 
+
+@app.route("/recommendations")
+def recommendations():
+
+    if "user_id" not in session:
+
+        return redirect(
+            url_for("login")
+        )
+
+    return render_template(
+        "recommendations.html"
+    )
 
 @app.route("/admin-dashboard")
 def admin_dashboard():
@@ -516,6 +530,12 @@ def spotify_search():
                 if track["album"]["images"]
                 else None,
 
+            "duration":
+                track.get(
+                    "duration_ms",
+                    0
+                ) / 1000,
+
             "spotify_url":
                 track["external_urls"]["spotify"]
 
@@ -547,6 +567,59 @@ def spotify_token():
         "access_token":
             access_token
     }
+
+
+@app.route(
+    "/api/recommendations/<track_id>",
+    methods=["GET"]
+)
+def get_recommendations(track_id):
+
+    if "user_id" not in session:
+
+        return {
+            "success": False,
+            "error":
+                "User is not logged in."
+        }, 401
+
+    try:
+
+        recommendations = (
+            recommend_songs_by_id(
+                track_id,
+                5
+            )
+        )
+
+        if not recommendations:
+
+            return {
+                "success": False,
+                "error":
+                    "No recommendations found."
+            }, 404
+
+        return {
+            "success": True,
+            "track_id":
+                track_id,
+            "recommendations":
+                recommendations
+        }
+
+    except Exception as e:
+
+        print(
+            "RECOMMENDATION ERROR:",
+            repr(e)
+        )
+
+        return {
+            "success": False,
+            "error":
+                str(e)
+        }, 500
 
 
 def get_database_user_id():

@@ -2,21 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
 
-
-# ==========================================
-# 1. LOAD CLEANED DATASET
-# ==========================================
-
 df = pd.read_csv("cleaned_data/clean_music.csv")
-
-print("Dataset loaded successfully")
-print("Rows:", len(df))
-print("Columns:", len(df.columns))
-
-
-# ==========================================
-# 2. SELECT MUSIC FEATURES
-# ==========================================
 
 features = [
     "danceability",
@@ -30,30 +16,11 @@ features = [
     "tempo"
 ]
 
-print("\nSelected features:")
-print(features)
-
-
-# ==========================================
-# 3. PREPARE FEATURES
-# ==========================================
-
-feature_data = df[features]
-
-# Handle missing numerical values
+feature_data = df[features].copy()
 feature_data = feature_data.fillna(feature_data.mean())
 
-# Scale the features
 scaler = StandardScaler()
 feature_matrix = scaler.fit_transform(feature_data)
-
-print("\nFeatures prepared successfully")
-print("Feature matrix shape:", feature_matrix.shape)
-
-
-# ==========================================
-# 4. CREATE RECOMMENDATION MODEL
-# ==========================================
 
 model = NearestNeighbors(
     n_neighbors=15,
@@ -62,75 +29,87 @@ model = NearestNeighbors(
 
 model.fit(feature_matrix)
 
-print("\nRecommendation model created successfully")
 
+def recommend_songs_by_id(
+    track_id,
+    number_of_recommendations=5
+):
 
-# ==========================================
-# 5. RECOMMENDATION FUNCTION
-# ==========================================
-
-def recommend_songs(song_name, number_of_recommendations=5):
-
-    # Find the song
     matches = df[
-        df["track_name"].str.lower() == song_name.lower()
+        df["track_id"].astype(str) == str(track_id)
     ]
 
-    # If song is not found
     if matches.empty:
-        print("\nSong not found.")
-        print("Please check the song name and try again.")
-        return
+        return []
 
-    # Get the first matching song
     song_index = matches.index[0]
 
-    # Find similar songs
-    distances, indices = model.kneighbors(
+    neighbours = model.kneighbors(
         feature_matrix[song_index].reshape(1, -1),
         n_neighbors=15
     )
 
-    print("\nRecommended songs for:", df.loc[song_index, "track_name"])
-    print("----------------------------------------")
+    distances = neighbours[0][0]
+    indices = neighbours[1][0]
 
-    recommended_songs = set()
-    count = 0
+    recommendations = []
+    used_tracks = set()
 
-    for index in indices[0]:
+    for distance, index in zip(distances, indices):
 
-        # Skip the original song
         if index == song_index:
             continue
 
-        track_name = df.loc[index, "track_name"]
-
-        # Skip duplicate songs
-        if track_name in recommended_songs:
-            continue
-
-        recommended_songs.add(track_name)
-
-        print(
-            f"{count + 1}. "
-            f"{track_name} - "
-            f"{df.loc[index, 'artists']}"
+        recommended_track_id = str(
+            df.loc[index, "track_id"]
         )
 
-        count += 1
+        if recommended_track_id in used_tracks:
+            continue
 
-        if count == number_of_recommendations:
+        used_tracks.add(
+            recommended_track_id
+        )
+
+        recommendations.append({
+            "track_id": recommended_track_id,
+            "track_name": str(
+                df.loc[index, "track_name"]
+            ),
+            "artists": str(
+                df.loc[index, "artists"]
+            ),
+            "album_name": str(
+                df.loc[index, "album_name"]
+            ),
+            "similarity": round(
+                1 - float(distance),
+                4
+            )
+        })
+
+        if len(recommendations) >= number_of_recommendations:
             break
 
+    return recommendations
 
-# ==========================================
-# 6. USER INPUT
-# ==========================================
 
-print("\n========================================")
-print("       MUSIC RECOMMENDATION SYSTEM")
-print("========================================")
+def recommend_songs_by_name(
+    song_name,
+    number_of_recommendations=5
+):
 
-song = input("\nEnter a song name: ")
+    matches = df[
+        df["track_name"].astype(str).str.lower()
+        == song_name.lower()
+    ]
 
-recommend_songs(song)
+    if matches.empty:
+        return []
+
+    track_id = matches.iloc[0]["track_id"]
+
+    return recommend_songs_by_id(
+        track_id,
+        number_of_recommendations
+    )

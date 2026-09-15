@@ -1,0 +1,512 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+    background-image:
+        linear-gradient(
+            rgba(5, 5, 10, 0.62),
+            rgba(5, 5, 10, 0.84)
+        ),
+        url("../images/Dashboard.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.navbar {
+    height: 72px;
+    padding: 0 45px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(8, 7, 14, 0.92);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
+}
+
+.logo {
+    color: white;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar nav a {
+    padding: 10px 17px;
+    color: rgba(255, 255, 255, 0.62);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: 0.25s ease;
+}
+
+.navbar nav a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.navbar nav a.active {
+    color: white;
+    background: rgba(197, 92, 255, 0.18);
+}
+
+.container {
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+    padding-bottom: 60px;
+}
+
+.recommendation-hero {
+    position: relative;
+    min-height: 280px;
+    margin: 25px 38px 35px;
+    padding: 45px 55px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    background:
+        linear-gradient(
+            110deg,
+            rgba(18, 12, 31, 0.96),
+            rgba(43, 19, 60, 0.88),
+            rgba(68, 27, 88, 0.72)
+        );
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.recommendation-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(
+            circle at 85% 30%,
+            rgba(213, 86, 255, 0.25),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 15% 80%,
+            rgba(255, 73, 160, 0.14),
+            transparent 30%
+        );
+    pointer-events: none;
+}
+
+.recommendation-hero::after {
+    content: "";
+    position: absolute;
+    width: 330px;
+    height: 330px;
+    right: 50px;
+    top: -160px;
+    border-radius: 50%;
+    background: rgba(197, 87, 255, 0.13);
+    filter: blur(75px);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.hero-icon {
+    width: 105px;
+    height: 105px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 25px;
+    color: #d789ff;
+    font-size: 48px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.15),
+            rgba(255, 255, 255, 0.05)
+        );
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.hero-label {
+    margin-bottom: 9px;
+    color: #c58cff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.hero-content h1 {
+    color: white;
+    font-size: 50px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+}
+
+.hero-description {
+    margin-top: 14px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 16px;
+}
+
+.recommendation-section {
+    margin: 0 38px;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    background: rgba(13, 12, 20, 0.82);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(18px);
+}
+
+.section-header {
+    margin-bottom: 25px;
+}
+
+.section-label {
+    margin-bottom: 7px;
+    color: #c58cff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.section-header h2 {
+    color: white;
+    font-size: 27px;
+    font-weight: 750;
+}
+
+.section-description {
+    margin-top: 7px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 14px;
+}
+
+.recommendation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.recommendation-card {
+    position: relative;
+    min-height: 88px;
+    padding: 11px 18px;
+    display: grid;
+    grid-template-columns: 35px 68px 1fr 85px 42px;
+    align-items: center;
+    gap: 17px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.035);
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.recommendation-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 15px;
+    bottom: 15px;
+    width: 3px;
+    border-radius: 5px;
+    background: linear-gradient(
+        180deg,
+        #c05cff,
+        #ff4fa3
+    );
+    opacity: 0;
+    transition: 0.25s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.075);
+    border-color: rgba(197, 140, 255, 0.2);
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.recommendation-card:hover::before {
+    opacity: 1;
+}
+
+.recommendation-number {
+    color: rgba(255, 255, 255, 0.38);
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.recommendation-art {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    overflow: hidden;
+    border-radius: 10px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(192, 92, 255, 0.25),
+            rgba(255, 79, 163, 0.18)
+        );
+    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.3);
+}
+
+.art-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 27px;
+}
+
+.recommendation-play {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    color: white;
+    background: rgba(0, 0, 0, 0.58);
+    opacity: 0;
+    cursor: pointer;
+    font-size: 19px;
+    transition: 0.2s ease;
+}
+
+.recommendation-art:hover .recommendation-play {
+    opacity: 1;
+}
+
+.recommendation-info {
+    min-width: 0;
+}
+
+.recommendation-info h3 {
+    overflow: hidden;
+    color: white;
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.recommendation-info p {
+    margin-top: 5px;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.recommendation-info span {
+    display: block;
+    margin-top: 4px;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.similarity {
+    text-align: center;
+}
+
+.similarity strong {
+    display: block;
+    color: #d29aff;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.similarity small {
+    display: block;
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.play-button {
+    width: 39px;
+    height: 39px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    color: white;
+    background: rgba(255, 255, 255, 0.07);
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.play-button:hover {
+    transform: scale(1.1);
+    border-color: rgba(197, 140, 255, 0.35);
+    background: rgba(197, 140, 255, 0.22);
+}
+
+.recommendation-loading {
+    padding: 65px 20px;
+    text-align: center;
+}
+
+.loading-icon {
+    margin-bottom: 15px;
+    color: #c58cff;
+    font-size: 36px;
+}
+
+.recommendation-loading h3 {
+    color: white;
+    font-size: 20px;
+}
+
+.recommendation-loading p {
+    margin-top: 9px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 14px;
+}
+
+.browse-button {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 11px 24px;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 22px;
+    background: linear-gradient(
+        135deg,
+        #c05cff,
+        #ff4fa3
+    );
+    transition: 0.2s ease;
+}
+
+.browse-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(192, 92, 255, 0.25);
+}
+
+@media (max-width: 800px) {
+
+    .navbar {
+        padding: 0 20px;
+    }
+
+    .navbar nav {
+        gap: 2px;
+    }
+
+    .navbar nav a {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .recommendation-hero {
+        margin: 15px;
+        padding: 35px 25px;
+    }
+
+    .hero-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 35px;
+    }
+
+    .hero-content h1 {
+        font-size: 36px;
+    }
+
+    .recommendation-section {
+        margin: 0 15px;
+        padding: 20px;
+    }
+
+    .recommendation-card {
+        grid-template-columns: 50px 1fr 40px;
+    }
+
+    .recommendation-number,
+    .similarity {
+        display: none;
+    }
+
+}
+
+@media (max-width: 550px) {
+
+    .navbar {
+        height: auto;
+        min-height: 65px;
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .navbar nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .recommendation-hero {
+        min-height: 230px;
+    }
+
+    .hero-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
+    }
+
+    .hero-content h1 {
+        font-size: 29px;
+    }
+
+    .hero-label {
+        font-size: 10px;
+        letter-spacing: 2px;
+    }
+
+}
