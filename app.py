@@ -33,7 +33,7 @@ SPOTIFY_REDIRECT_URI = os.getenv(
 @app.route("/")
 def home():
 
-    return "Music Recommendation System Backend is Running!"
+    return render_template("home.html")
 
 
 @app.route("/test-users")
@@ -233,6 +233,7 @@ def recommendations():
     return render_template(
         "recommendations.html"
     )
+
 
 @app.route("/admin-dashboard")
 def admin_dashboard():
