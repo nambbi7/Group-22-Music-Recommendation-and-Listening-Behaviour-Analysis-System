@@ -16,8 +16,10 @@
 <header class="navbar">
 
     <div class="logo">
-        CHERI
-    </div>
+    <a href="/">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="CHERI">
+    </a>
+</div>
 
     <nav class="nav-links">
 
@@ -43,7 +45,7 @@
 
     <div class="hero-content">
 
-        <p class="welcome-text">WELCOME TO CHERI</p>
+    <p class="welcome-text">WELCOME TO CHERI</p>
 
         <h1>
             Discover Music<br>
@@ -56,19 +58,39 @@
         </p>
 
         <div class="search-box">
-
-            <span class="search-icon">&#8981;</span>
-
             <input
-                type="text"
-                placeholder="Search for songs, artists or genres..."
-            >
+            type="text"
+            placeholder="Search for songs, artists or genres..."
+        >
 
-            <button>Search</button>
-
-        </div>
+        <button>Search</button>
 
     </div>
+
+</div>
+
+<div class="floating-albums">
+
+    <img
+        src="{{ url_for('static', filename='images/album1.jpg') }}"
+        class="album album-one"
+        alt="Album"
+    >
+
+    <img
+        src="{{ url_for('static', filename='images/album2.jpg') }}"
+        class="album album-two"
+        alt="Album"
+    >
+
+    <img
+        src="{{ url_for('static', filename='images/album3.jpg') }}"
+        class="album album-three"
+        alt="Album"
+    >
+
+
+</div>
 
 </section>
 

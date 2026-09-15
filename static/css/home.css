@@ -30,9 +30,10 @@ a {
 }
 
 .logo {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: 3px;
+    width: 100px;
+    height: 40px;
+    object-fit: contain;
+    display: block;
 }
 
 .nav-links {
@@ -791,4 +792,132 @@ footer p {
     .cta-section h2 {
         font-size: 24px;
     }
+}
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 90px;
+    height: 45px;
+    object-fit: contain;
+    display: block;
+}
+.logo img {
+    width: 90px;
+    height: 45px;
+    object-fit: contain;
+    display: block;
+}
+
+.logo img:hover {
+    animation: cheriSpin 1s linear;
+}
+
+@keyframes cheriSpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.floating-albums {
+    position: absolute;
+    right: 7%;
+    top: 50%;
+    width: 430px;
+    height: 430px;
+    transform: translateY(-50%);
+}
+
+.album {
+    position: absolute;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.album-one {
+    width: 190px;
+    height: 190px;
+    top: 20px;
+    right: 20px;
+    transform: rotate(8deg);
+    animation: floatOne 4s ease-in-out infinite;
+}
+
+.album-two {
+    width: 240px;
+    height: 240px;
+    top: 100px;
+    left: 40px;
+    z-index: 2;
+    animation: floatTwo 5s ease-in-out infinite;
+}
+
+.album-three {
+    width: 180px;
+    height: 180px;
+    bottom: 15px;
+    right: 0;
+    transform: rotate(-8deg);
+    animation: floatThree 4.5s ease-in-out infinite;
+}
+
+@keyframes floatOne {
+    0%, 100% {
+        transform: translateY(0) rotate(8deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(8deg);
+    }
+}
+
+@keyframes floatTwo {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes floatThree {
+    0%, 100% {
+        transform: translateY(0) rotate(-8deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(-8deg);
+    }
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    background-image: url("../images/home.background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
+.floating-albums {
+    position: absolute;
+    z-index: 2;
 }
