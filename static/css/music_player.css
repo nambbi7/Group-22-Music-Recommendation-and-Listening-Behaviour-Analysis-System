@@ -701,3 +701,156 @@ body {
         width: 100%;
     }
 }
+
+.rating-popup {
+    position: fixed;
+
+    right: 25px;
+    bottom: 25px;
+
+    width: 245px;
+
+    padding: 18px 20px;
+
+    background: rgba(8, 14, 13, 0.92);
+
+    border: 1px solid rgba(220, 255, 240, 0.20);
+
+    border-radius: 18px;
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.45);
+
+    z-index: 9999;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform: translateX(30px);
+
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease,
+        visibility 0.35s ease;
+}
+
+.rating-popup.show {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: translateX(0);
+}
+
+.close-rating {
+    position: absolute;
+
+    top: 8px;
+    right: 10px;
+
+    width: 24px;
+    height: 24px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #aeb9b4;
+
+    font-size: 20px;
+
+    line-height: 20px;
+
+    cursor: pointer;
+
+    padding: 0;
+}
+
+.close-rating:hover {
+    color: #ffffff;
+}
+
+.rating-title {
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+
+    padding-right: 20px;
+}
+
+.rating-song-name {
+    color: #aeb9b4;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    margin-bottom: 12px;
+}
+
+.rating-stars {
+    display: flex;
+
+    align-items: center;
+
+    gap: 3px;
+}
+
+.rating-stars button {
+    border: none;
+
+    background: transparent;
+
+    color: #68736e;
+
+    font-size: 23px;
+
+    padding: 0 2px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.rating-stars button:hover {
+    color: #ffffff;
+
+    transform: scale(1.15);
+}
+
+.rating-stars button.selected {
+    color: #ffffff;
+}
+
+.rating-message {
+    color: #aeb9b4;
+
+    font-size: 11px;
+
+    margin-top: 9px;
+}
+
+@media (max-width: 600px) {
+
+    .rating-popup {
+        right: 15px;
+
+        bottom: 15px;
+
+        width: 225px;
+    }
+
+}

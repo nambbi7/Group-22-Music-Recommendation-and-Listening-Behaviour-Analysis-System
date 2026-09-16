@@ -36,7 +36,6 @@
 
         </div>
 
-
         <div class="spotify-connection">
 
             <p id="spotifyStatus">
@@ -53,7 +52,6 @@
 
         </div>
 
-
         <div class="CHERI">
 
             <input
@@ -68,12 +66,10 @@
 
         </div>
 
-
         <div
             id="searchResults"
             class="search-results">
         </div>
-
 
         <div class="album-art">
 
@@ -84,7 +80,6 @@
             >
 
         </div>
-
 
         <div class="song-info">
 
@@ -97,7 +92,6 @@
             </p>
 
         </div>
-
 
         <div class="favourite-control">
 
@@ -117,7 +111,6 @@
 
         </div>
 
-
         <div class="recommendation-control">
 
             <a
@@ -129,7 +122,6 @@
             </a>
 
         </div>
-
 
         <div class="progress-container">
 
@@ -155,7 +147,6 @@
             </div>
 
         </div>
-
 
         <div class="controls">
 
@@ -183,7 +174,6 @@
 
         </div>
 
-
         <div class="volume">
 
             <span>&#128266;</span>
@@ -199,7 +189,6 @@
 
         </div>
 
-
         <a
             href="{{ url_for('dashboard') }}"
             class="back"
@@ -209,11 +198,89 @@
 
     </div>
 
+    <div
+        id="ratingPopup"
+        class="rating-popup"
+    >
+
+        <button
+            id="closeRating"
+            class="close-rating"
+            type="button"
+        >
+            &times;
+        </button>
+
+        <div class="rating-title">
+            Rate this song
+        </div>
+
+        <div
+            id="ratingSongName"
+            class="rating-song-name"
+        >
+            Current Song
+        </div>
+
+        <div
+            id="ratingStars"
+            class="rating-stars"
+        >
+
+            <button
+                type="button"
+                data-rating="1"
+                aria-label="1 star"
+            >
+                &#9733;
+            </button>
+
+            <button
+                type="button"
+                data-rating="2"
+                aria-label="2 stars"
+            >
+                &#9733;
+            </button>
+
+            <button
+                type="button"
+                data-rating="3"
+                aria-label="3 stars"
+            >
+                &#9733;
+            </button>
+
+            <button
+                type="button"
+                data-rating="4"
+                aria-label="4 stars"
+            >
+                &#9733;
+            </button>
+
+            <button
+                type="button"
+                data-rating="5"
+                aria-label="5 stars"
+            >
+                &#9733;
+            </button>
+
+        </div>
+
+        <div
+            id="ratingMessage"
+            class="rating-message"
+        >
+            Tap a star to rate
+        </div>
+
+    </div>
+
 </div>
 
-
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
-
 
 <script>
 
@@ -233,6 +300,8 @@ let historyTimer = null;
 
 let progressTimer = null;
 
+let ratingTimer = null;
+
 let lastStatePosition = 0;
 
 let lastStateTime = 0;
@@ -241,6 +310,9 @@ let currentTrack = null;
 
 let isFavourite = false;
 
+let ratingDismissed = false;
+
+let ratingSubmitted = false;
 
 const title =
     document.getElementById("song-title");
@@ -287,6 +359,23 @@ const favouriteStatus =
 const recommendationButton =
     document.getElementById("recommendationButton");
 
+const ratingPopup =
+    document.getElementById("ratingPopup");
+
+const ratingSongName =
+    document.getElementById("ratingSongName");
+
+const ratingStars =
+    document.getElementById("ratingStars");
+
+const closeRating =
+    document.getElementById("closeRating");
+
+const ratingMessage =
+    document.getElementById("ratingMessage");
+
+const ratingButtons =
+    ratingStars.querySelectorAll("button");
 
 searchInput.addEventListener(
     "keydown",
@@ -301,171 +390,163 @@ searchInput.addEventListener(
     }
 );
 
+window.onSpotifyWebPlaybackSDKReady =
+    async function() {
 
-window.onSpotifyWebPlaybackSDKReady = async function() {
+        try {
 
-    try {
-
-        const response =
-            await fetch("/spotify/token");
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            spotifyStatus.textContent =
-                "Spotify is not connected.";
-
-            connectSpotifyButton.style.display =
-                "inline-block";
-
-            return;
-
-        }
-
-
-        spotifyPlayer =
-            new Spotify.Player({
-
-                name: "CHERI Music Player",
-
-                getOAuthToken: callback => {
-
-                    callback(
-                        data.access_token
-                    );
-
-                },
-
-                volume: 1.0
-
-            });
-
-
-        spotifyPlayer.addListener(
-            "ready",
-            ({ device_id }) => {
-
-                deviceId =
-                    device_id;
-
-                spotifyStatus.textContent =
-                    "Spotify connected \u2713";
-
-                connectSpotifyButton.style.display =
-                    "none";
-
-                console.log(
-                    "CHERI Spotify Device:",
-                    device_id
+            const response =
+                await fetch(
+                    "/spotify/token"
                 );
 
-            }
-        );
+            const data =
+                await response.json();
 
-
-        spotifyPlayer.addListener(
-            "not_ready",
-            ({ device_id }) => {
+            if (!data.success) {
 
                 spotifyStatus.textContent =
-                    "Spotify player is offline.";
-
-                console.log(
-                    "Device offline:",
-                    device_id
-                );
-
-            }
-        );
-
-
-        spotifyPlayer.addListener(
-            "player_state_changed",
-            state => {
-
-                if (!state) {
-
-                    return;
-
-                }
-
-                currentState =
-                    state;
-
-                updatePlayerState(
-                    state
-                );
-
-            }
-        );
-
-
-        spotifyPlayer.addListener(
-            "initialization_error",
-            ({ message }) => {
-
-                console.error(message);
-
-                spotifyStatus.textContent =
-                    "Spotify initialization error.";
-
-            }
-        );
-
-
-        spotifyPlayer.addListener(
-            "authentication_error",
-            ({ message }) => {
-
-                console.error(message);
-
-                spotifyStatus.textContent =
-                    "Spotify authentication error.";
+                    "Spotify is not connected.";
 
                 connectSpotifyButton.style.display =
                     "inline-block";
 
-            }
-        );
-
-
-        spotifyPlayer.addListener(
-            "account_error",
-            ({ message }) => {
-
-                console.error(message);
-
-                spotifyStatus.textContent =
-                    "Spotify Premium is required.";
+                return;
 
             }
-        );
 
+            spotifyPlayer =
+                new Spotify.Player({
 
-        await spotifyPlayer.connect();
+                    name:
+                        "CHERI Music Player",
 
-    }
+                    getOAuthToken:
+                        callback => {
 
-    catch (error) {
+                            callback(
+                                data.access_token
+                            );
 
-        console.error(error);
+                        },
 
-        spotifyStatus.textContent =
-            "Unable to connect to Spotify.";
+                    volume:
+                        1.0
 
-    }
+                });
 
-};
+            spotifyPlayer.addListener(
+                "ready",
+                ({ device_id }) => {
 
+                    deviceId =
+                        device_id;
+
+                    spotifyStatus.textContent =
+                        "Spotify connected";
+
+                    connectSpotifyButton.style.display =
+                        "none";
+
+                }
+            );
+
+            spotifyPlayer.addListener(
+                "not_ready",
+                ({ device_id }) => {
+
+                    spotifyStatus.textContent =
+                        "Spotify player is offline.";
+
+                }
+            );
+
+            spotifyPlayer.addListener(
+                "player_state_changed",
+                state => {
+
+                    if (!state) {
+
+                        return;
+
+                    }
+
+                    currentState =
+                        state;
+
+                    updatePlayerState(
+                        state
+                    );
+
+                }
+            );
+
+            spotifyPlayer.addListener(
+                "initialization_error",
+                ({ message }) => {
+
+                    console.error(
+                        message
+                    );
+
+                    spotifyStatus.textContent =
+                        "Spotify initialization error.";
+
+                }
+            );
+
+            spotifyPlayer.addListener(
+                "authentication_error",
+                ({ message }) => {
+
+                    console.error(
+                        message
+                    );
+
+                    spotifyStatus.textContent =
+                        "Spotify authentication error.";
+
+                    connectSpotifyButton.style.display =
+                        "inline-block";
+
+                }
+            );
+
+            spotifyPlayer.addListener(
+                "account_error",
+                ({ message }) => {
+
+                    console.error(
+                        message
+                    );
+
+                    spotifyStatus.textContent =
+                        "Spotify Premium is required.";
+
+                }
+            );
+
+            await spotifyPlayer.connect();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                error
+            );
+
+            spotifyStatus.textContent =
+                "Unable to connect to Spotify.";
+
+        }
+
+    };
 
 async function searchSpotify() {
 
     const query =
         searchInput.value.trim();
-
 
     if (!query) {
 
@@ -473,23 +554,21 @@ async function searchSpotify() {
 
     }
 
-
     searchResults.innerHTML =
         "Searching Spotify...";
-
 
     try {
 
         const response =
             await fetch(
                 "/api/spotify/search?q="
-                + encodeURIComponent(query)
+                + encodeURIComponent(
+                    query
+                )
             );
-
 
         const data =
             await response.json();
-
 
         if (!data.success) {
 
@@ -500,10 +579,8 @@ async function searchSpotify() {
 
         }
 
-
         spotifyTracks =
             data.tracks;
-
 
         displaySearchResults(
             spotifyTracks
@@ -513,7 +590,9 @@ async function searchSpotify() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         searchResults.innerHTML =
             "Search error.";
@@ -522,12 +601,12 @@ async function searchSpotify() {
 
 }
 
-
-function displaySearchResults(tracks) {
+function displaySearchResults(
+    tracks
+) {
 
     searchResults.innerHTML =
         "";
-
 
     if (tracks.length === 0) {
 
@@ -538,17 +617,16 @@ function displaySearchResults(tracks) {
 
     }
 
-
     tracks.forEach(
         (track, index) => {
 
             const result =
-                document.createElement("div");
-
+                document.createElement(
+                    "div"
+                );
 
             result.className =
                 "search-result";
-
 
             result.innerHTML = `
 
@@ -560,17 +638,20 @@ function displaySearchResults(tracks) {
                 <div>
 
                     <strong>
-                        ${escapeHtml(track.name)}
+                        ${escapeHtml(
+                            track.name
+                        )}
                     </strong>
 
                     <p>
-                        ${escapeHtml(track.artist)}
+                        ${escapeHtml(
+                            track.artist
+                        )}
                     </p>
 
                 </div>
 
             `;
-
 
             result.addEventListener(
                 "click",
@@ -584,7 +665,6 @@ function displaySearchResults(tracks) {
                 }
             );
 
-
             searchResults.appendChild(
                 result
             );
@@ -593,7 +673,6 @@ function displaySearchResults(tracks) {
     );
 
 }
-
 
 async function playTrack(
     track,
@@ -610,37 +689,36 @@ async function playTrack(
 
     }
 
-
     await finishPreviousListening();
 
+    hideRatingPopup();
 
     currentTrackIndex =
         index;
 
-
     currentTrack =
         track;
-
 
     currentHistoryId =
         null;
 
-
     isFavourite =
         false;
 
+    ratingDismissed =
+        false;
+
+    ratingSubmitted =
+        false;
 
     favouriteButton.disabled =
         false;
 
-
-    favouriteButton.textContent =
-        "\u2661";
-
+    favouriteButton.innerHTML =
+        "&#9825;";
 
     favouriteStatus.textContent =
         "Add to favourites";
-
 
     recommendationButton.href =
         "/recommendations?track="
@@ -648,22 +726,16 @@ async function playTrack(
             track.id
         );
 
-
-    lastStatePosition =
-        0;
-
-
-    lastStateTime =
-        Date.now();
-
-
     title.textContent =
         track.name;
-
 
     artist.textContent =
         track.artist;
 
+    ratingSongName.textContent =
+        track.name;
+
+    resetRatingStars();
 
     if (track.image) {
 
@@ -672,18 +744,14 @@ async function playTrack(
 
     }
 
-
     progress.value =
         0;
-
 
     currentTime.textContent =
         "0:00";
 
-
     duration.textContent =
         "0:00";
-
 
     try {
 
@@ -692,10 +760,8 @@ async function playTrack(
                 "/spotify/token"
             );
 
-
         const tokenData =
             await tokenResponse.json();
-
 
         if (!tokenData.success) {
 
@@ -707,14 +773,16 @@ async function playTrack(
 
         }
 
-
         const playResponse =
             await fetch(
                 "https://api.spotify.com/v1/me/player/play?device_id="
-                + encodeURIComponent(deviceId),
+                + encodeURIComponent(
+                    deviceId
+                ),
                 {
 
-                    method: "PUT",
+                    method:
+                        "PUT",
 
                     headers: {
 
@@ -727,20 +795,20 @@ async function playTrack(
 
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        uris: [
+                            uris: [
 
-                            "spotify:track:"
-                            + track.id
+                                "spotify:track:"
+                                + track.id
 
-                        ]
+                            ]
 
-                    })
+                        })
 
                 }
             );
-
 
         if (!playResponse.ok) {
 
@@ -758,32 +826,32 @@ async function playTrack(
 
         }
 
-
         await saveListeningHistory(
             track
         );
-
 
         await checkFavourite(
             track.id
         );
 
-
-        playButton.textContent =
-            "\u23F8";
+        playButton.innerHTML =
+            "&#9208;";
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
     }
 
 }
 
-
-async function saveListeningHistory(track) {
+async function saveListeningHistory(
+    track
+) {
 
     try {
 
@@ -792,7 +860,8 @@ async function saveListeningHistory(track) {
                 "/api/listening/start",
                 {
 
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
 
@@ -801,32 +870,31 @@ async function saveListeningHistory(track) {
 
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        spotify_track_id:
-                            track.id,
+                            spotify_track_id:
+                                track.id,
 
-                        title:
-                            track.name,
+                            title:
+                                track.name,
 
-                        artist:
-                            track.artist,
+                            artist:
+                                track.artist,
 
-                        image_url:
-                            track.image,
+                            image_url:
+                                track.image,
 
-                        duration:
-                            track.duration
+                            duration:
+                                track.duration
 
-                    })
+                        })
 
                 }
             );
 
-
         const data =
             await response.json();
-
 
         if (!data.success) {
 
@@ -839,16 +907,8 @@ async function saveListeningHistory(track) {
 
         }
 
-
         currentHistoryId =
             data.history_id;
-
-
-        console.log(
-            "Listening history saved:",
-            currentHistoryId
-        );
-
 
         startHistoryTimer();
 
@@ -865,7 +925,6 @@ async function saveListeningHistory(track) {
 
 }
 
-
 async function checkFavourite(
     spotifyTrackId
 ) {
@@ -877,10 +936,8 @@ async function checkFavourite(
                 "/api/favourites"
             );
 
-
         const data =
             await response.json();
-
 
         if (!data.success) {
 
@@ -888,22 +945,20 @@ async function checkFavourite(
 
         }
 
-
         const favourite =
             data.favourites.find(
                 item =>
-                    item.spotify_track_id
-                    === spotifyTrackId
+                    item.spotify_track_id ===
+                    spotifyTrackId
             );
-
 
         if (favourite) {
 
             isFavourite =
                 true;
 
-            favouriteButton.textContent =
-                "\u2665";
+            favouriteButton.innerHTML =
+                "&#9829;";
 
             favouriteStatus.textContent =
                 "Added to favourites";
@@ -915,8 +970,8 @@ async function checkFavourite(
             isFavourite =
                 false;
 
-            favouriteButton.textContent =
-                "\u2661";
+            favouriteButton.innerHTML =
+                "&#9825;";
 
             favouriteStatus.textContent =
                 "Add to favourites";
@@ -936,7 +991,6 @@ async function checkFavourite(
 
 }
 
-
 async function toggleFavourite() {
 
     if (!currentTrack) {
@@ -945,15 +999,12 @@ async function toggleFavourite() {
 
     }
 
-
     favouriteButton.disabled =
         true;
-
 
     try {
 
         let response;
-
 
         if (!isFavourite) {
 
@@ -962,7 +1013,8 @@ async function toggleFavourite() {
                     "/api/favourites/add",
                     {
 
-                        method: "POST",
+                        method:
+                            "POST",
 
                         headers: {
 
@@ -971,24 +1023,25 @@ async function toggleFavourite() {
 
                         },
 
-                        body: JSON.stringify({
+                        body:
+                            JSON.stringify({
 
-                            spotify_track_id:
-                                currentTrack.id,
+                                spotify_track_id:
+                                    currentTrack.id,
 
-                            title:
-                                currentTrack.name,
+                                title:
+                                    currentTrack.name,
 
-                            artist:
-                                currentTrack.artist,
+                                artist:
+                                    currentTrack.artist,
 
-                            image_url:
-                                currentTrack.image,
+                                image_url:
+                                    currentTrack.image,
 
-                            duration:
-                                currentTrack.duration
+                                duration:
+                                    currentTrack.duration
 
-                        })
+                            })
 
                     }
                 );
@@ -1002,7 +1055,8 @@ async function toggleFavourite() {
                     "/api/favourites/remove",
                     {
 
-                        method: "POST",
+                        method:
+                            "POST",
 
                         headers: {
 
@@ -1011,29 +1065,23 @@ async function toggleFavourite() {
 
                         },
 
-                        body: JSON.stringify({
+                        body:
+                            JSON.stringify({
 
-                            spotify_track_id:
-                                currentTrack.id
+                                spotify_track_id:
+                                    currentTrack.id
 
-                        })
+                            })
 
                     }
                 );
 
         }
 
-
         const data =
             await response.json();
 
-
         if (!data.success) {
-
-            console.error(
-                "Favourite error:",
-                data.error
-            );
 
             favouriteStatus.textContent =
                 "Unable to update favourite.";
@@ -1045,15 +1093,13 @@ async function toggleFavourite() {
 
         }
 
-
         isFavourite =
             !isFavourite;
 
-
         if (isFavourite) {
 
-            favouriteButton.textContent =
-                "\u2665";
+            favouriteButton.innerHTML =
+                "&#9829;";
 
             favouriteStatus.textContent =
                 "Added to favourites";
@@ -1062,8 +1108,8 @@ async function toggleFavourite() {
 
         else {
 
-            favouriteButton.textContent =
-                "\u2661";
+            favouriteButton.innerHTML =
+                "&#9825;";
 
             favouriteStatus.textContent =
                 "Removed from favourites";
@@ -1075,7 +1121,6 @@ async function toggleFavourite() {
     catch (error) {
 
         console.error(
-            "Favourite request error:",
             error
         );
 
@@ -1084,12 +1129,10 @@ async function toggleFavourite() {
 
     }
 
-
     favouriteButton.disabled =
         false;
 
 }
-
 
 function startHistoryTimer() {
 
@@ -1101,7 +1144,6 @@ function startHistoryTimer() {
 
     }
 
-
     historyTimer =
         setInterval(
             updateListeningDuration,
@@ -1109,7 +1151,6 @@ function startHistoryTimer() {
         );
 
 }
-
 
 async function updateListeningDuration() {
 
@@ -1119,19 +1160,17 @@ async function updateListeningDuration() {
 
     }
 
-
     if (!currentState) {
 
         return;
 
     }
 
-
     const durationPlayed =
         Math.floor(
-            getCurrentPosition() / 1000
+            getCurrentPosition()
+            / 1000
         );
-
 
     if (durationPlayed <= 0) {
 
@@ -1139,24 +1178,24 @@ async function updateListeningDuration() {
 
     }
 
-
     try {
 
-        const response =
-            await fetch(
-                "/api/listening/update",
-                {
+        await fetch(
+            "/api/listening/update",
+            {
 
-                    method: "POST",
+                method:
+                    "POST",
 
-                    headers: {
+                headers: {
 
-                        "Content-Type":
-                            "application/json"
+                    "Content-Type":
+                        "application/json"
 
-                    },
+                },
 
-                    body: JSON.stringify({
+                body:
+                    JSON.stringify({
 
                         history_id:
                             currentHistoryId,
@@ -1166,29 +1205,14 @@ async function updateListeningDuration() {
 
                     })
 
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            console.error(
-                "Duration update failed:",
-                data.error
-            );
-
-        }
+            }
+        );
 
     }
 
     catch (error) {
 
         console.error(
-            "Duration update error:",
             error
         );
 
@@ -1196,11 +1220,9 @@ async function updateListeningDuration() {
 
 }
 
-
 async function finishPreviousListening() {
 
     stopProgressTimer();
-
 
     if (historyTimer) {
 
@@ -1213,22 +1235,18 @@ async function finishPreviousListening() {
 
     }
 
-
     if (!currentHistoryId) {
 
         return;
 
     }
 
-
     await updateListeningDuration();
-
 
     currentHistoryId =
         null;
 
 }
-
 
 async function togglePlay() {
 
@@ -1238,11 +1256,9 @@ async function togglePlay() {
 
     }
 
-
     await spotifyPlayer.togglePlay();
 
 }
-
 
 async function nextSong() {
 
@@ -1254,23 +1270,19 @@ async function nextSong() {
 
         currentTrackIndex++;
 
-
         const nextTrack =
             spotifyTracks[
                 currentTrackIndex
             ];
-
 
         await playTrack(
             nextTrack,
             currentTrackIndex
         );
 
-
         return;
 
     }
-
 
     if (spotifyPlayer) {
 
@@ -1280,7 +1292,6 @@ async function nextSong() {
 
 }
 
-
 async function previousSong() {
 
     if (
@@ -1289,23 +1300,19 @@ async function previousSong() {
 
         currentTrackIndex--;
 
-
         const previousTrack =
             spotifyTracks[
                 currentTrackIndex
             ];
-
 
         await playTrack(
             previousTrack,
             currentTrackIndex
         );
 
-
         return;
 
     }
-
 
     if (spotifyPlayer) {
 
@@ -1315,12 +1322,12 @@ async function previousSong() {
 
 }
 
-
-function updatePlayerState(state) {
+function updatePlayerState(
+    state
+) {
 
     const track =
         state.track_window.current_track;
-
 
     if (!track) {
 
@@ -1328,10 +1335,8 @@ function updatePlayerState(state) {
 
     }
 
-
     title.textContent =
         track.name;
-
 
     artist.textContent =
         track.artists
@@ -1339,7 +1344,6 @@ function updatePlayerState(state) {
                 artist => artist.name
             )
             .join(", ");
-
 
     if (
         track.album &&
@@ -1352,9 +1356,21 @@ function updatePlayerState(state) {
 
     }
 
+    const newTrackId =
+        track.id;
+
+    if (
+        currentTrack &&
+        currentTrack.id !== newTrackId
+    ) {
+
+        resetRatingSystem();
+
+    }
 
     currentTrack =
         {
+
             id:
                 track.id,
 
@@ -1369,10 +1385,8 @@ function updatePlayerState(state) {
                     .join(", "),
 
             image:
-                track.album
-                    &&
-                track.album.images
-                    &&
+                track.album &&
+                track.album.images &&
                 track.album.images.length > 0
                     ? track.album.images[0].url
                     : null,
@@ -1381,8 +1395,8 @@ function updatePlayerState(state) {
                 track.duration_ms
                 ? track.duration_ms / 1000
                 : null
-        };
 
+        };
 
     recommendationButton.href =
         "/recommendations?track="
@@ -1390,22 +1404,17 @@ function updatePlayerState(state) {
             track.id
         );
 
-
     const position =
         state.position;
-
 
     const trackDuration =
         state.duration;
 
-
     lastStatePosition =
         position;
 
-
     lastStateTime =
         Date.now();
-
 
     if (trackDuration > 0) {
 
@@ -1417,23 +1426,20 @@ function updatePlayerState(state) {
 
     }
 
-
     currentTime.textContent =
         formatTime(
             position
         );
-
 
     duration.textContent =
         formatTime(
             trackDuration
         );
 
-
     if (state.paused) {
 
-        playButton.textContent =
-            "\u25B6";
+        playButton.innerHTML =
+            "&#9654;";
 
         stopProgressTimer();
 
@@ -1441,15 +1447,457 @@ function updatePlayerState(state) {
 
     else {
 
-        playButton.textContent =
-            "\u23F8";
+        playButton.innerHTML =
+            "&#9208;";
 
         startProgressTimer();
+
+        startRatingTimer();
 
     }
 
 }
 
+function startRatingTimer() {
+
+    if (
+        ratingTimer ||
+        ratingDismissed ||
+        ratingSubmitted ||
+        !currentTrack
+    ) {
+
+        return;
+
+    }
+
+    ratingTimer =
+        setTimeout(
+            async function() {
+
+                ratingTimer =
+                    null;
+
+                if (
+                    !currentState ||
+                    currentState.paused ||
+                    !currentTrack
+                ) {
+
+                    return;
+
+                }
+
+                const alreadyRated =
+                    await checkExistingRating(
+                        currentTrack.id
+                    );
+
+                if (alreadyRated) {
+
+                    ratingSubmitted =
+                        true;
+
+                    return;
+
+                }
+
+                ratingSongName.textContent =
+                    currentTrack.name;
+
+                resetRatingStars();
+
+                ratingPopup.classList.add(
+                    "show"
+                );
+
+            },
+            15000
+        );
+
+}
+
+function resetRatingSystem() {
+
+    if (ratingTimer) {
+
+        clearTimeout(
+            ratingTimer
+        );
+
+        ratingTimer =
+            null;
+
+    }
+
+    hideRatingPopup();
+
+    ratingDismissed =
+        false;
+
+    ratingSubmitted =
+        false;
+
+    resetRatingStars();
+
+    if (
+        currentState &&
+        !currentState.paused
+    ) {
+
+        startRatingTimer();
+
+    }
+
+}
+
+function hideRatingPopup() {
+
+    ratingPopup.classList.remove(
+        "show"
+    );
+
+}
+
+function resetRatingStars() {
+
+    ratingButtons.forEach(
+        button => {
+
+            button.classList.remove(
+                "selected"
+            );
+
+            button.disabled =
+                false;
+
+        }
+    );
+
+    ratingMessage.textContent =
+        "Tap a star to rate";
+
+}
+
+ratingButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "mouseenter",
+            function() {
+
+                highlightStars(
+                    Number(
+                        button.dataset.rating
+                    )
+                );
+
+            }
+        );
+
+        button.addEventListener(
+            "mouseleave",
+            function() {
+
+                const selected =
+                    getSelectedRating();
+
+                if (selected > 0) {
+
+                    highlightStars(
+                        selected
+                    );
+
+                }
+
+                else {
+
+                    resetRatingStars();
+
+                }
+
+            }
+        );
+
+        button.addEventListener(
+            "click",
+            async function() {
+
+                await submitRating(
+                    Number(
+                        button.dataset.rating
+                    )
+                );
+
+            }
+        );
+
+    }
+);
+
+function highlightStars(
+    rating
+) {
+
+    ratingButtons.forEach(
+        button => {
+
+            const buttonRating =
+                Number(
+                    button.dataset.rating
+                );
+
+            if (
+                buttonRating <= rating
+            ) {
+
+                button.classList.add(
+                    "selected"
+                );
+
+            }
+
+            else {
+
+                button.classList.remove(
+                    "selected"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+function getSelectedRating() {
+
+    let selected =
+        0;
+
+    ratingButtons.forEach(
+        button => {
+
+            if (
+                button.classList.contains(
+                    "selected"
+                )
+            ) {
+
+                selected =
+                    Math.max(
+                        selected,
+                        Number(
+                            button.dataset.rating
+                        )
+                    );
+
+            }
+
+        }
+    );
+
+    return selected;
+
+}
+
+async function checkExistingRating(
+    spotifyTrackId
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/ratings?spotify_track_id="
+                + encodeURIComponent(
+                    spotifyTrackId
+                )
+            );
+
+        if (!response.ok) {
+
+            return false;
+
+        }
+
+        const data =
+            await response.json();
+
+        return (
+            data.success &&
+            data.rated === true
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+async function submitRating(
+    rating
+) {
+
+    if (
+        !currentTrack ||
+        ratingSubmitted
+    ) {
+
+        return;
+
+    }
+
+    ratingMessage.textContent =
+        "Saving rating...";
+
+    ratingButtons.forEach(
+        button => {
+
+            button.disabled =
+                true;
+
+        }
+    );
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/ratings",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            spotify_track_id:
+                                currentTrack.id,
+
+                            title:
+                                currentTrack.name,
+
+                            artist:
+                                currentTrack.artist,
+
+                            image_url:
+                                currentTrack.image,
+
+                            duration:
+                                currentTrack.duration,
+
+                            rating:
+                                rating
+
+                        })
+
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            ratingMessage.textContent =
+                data.error ||
+                "Unable to save rating.";
+
+            ratingButtons.forEach(
+                button => {
+
+                    button.disabled =
+                        false;
+
+                }
+            );
+
+            return;
+
+        }
+
+        ratingSubmitted =
+            true;
+
+        highlightStars(
+            rating
+        );
+
+        ratingMessage.textContent =
+            "Thanks for rating!";
+
+        setTimeout(
+            function() {
+
+                hideRatingPopup();
+
+            },
+            1000
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        ratingMessage.textContent =
+            "Rating failed.";
+
+        ratingButtons.forEach(
+            button => {
+
+                button.disabled =
+                    false;
+
+            }
+        );
+
+    }
+
+}
+
+closeRating.addEventListener(
+    "click",
+    function() {
+
+        ratingDismissed =
+            true;
+
+        if (ratingTimer) {
+
+            clearTimeout(
+                ratingTimer
+            );
+
+            ratingTimer =
+                null;
+
+        }
+
+        hideRatingPopup();
+
+    }
+);
 
 function getCurrentPosition() {
 
@@ -1459,23 +1907,19 @@ function getCurrentPosition() {
 
     }
 
-
     if (currentState.paused) {
 
         return lastStatePosition;
 
     }
 
-
     const elapsed =
         Date.now()
         - lastStateTime;
 
-
     let position =
         lastStatePosition
         + elapsed;
-
 
     if (
         position >
@@ -1487,7 +1931,6 @@ function getCurrentPosition() {
 
     }
 
-
     if (position < 0) {
 
         position =
@@ -1495,11 +1938,9 @@ function getCurrentPosition() {
 
     }
 
-
     return position;
 
 }
-
 
 function startProgressTimer() {
 
@@ -1508,7 +1949,6 @@ function startProgressTimer() {
         return;
 
     }
-
 
     progressTimer =
         setInterval(
@@ -1523,10 +1963,8 @@ function startProgressTimer() {
 
                 }
 
-
                 const trackDuration =
                     currentState.duration;
-
 
                 if (trackDuration <= 0) {
 
@@ -1534,17 +1972,14 @@ function startProgressTimer() {
 
                 }
 
-
                 const currentPosition =
                     getCurrentPosition();
-
 
                 progress.value =
                     (
                         currentPosition /
                         trackDuration
                     ) * 100;
-
 
                 currentTime.textContent =
                     formatTime(
@@ -1556,7 +1991,6 @@ function startProgressTimer() {
         );
 
 }
-
 
 function stopProgressTimer() {
 
@@ -1573,7 +2007,6 @@ function stopProgressTimer() {
 
 }
 
-
 progress.addEventListener(
     "input",
     async function() {
@@ -1587,26 +2020,23 @@ progress.addEventListener(
 
         }
 
-
         const newPosition =
             (
-                progress.value / 100
-            ) * currentState.duration;
-
+                progress.value /
+                100
+            ) *
+            currentState.duration;
 
         lastStatePosition =
             newPosition;
 
-
         lastStateTime =
             Date.now();
-
 
         currentTime.textContent =
             formatTime(
                 newPosition
             );
-
 
         await spotifyPlayer.seek(
             newPosition
@@ -1614,7 +2044,6 @@ progress.addEventListener(
 
     }
 );
-
 
 volume.addEventListener(
     "input",
@@ -1626,7 +2055,6 @@ volume.addEventListener(
 
         }
 
-
         await spotifyPlayer.setVolume(
             parseFloat(
                 volume.value
@@ -1635,7 +2063,6 @@ volume.addEventListener(
 
     }
 );
-
 
 function formatTime(
     milliseconds
@@ -1646,7 +2073,6 @@ function formatTime(
             milliseconds / 1000
         );
 
-
     if (
         isNaN(seconds) ||
         seconds < 0
@@ -1656,16 +2082,13 @@ function formatTime(
 
     }
 
-
     const minutes =
         Math.floor(
             seconds / 60
         );
 
-
     const remainingSeconds =
         seconds % 60;
-
 
     return (
         minutes
@@ -1680,22 +2103,21 @@ function formatTime(
 
 }
 
-
-function escapeHtml(text) {
+function escapeHtml(
+    text
+) {
 
     const div =
-        document.createElement("div");
-
+        document.createElement(
+            "div"
+        );
 
     div.textContent =
-        text
-        || "";
-
+        text || "";
 
     return div.innerHTML;
 
 }
-
 
 window.addEventListener(
     "beforeunload",
@@ -1703,11 +2125,18 @@ window.addEventListener(
 
         stopProgressTimer();
 
-
         if (historyTimer) {
 
             clearInterval(
                 historyTimer
+            );
+
+        }
+
+        if (ratingTimer) {
+
+            clearTimeout(
+                ratingTimer
             );
 
         }

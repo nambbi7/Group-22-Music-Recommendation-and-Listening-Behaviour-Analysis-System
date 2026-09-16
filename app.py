@@ -3,23 +3,48 @@ import secrets
 import hashlib
 import base64
 import requests
-from flask import Flask, render_template, request, redirect, url_for, session
+
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    jsonify
+)
+
 from dotenv import load_dotenv
 from supabase import create_client
+
 from week4_recommendation.recommendation import recommend_songs_by_id
+
 
 load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
 
-supabase_url = os.getenv("SUPABASE_URL")
-supabase_key = os.getenv("SUPABASE_KEY")
+app = Flask(__name__)
+
+app.secret_key = os.getenv(
+    "FLASK_SECRET_KEY",
+    "dev-secret-key"
+)
+
+
+supabase_url = os.getenv(
+    "SUPABASE_URL"
+)
+
+supabase_key = os.getenv(
+    "SUPABASE_KEY"
+)
+
 
 supabase = create_client(
     supabase_url,
     supabase_key
 )
+
 
 SPOTIFY_CLIENT_ID = os.getenv(
     "SPOTIFY_CLIENT_ID"
@@ -33,7 +58,9 @@ SPOTIFY_REDIRECT_URI = os.getenv(
 @app.route("/")
 def home():
 
-    return render_template("home.html")
+    return render_template(
+        "home.html"
+    )
 
 
 @app.route("/test-users")
@@ -235,6 +262,302 @@ def recommendations():
     )
 
 
+@app.route(
+    "/api/ratings",
+    methods=["GET", "POST"]
+)
+def ratings():
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "success": False,
+            "error": "Not logged in"
+        }), 401
+
+
+    user_id = get_database_user_id()
+
+
+    if not user_id:
+
+        return jsonify({
+            "success": False,
+            "error": "User account not found"
+        }), 404
+
+
+    if request.method == "GET":
+
+        spotify_track_id = request.args.get(
+            "spotify_track_id"
+        )
+
+
+        if not spotify_track_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Spotify track ID is required"
+            }), 400
+
+
+        song_response = (
+            supabase
+            .table("Songs")
+            .select("id")
+            .eq(
+                "spotify_track_id",
+                spotify_track_id
+            )
+            .limit(1)
+            .execute()
+        )
+
+
+        if not song_response.data:
+
+            return jsonify({
+                "success": True,
+                "rated": False
+            })
+
+
+        song_id = song_response.data[0]["id"]
+
+
+        rating_response = (
+            supabase
+            .table("ratings")
+            .select("id, rating")
+            .eq(
+                "user_id",
+                user_id
+            )
+            .eq(
+                "song_id",
+                song_id
+            )
+            .limit(1)
+            .execute()
+        )
+
+
+        return jsonify({
+            "success": True,
+            "rated": bool(
+                rating_response.data
+            ),
+            "rating": (
+                rating_response.data[0]["rating"]
+                if rating_response.data
+                else None
+            )
+        })
+
+
+    data = request.get_json() or {}
+
+
+    spotify_track_id = data.get(
+        "spotify_track_id"
+    )
+
+    title = data.get(
+        "title"
+    )
+
+    artist = data.get(
+        "artist"
+    )
+
+    image_url = data.get(
+        "image_url"
+    )
+
+    duration = data.get(
+        "duration"
+    )
+
+    rating = data.get(
+        "rating"
+    )
+
+
+    if not spotify_track_id:
+
+        return jsonify({
+            "success": False,
+            "error": "Spotify track ID is required"
+        }), 400
+
+
+    try:
+
+        rating = int(rating)
+
+    except (TypeError, ValueError):
+
+        return jsonify({
+            "success": False,
+            "error": "Rating must be a number"
+        }), 400
+
+
+    if rating < 1 or rating > 5:
+
+        return jsonify({
+            "success": False,
+            "error": "Rating must be between 1 and 5"
+        }), 400
+
+
+    song_response = (
+        supabase
+        .table("Songs")
+        .select("*")
+        .eq(
+            "spotify_track_id",
+            spotify_track_id
+        )
+        .limit(1)
+        .execute()
+    )
+
+
+    if song_response.data:
+
+        song_id = song_response.data[0]["id"]
+
+        existing_song = song_response.data[0]
+
+        update_data = {}
+
+
+        if (
+            image_url
+            and not existing_song.get(
+                "image_url"
+            )
+        ):
+
+            update_data[
+                "image_url"
+            ] = image_url
+
+
+        if (
+            duration is not None
+            and not existing_song.get(
+                "duration"
+            )
+        ):
+
+            update_data[
+                "duration"
+            ] = duration
+
+
+        if update_data:
+
+            (
+                supabase
+                .table("Songs")
+                .update(update_data)
+                .eq(
+                    "id",
+                    song_id
+                )
+                .execute()
+            )
+
+
+    else:
+
+        song_data = {
+
+            "tittle":
+                title or "Unknown",
+
+            "artist":
+                artist or "Unknown",
+
+            "spotify_track_id":
+                spotify_track_id
+
+        }
+
+
+        if image_url:
+
+            song_data[
+                "image_url"
+            ] = image_url
+
+
+        if duration is not None:
+
+            song_data[
+                "duration"
+            ] = duration
+
+
+        new_song_response = (
+            supabase
+            .table("Songs")
+            .insert(song_data)
+            .execute()
+        )
+
+
+        if not new_song_response.data:
+
+            return jsonify({
+                "success": False,
+                "error": "Unable to save song"
+            }), 500
+
+
+        song_id = (
+            new_song_response
+            .data[0]["id"]
+        )
+
+
+    rating_response = (
+        supabase
+        .table("ratings")
+        .upsert(
+            {
+                "user_id":
+                    user_id,
+
+                "song_id":
+                    song_id,
+
+                "rating":
+                    rating
+            },
+            on_conflict="user_id,song_id"
+        )
+        .execute()
+    )
+
+
+    if not rating_response.data:
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to save rating"
+        }), 500
+
+
+    return jsonify({
+        "success": True,
+        "rating": rating
+    })
+
+
 @app.route("/admin-dashboard")
 def admin_dashboard():
 
@@ -243,6 +566,7 @@ def admin_dashboard():
         return redirect(
             url_for("login")
         )
+
 
     try:
 
@@ -256,6 +580,7 @@ def admin_dashboard():
             .execute()
         )
 
+
         songs_response = (
             supabase
             .table("Songs")
@@ -265,6 +590,7 @@ def admin_dashboard():
             )
             .execute()
         )
+
 
         history_response = (
             supabase
@@ -276,19 +602,24 @@ def admin_dashboard():
             .execute()
         )
 
+
         total_users = (
             users_response.count or 0
         )
+
 
         total_songs = (
             songs_response.count or 0
         )
 
+
         total_plays = (
             history_response.count or 0
         )
 
+
         total_minutes = 0
+
 
         for item in history_response.data:
 
@@ -300,9 +631,11 @@ def admin_dashboard():
 
             total_minutes += duration
 
+
         total_minutes = round(
             total_minutes / 60
         )
+
 
         return render_template(
             "admin_dashboard.html",
@@ -312,12 +645,14 @@ def admin_dashboard():
             total_minutes=total_minutes
         )
 
+
     except Exception as e:
 
         print(
             "ADMIN DASHBOARD ERROR:",
             repr(e)
         )
+
 
         return render_template(
             "admin_dashboard.html",
@@ -335,6 +670,7 @@ def spotify_login():
         secrets.token_urlsafe(64)
     )
 
+
     code_challenge = (
         base64
         .urlsafe_b64encode(
@@ -346,9 +682,11 @@ def spotify_login():
         .rstrip("=")
     )
 
+
     session[
         "spotify_code_verifier"
     ] = code_verifier
+
 
     spotify_url = (
         "https://accounts.spotify.com/authorize"
@@ -366,6 +704,7 @@ def spotify_login():
         + "streaming"
     )
 
+
     return redirect(
         spotify_url
     )
@@ -378,15 +717,18 @@ def spotify_callback():
         "code"
     )
 
+
     if not code:
 
         return (
             "Spotify authorization failed."
         )
 
+
     code_verifier = session.get(
         "spotify_code_verifier"
     )
+
 
     if not code_verifier:
 
@@ -394,9 +736,11 @@ def spotify_callback():
             "Spotify code verifier missing."
         )
 
+
     token_response = requests.post(
         "https://accounts.spotify.com/api/token",
         data={
+
             "client_id":
                 SPOTIFY_CLIENT_ID,
 
@@ -412,11 +756,15 @@ def spotify_callback():
             "code_verifier":
                 code_verifier
         },
+
         headers={
+
             "Content-Type":
                 "application/x-www-form-urlencoded"
+
         }
     )
+
 
     if token_response.status_code != 200:
 
@@ -425,9 +773,11 @@ def spotify_callback():
             + token_response.text
         )
 
+
     token_data = (
         token_response.json()
     )
+
 
     session[
         "spotify_access_token"
@@ -435,11 +785,13 @@ def spotify_callback():
         "access_token"
     ]
 
+
     session[
         "spotify_refresh_token"
     ] = token_data.get(
         "refresh_token"
     )
+
 
     return redirect(
         url_for("music_player")
@@ -456,6 +808,7 @@ def spotify_search():
         "spotify_access_token"
     )
 
+
     if not access_token:
 
         return {
@@ -464,9 +817,11 @@ def spotify_search():
                 "Spotify is not connected."
         }, 401
 
+
     query = request.args.get(
         "q"
     )
+
 
     if not query:
 
@@ -476,13 +831,17 @@ def spotify_search():
                 "Please provide a search query."
         }, 400
 
+
     response = requests.get(
         "https://api.spotify.com/v1/search",
+
         headers={
             "Authorization":
                 f"Bearer {access_token}"
         },
+
         params={
+
             "q":
                 query,
 
@@ -491,8 +850,10 @@ def spotify_search():
 
             "limit":
                 10
+
         }
     )
+
 
     if response.status_code != 200:
 
@@ -502,9 +863,12 @@ def spotify_search():
                 response.text
         }, response.status_code
 
+
     data = response.json()
 
+
     tracks = []
+
 
     for track in data[
         "tracks"
@@ -538,13 +902,19 @@ def spotify_search():
                 ) / 1000,
 
             "spotify_url":
-                track["external_urls"]["spotify"]
+                track[
+                    "external_urls"
+                ][
+                    "spotify"
+                ]
 
         })
 
+
     return {
         "success": True,
-        "tracks": tracks
+        "tracks":
+            tracks
     }
 
 
@@ -555,6 +925,7 @@ def spotify_token():
         "spotify_access_token"
     )
 
+
     if not access_token:
 
         return {
@@ -562,6 +933,7 @@ def spotify_token():
             "error":
                 "Spotify is not connected."
         }, 401
+
 
     return {
         "success": True,
@@ -574,7 +946,9 @@ def spotify_token():
     "/api/recommendations/<track_id>",
     methods=["GET"]
 )
-def get_recommendations(track_id):
+def get_recommendations(
+    track_id
+):
 
     if "user_id" not in session:
 
@@ -583,6 +957,7 @@ def get_recommendations(track_id):
             "error":
                 "User is not logged in."
         }, 401
+
 
     try:
 
@@ -593,6 +968,7 @@ def get_recommendations(track_id):
             )
         )
 
+
         if not recommendations:
 
             return {
@@ -601,13 +977,17 @@ def get_recommendations(track_id):
                     "No recommendations found."
             }, 404
 
+
         return {
             "success": True,
+
             "track_id":
                 track_id,
+
             "recommendations":
                 recommendations
         }
+
 
     except Exception as e:
 
@@ -615,6 +995,7 @@ def get_recommendations(track_id):
             "RECOMMENDATION ERROR:",
             repr(e)
         )
+
 
         return {
             "success": False,
@@ -629,10 +1010,12 @@ def get_database_user_id():
         "email"
     )
 
+
     print(
         "LOGIN EMAIL:",
         email
     )
+
 
     if not email:
 
@@ -641,6 +1024,7 @@ def get_database_user_id():
         )
 
         return None
+
 
     try:
 
@@ -658,10 +1042,12 @@ def get_database_user_id():
             .execute()
         )
 
+
         print(
             "DATABASE USER:",
             response.data
         )
+
 
         if not response.data:
 
@@ -671,7 +1057,9 @@ def get_database_user_id():
 
             return None
 
+
         return response.data[0]["id"]
+
 
     except Exception as e:
 
@@ -693,11 +1081,13 @@ def start_listening():
         "LISTENING START REQUEST RECEIVED"
     )
 
+
     if "user_id" not in session:
 
         print(
             "NO AUTH USER IN SESSION"
         )
+
 
         return {
             "success": False,
@@ -705,12 +1095,15 @@ def start_listening():
                 "User is not logged in."
         }, 401
 
+
     data = request.get_json()
+
 
     print(
         "LISTENING DATA:",
         data
     )
+
 
     if not data:
 
@@ -720,25 +1113,31 @@ def start_listening():
                 "No song data received."
         }, 400
 
+
     spotify_track_id = data.get(
         "spotify_track_id"
     )
+
 
     title = data.get(
         "title"
     )
 
+
     artist = data.get(
         "artist"
     )
+
 
     image_url = data.get(
         "image_url"
     )
 
+
     duration = data.get(
         "duration"
     )
+
 
     if not spotify_track_id:
 
@@ -748,13 +1147,16 @@ def start_listening():
                 "Spotify track ID is required."
         }, 400
 
+
     if not title:
 
         title = "Unknown"
 
+
     if not artist:
 
         artist = "Unknown"
+
 
     try:
 
@@ -770,10 +1172,12 @@ def start_listening():
             .execute()
         )
 
+
         print(
             "EXISTING SONG:",
             song_response.data
         )
+
 
         if not song_response.data:
 
@@ -796,10 +1200,12 @@ def start_listening():
 
             }
 
+
             print(
                 "CREATING SONG:",
                 new_song
             )
+
 
             insert_response = (
                 supabase
@@ -810,10 +1216,12 @@ def start_listening():
                 .execute()
             )
 
+
             print(
                 "SONG INSERT RESULT:",
                 insert_response.data
             )
+
 
             if not insert_response.data:
 
@@ -823,10 +1231,12 @@ def start_listening():
                         "Unable to create song."
                 }, 500
 
+
             song_id = (
                 insert_response
                 .data[0]["id"]
             )
+
 
         else:
 
@@ -835,12 +1245,15 @@ def start_listening():
                 .data[0]["id"]
             )
 
+
             existing_song = (
                 song_response
                 .data[0]
             )
 
+
             update_data = {}
+
 
             if (
                 image_url
@@ -853,6 +1266,7 @@ def start_listening():
                     "image_url"
                 ] = image_url
 
+
             if (
                 duration
                 and not existing_song.get(
@@ -863,6 +1277,7 @@ def start_listening():
                 update_data[
                     "duration"
                 ] = duration
+
 
             if update_data:
 
@@ -877,19 +1292,23 @@ def start_listening():
                     .execute()
                 )
 
+
         print(
             "SONG ID:",
             song_id
         )
 
+
         database_user_id = (
             get_database_user_id()
         )
+
 
         print(
             "DATABASE USER ID:",
             database_user_id
         )
+
 
         if not database_user_id:
 
@@ -898,6 +1317,7 @@ def start_listening():
                 "error":
                     "Database user not found."
             }, 404
+
 
         history_data = {
 
@@ -912,10 +1332,12 @@ def start_listening():
 
         }
 
+
         print(
             "CREATING HISTORY:",
             history_data
         )
+
 
         history_response = (
             supabase
@@ -926,10 +1348,12 @@ def start_listening():
             .execute()
         )
 
+
         print(
             "HISTORY INSERT RESULT:",
             history_response.data
         )
+
 
         if not history_response.data:
 
@@ -939,15 +1363,18 @@ def start_listening():
                     "Unable to save listening history."
             }, 500
 
+
         history_id = (
             history_response
             .data[0]["id"]
         )
 
+
         print(
             "LISTENING HISTORY SAVED:",
             history_id
         )
+
 
         return {
 
@@ -965,12 +1392,14 @@ def start_listening():
 
         }
 
+
     except Exception as e:
 
         print(
             "LISTENING ERROR:",
             repr(e)
         )
+
 
         return {
 
@@ -997,7 +1426,9 @@ def update_listening():
                 "User is not logged in."
         }, 401
 
+
     data = request.get_json()
+
 
     if not data:
 
@@ -1007,13 +1438,16 @@ def update_listening():
                 "No data received."
         }, 400
 
+
     history_id = data.get(
         "history_id"
     )
 
+
     duration_played = data.get(
         "duration_played"
     )
+
 
     if not history_id:
 
@@ -1023,6 +1457,7 @@ def update_listening():
                 "History ID is required."
         }, 400
 
+
     if duration_played is None:
 
         return {
@@ -1031,11 +1466,13 @@ def update_listening():
                 "Duration is required."
         }, 400
 
+
     try:
 
         database_user_id = (
             get_database_user_id()
         )
+
 
         if not database_user_id:
 
@@ -1044,6 +1481,7 @@ def update_listening():
                 "error":
                     "Database user not found."
             }, 404
+
 
         existing_history = (
             supabase
@@ -1059,6 +1497,7 @@ def update_listening():
             .execute()
         )
 
+
         if not existing_history.data:
 
             return {
@@ -1066,6 +1505,7 @@ def update_listening():
                 "error":
                     "Listening history not found."
             }, 404
+
 
         if (
             existing_history
@@ -1078,6 +1518,7 @@ def update_listening():
                 "error":
                     "You cannot update this listening history."
             }, 403
+
 
         response = (
             supabase
@@ -1093,10 +1534,12 @@ def update_listening():
             .execute()
         )
 
+
         print(
             "LISTENING DURATION UPDATED:",
             response.data
         )
+
 
         return {
             "success": True,
@@ -1104,12 +1547,14 @@ def update_listening():
                 "Listening duration updated."
         }
 
+
     except Exception as e:
 
         print(
             "DURATION UPDATE ERROR:",
             repr(e)
         )
+
 
         return {
             "success": False,
@@ -1132,7 +1577,9 @@ def add_favourite():
                 "User is not logged in."
         }, 401
 
+
     data = request.get_json()
+
 
     if not data:
 
@@ -1142,25 +1589,31 @@ def add_favourite():
                 "No data received."
         }, 400
 
+
     spotify_track_id = data.get(
         "spotify_track_id"
     )
+
 
     title = data.get(
         "title"
     )
 
+
     artist = data.get(
         "artist"
     )
+
 
     image_url = data.get(
         "image_url"
     )
 
+
     duration = data.get(
         "duration"
     )
+
 
     if not spotify_track_id:
 
@@ -1170,11 +1623,13 @@ def add_favourite():
                 "Spotify track ID is required."
         }, 400
 
+
     try:
 
         database_user_id = (
             get_database_user_id()
         )
+
 
         if not database_user_id:
 
@@ -1184,17 +1639,21 @@ def add_favourite():
                     "Database user not found."
             }, 404
 
+
         access_token = session.get(
             "spotify_access_token"
         )
 
+
         spotify_track = None
+
 
         if access_token:
 
             spotify_response = requests.get(
                 "https://api.spotify.com/v1/tracks/"
                 + spotify_track_id,
+
                 headers={
                     "Authorization":
                         "Bearer "
@@ -1202,11 +1661,13 @@ def add_favourite():
                 }
             )
 
+
             if spotify_response.status_code == 200:
 
                 spotify_track = (
                     spotify_response.json()
                 )
+
 
         if spotify_track:
 
@@ -1218,12 +1679,14 @@ def add_favourite():
                 or "Unknown"
             )
 
+
             artists = (
                 spotify_track.get(
                     "artists",
                     []
                 )
             )
+
 
             if artists:
 
@@ -1235,15 +1698,18 @@ def add_favourite():
                     or "Unknown"
                 )
 
+
             album = spotify_track.get(
                 "album",
                 {}
             )
 
+
             images = album.get(
                 "images",
                 []
             )
+
 
             if images:
 
@@ -1254,11 +1720,13 @@ def add_favourite():
                     or image_url
                 )
 
+
             spotify_duration = (
                 spotify_track.get(
                     "duration_ms"
                 )
             )
+
 
             if spotify_duration:
 
@@ -1266,6 +1734,7 @@ def add_favourite():
                     spotify_duration
                     / 1000
                 )
+
 
         song_response = (
             supabase
@@ -1279,15 +1748,19 @@ def add_favourite():
             .execute()
         )
 
+
         if song_response.data:
 
             song = (
                 song_response.data[0]
             )
 
+
             song_id = song["id"]
 
+
             update_data = {}
+
 
             if (
                 image_url
@@ -1300,6 +1773,7 @@ def add_favourite():
                     "image_url"
                 ] = image_url
 
+
             if (
                 duration
                 and not song.get(
@@ -1310,6 +1784,7 @@ def add_favourite():
                 update_data[
                     "duration"
                 ] = duration
+
 
             if update_data:
 
@@ -1323,6 +1798,7 @@ def add_favourite():
                     )
                     .execute()
                 )
+
 
         else:
 
@@ -1345,6 +1821,7 @@ def add_favourite():
 
             }
 
+
             insert_response = (
                 supabase
                 .table("Songs")
@@ -1354,6 +1831,7 @@ def add_favourite():
                 .execute()
             )
 
+
             if not insert_response.data:
 
                 return {
@@ -1362,10 +1840,12 @@ def add_favourite():
                         "Unable to create song."
                 }, 500
 
+
             song_id = (
                 insert_response
                 .data[0]["id"]
             )
+
 
         existing = (
             supabase
@@ -1383,6 +1863,7 @@ def add_favourite():
             .execute()
         )
 
+
         if existing.data:
 
             return {
@@ -1393,18 +1874,22 @@ def add_favourite():
                     existing.data[0]["id"]
             }
 
+
         favourite_response = (
             supabase
             .table("favourites")
             .insert({
+
                 "user_id":
                     database_user_id,
 
                 "song_id":
                     song_id
+
             })
             .execute()
         )
+
 
         if not favourite_response.data:
 
@@ -1414,13 +1899,21 @@ def add_favourite():
                     "Unable to save favourite."
             }, 500
 
+
         return {
-            "success": True,
+
+            "success":
+                True,
+
             "message":
                 "Song added to favourites.",
+
             "favourite_id":
-                favourite_response.data[0]["id"]
+                favourite_response
+                .data[0]["id"]
+
         }
+
 
     except Exception as e:
 
@@ -1429,10 +1922,15 @@ def add_favourite():
             repr(e)
         )
 
+
         return {
-            "success": False,
+
+            "success":
+                False,
+
             "error":
                 str(e)
+
         }, 500
 
 
@@ -1450,7 +1948,9 @@ def remove_favourite():
                 "User is not logged in."
         }, 401
 
+
     data = request.get_json()
+
 
     if not data:
 
@@ -1460,9 +1960,11 @@ def remove_favourite():
                 "No data received."
         }, 400
 
+
     spotify_track_id = data.get(
         "spotify_track_id"
     )
+
 
     if not spotify_track_id:
 
@@ -1472,11 +1974,13 @@ def remove_favourite():
                 "Spotify track ID is required."
         }, 400
 
+
     try:
 
         database_user_id = (
             get_database_user_id()
         )
+
 
         if not database_user_id:
 
@@ -1485,6 +1989,7 @@ def remove_favourite():
                 "error":
                     "Database user not found."
             }, 404
+
 
         song_response = (
             supabase
@@ -1498,6 +2003,7 @@ def remove_favourite():
             .execute()
         )
 
+
         if not song_response.data:
 
             return {
@@ -1506,10 +2012,12 @@ def remove_favourite():
                     "Song not found."
             }, 404
 
+
         song_id = (
             song_response
             .data[0]["id"]
         )
+
 
         (
             supabase
@@ -1526,11 +2034,13 @@ def remove_favourite():
             .execute()
         )
 
+
         return {
             "success": True,
             "message":
                 "Song removed from favourites."
         }
+
 
     except Exception as e:
 
@@ -1538,6 +2048,7 @@ def remove_favourite():
             "REMOVE FAVOURITE ERROR:",
             repr(e)
         )
+
 
         return {
             "success": False,
@@ -1560,11 +2071,13 @@ def get_favourites():
                 "User is not logged in."
         }, 401
 
+
     try:
 
         database_user_id = (
             get_database_user_id()
         )
+
 
         if not database_user_id:
 
@@ -1573,6 +2086,7 @@ def get_favourites():
                 "error":
                     "Database user not found."
             }, 404
+
 
         response = (
             supabase
@@ -1591,7 +2105,9 @@ def get_favourites():
             .execute()
         )
 
+
         favourites = []
+
 
         for item in response.data:
 
@@ -1599,9 +2115,11 @@ def get_favourites():
                 "Songs"
             )
 
+
             if not song:
 
                 continue
+
 
             favourites.append({
 
@@ -1645,11 +2163,17 @@ def get_favourites():
 
             })
 
+
         return {
-            "success": True,
+
+            "success":
+                True,
+
             "favourites":
                 favourites
+
         }
+
 
     except Exception as e:
 
@@ -1658,10 +2182,15 @@ def get_favourites():
             repr(e)
         )
 
+
         return {
-            "success": False,
+
+            "success":
+                False,
+
             "error":
                 str(e)
+
         }, 500
 
 
@@ -1670,6 +2199,7 @@ if __name__ == "__main__":
     print(
         app.url_map
     )
+
 
     app.run(
         debug=True
