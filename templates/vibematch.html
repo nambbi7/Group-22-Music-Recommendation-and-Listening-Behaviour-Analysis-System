@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeMatch - CHERI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vibematch.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            CHERI
+        </div>
+
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <a href="{{ url_for('music_player') }}">Music Player</a>
+            <a href="{{ url_for('favourites') }}">Favourites</a>
+            <a href="{{ url_for('vibematch') }}" class="active">VibeMatch</a>
+        </div>
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+            Logout
+        </a>
+
+    </nav>
+
+
+    <main class="vibematch-container">
+
+        <section class="hero-section">
+
+            <h1>VibeMatch</h1>
+
+            <p>
+                Your music taste, based on the songs you rate.
+            </p>
+
+        </section>
+
+
+        <div class="vibe-main-grid">
+
+
+            <section class="vibe-profile-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Your Vibe Profile
+                        </h2>
+
+                        <p>
+                            See how you rate your favourite music
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="vibe-profile-card">
+
+                    <div class="rating-chart">
+
+                        <div class="donut-chart">
+
+                            <div class="donut-center">
+
+                                <strong id="totalRated">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Songs Rated
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="rating-breakdown">
+
+                        <div class="rating-row">
+
+                            <div class="rating-label">
+                                <span class="rating-dot five"></span>
+                                5 Stars
+                            </div>
+
+                            <strong id="fiveStarCount">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="rating-row">
+
+                            <div class="rating-label">
+                                <span class="rating-dot four"></span>
+                                4 Stars
+                            </div>
+
+                            <strong id="fourStarCount">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="rating-row">
+
+                            <div class="rating-label">
+                                <span class="rating-dot three"></span>
+                                3 Stars
+                            </div>
+
+                            <strong id="threeStarCount">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="rating-row">
+
+                            <div class="rating-label">
+                                <span class="rating-dot two"></span>
+                                2 Stars
+                            </div>
+
+                            <strong id="twoStarCount">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="rating-row">
+
+                            <div class="rating-label">
+                                <span class="rating-dot one"></span>
+                                1 Star
+                            </div>
+
+                            <strong id="oneStarCount">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="ratings-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            My Ratings
+                        </h2>
+
+                        <p>
+                            Songs you have rated in CHERI
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="rating-count"
+                        id="ratingCount"
+                    >
+                        0 Ratings
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="ratingsContainer"
+                    class="ratings-container"
+                >
+
+                    <div class="loading-message">
+                        Loading your ratings...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+        <section class="stats-section">
+
+            <div class="stat-card">
+
+                <span class="stat-icon">
+                    &#9733;
+                </span>
+
+                <div>
+
+                    <p>
+                        Average Rating
+                    </p>
+
+                    <h3 id="averageRating">
+                        0.0
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span class="stat-icon">
+                    &#9829;
+                </span>
+
+                <div>
+
+                    <p>
+                        5-Star Songs
+                    </p>
+
+                    <h3 id="topRatingCount">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span class="stat-icon">
+                    &#9835;
+                </span>
+
+                <div>
+
+                    <p>
+                        Total Songs Rated
+                    </p>
+
+                    <h3 id="totalSongsStat">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        async function loadRatings() {
+
+            const container =
+                document.getElementById(
+                    "ratingsContainer"
+                );
+
+            const ratingCount =
+                document.getElementById(
+                    "ratingCount"
+                );
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/vibematch/ratings"
+                    );
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    container.innerHTML =
+                        '<div class="error-message">Unable to load your ratings.</div>';
+
+                    return;
+                }
+
+
+                const ratings =
+                    data.ratings || [];
+
+
+                const total =
+                    ratings.length;
+
+
+                let oneStar = 0;
+                let twoStar = 0;
+                let threeStar = 0;
+                let fourStar = 0;
+                let fiveStar = 0;
+
+
+                let ratingTotal = 0;
+
+
+                ratings.forEach(
+                    song => {
+
+                        const rating =
+                            Number(
+                                song.rating
+                            );
+
+
+                        ratingTotal +=
+                            rating;
+
+
+                        if (
+                            rating === 1
+                        ) {
+
+                            oneStar++;
+
+                        } else if (
+                            rating === 2
+                        ) {
+
+                            twoStar++;
+
+                        } else if (
+                            rating === 3
+                        ) {
+
+                            threeStar++;
+
+                        } else if (
+                            rating === 4
+                        ) {
+
+                            fourStar++;
+
+                        } else if (
+                            rating === 5
+                        ) {
+
+                            fiveStar++;
+
+                        }
+
+                    }
+                );
+
+
+                const average =
+                    total > 0
+                        ? (
+                            ratingTotal /
+                            total
+                        ).toFixed(1)
+                        : "0.0";
+
+
+                document.getElementById(
+                    "totalRated"
+                ).textContent = total;
+
+
+                document.getElementById(
+                    "totalSongsStat"
+                ).textContent = total;
+
+
+                document.getElementById(
+                    "averageRating"
+                ).textContent = average;
+
+
+                document.getElementById(
+                    "topRatingCount"
+                ).textContent = fiveStar;
+
+
+                document.getElementById(
+                    "oneStarCount"
+                ).textContent = oneStar;
+
+
+                document.getElementById(
+                    "twoStarCount"
+                ).textContent = twoStar;
+
+
+                document.getElementById(
+                    "threeStarCount"
+                ).textContent = threeStar;
+
+
+                document.getElementById(
+                    "fourStarCount"
+                ).textContent = fourStar;
+
+
+                document.getElementById(
+                    "fiveStarCount"
+                ).textContent = fiveStar;
+
+
+                ratingCount.textContent =
+                    `${total} ${total === 1 ? "Rating" : "Ratings"}`;
+
+
+                updateDonutChart(
+                    oneStar,
+                    twoStar,
+                    threeStar,
+                    fourStar,
+                    fiveStar
+                );
+
+
+                if (
+                    ratings.length === 0
+                ) {
+
+                    container.innerHTML =
+                        '<div class="empty-message">You have not rated any songs yet.</div>';
+
+                    return;
+                }
+
+
+                container.innerHTML = "";
+
+
+                ratings.forEach(
+                    song => {
+
+                        const card =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        card.className =
+                            "rating-card";
+
+
+                        const image =
+                            song.image ||
+                            "/static/images/default-album.png";
+
+
+                        let stars = "";
+
+
+                        for (
+                            let i = 1;
+                            i <= 5;
+                            i++
+                        ) {
+
+                            if (
+                                i <=
+                                Number(
+                                    song.rating
+                                )
+                            ) {
+
+                                stars +=
+                                    "&#9733;";
+
+                            } else {
+
+                                stars +=
+                                    "&#9734;";
+
+                            }
+
+                        }
+
+
+                        card.innerHTML = `
+
+                            <div class="rating-image-container">
+
+                                <img
+                                    src="${image}"
+                                    alt="${song.title}"
+                                    class="rating-image"
+                                >
+
+                            </div>
+
+
+                            <div class="rating-info">
+
+                                <h3>
+                                    ${song.title}
+                                </h3>
+
+                                <p>
+                                    ${song.artist}
+                                </p>
+
+                                <div class="rating-stars">
+                                    ${stars}
+                                </div>
+
+                            </div>
+
+
+                            <div class="rating-number">
+                                ${song.rating}/5
+                            </div>
+
+                        `;
+
+
+                        container.appendChild(
+                            card
+                        );
+
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "VibeMatch error:",
+                    error
+                );
+
+
+                container.innerHTML =
+                    '<div class="error-message">Something went wrong while loading your ratings.</div>';
+
+            }
+
+        }
+
+
+        function updateDonutChart(
+            oneStar,
+            twoStar,
+            threeStar,
+            fourStar,
+            fiveStar
+        ) {
+
+            const total =
+                oneStar +
+                twoStar +
+                threeStar +
+                fourStar +
+                fiveStar;
+
+
+            const chart =
+                document.querySelector(
+                    ".donut-chart"
+                );
+
+
+            if (total === 0) {
+
+                chart.style.background =
+                    "conic-gradient(#333 0deg 360deg)";
+
+                return;
+
+            }
+
+
+            const oneDegree =
+                (
+                    oneStar /
+                    total
+                ) * 360;
+
+
+            const twoDegree =
+                (
+                    twoStar /
+                    total
+                ) * 360;
+
+
+            const threeDegree =
+                (
+                    threeStar /
+                    total
+                ) * 360;
+
+
+            const fourDegree =
+                (
+                    fourStar /
+                    total
+                ) * 360;
+
+
+            const oneEnd =
+                oneDegree;
+
+
+            const twoEnd =
+                oneEnd +
+                twoDegree;
+
+
+            const threeEnd =
+                twoEnd +
+                threeDegree;
+
+
+            const fourEnd =
+                threeEnd +
+                fourDegree;
+
+
+            chart.style.background =
+                `conic-gradient(
+                    #777 0deg ${oneEnd}deg,
+                    #999 ${oneEnd}deg ${twoEnd}deg,
+                    #bbb ${twoEnd}deg ${threeEnd}deg,
+                    #ddd ${threeEnd}deg ${fourEnd}deg,
+                    #fff ${fourEnd}deg 360deg
+                )`;
+
+        }
+
+
+        loadRatings();
+
+    </script>
+
+</body>
+</html>

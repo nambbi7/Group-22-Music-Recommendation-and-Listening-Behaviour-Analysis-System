@@ -146,16 +146,224 @@
     </main>
 
 
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+
     <script>
 
+    let spotifyPlayer = null;
+
+    let deviceId = null;
+
+    let spotifyReady = false;
+
+    let currentPlayingTrack = null;
+
+    let currentPlaying = false;
+
+
     const songList =
-        document.getElementById("songList");
+        document.getElementById(
+            "songList"
+        );
 
     const songCount =
-        document.getElementById("songCount");
+        document.getElementById(
+            "songCount"
+        );
 
     const favouriteCount =
-        document.getElementById("favouriteCount");
+        document.getElementById(
+            "favouriteCount"
+        );
+
+
+    window.onSpotifyWebPlaybackSDKReady =
+        async function() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/spotify/token"
+                    );
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    spotifyReady =
+                        false;
+
+                    console.log(
+                        "Spotify is not connected."
+                    );
+
+                    return;
+
+                }
+
+
+                spotifyPlayer =
+                    new Spotify.Player({
+
+                        name:
+                            "CHERI Favourites Player",
+
+                        getOAuthToken:
+                            callback => {
+
+                                callback(
+                                    data.access_token
+                                );
+
+                            },
+
+                        volume:
+                            1.0
+
+                    });
+
+
+                spotifyPlayer.addListener(
+                    "ready",
+                    ({ device_id }) => {
+
+                        deviceId =
+                            device_id;
+
+                        spotifyReady =
+                            true;
+
+                        console.log(
+                            "CHERI Favourites Player Ready:",
+                            deviceId
+                        );
+
+                    }
+                );
+
+
+                spotifyPlayer.addListener(
+                    "not_ready",
+                    () => {
+
+                        spotifyReady =
+                            false;
+
+                    }
+                );
+
+
+                spotifyPlayer.addListener(
+                    "player_state_changed",
+                    state => {
+
+                        if (!state) {
+
+                            return;
+
+                        }
+
+
+                        const track =
+                            state.track_window.current_track;
+
+
+                        if (!track) {
+
+                            return;
+
+                        }
+
+
+                        currentPlayingTrack =
+                            track.id;
+
+
+                        currentPlaying =
+                            !state.paused;
+
+
+                        updatePlayButtons(
+                            track.id,
+                            state.paused
+                        );
+
+                    }
+                );
+
+
+                spotifyPlayer.addListener(
+                    "initialization_error",
+                    ({ message }) => {
+
+                        console.error(
+                            "Spotify initialization error:",
+                            message
+                        );
+
+                        spotifyReady =
+                            false;
+
+                    }
+                );
+
+
+                spotifyPlayer.addListener(
+                    "authentication_error",
+                    ({ message }) => {
+
+                        console.error(
+                            "Spotify authentication error:",
+                            message
+                        );
+
+                        spotifyReady =
+                            false;
+
+                    }
+                );
+
+
+                spotifyPlayer.addListener(
+                    "account_error",
+                    ({ message }) => {
+
+                        console.error(
+                            "Spotify Premium is required:",
+                            message
+                        );
+
+                        spotifyReady =
+                            false;
+
+                    }
+                );
+
+
+                await spotifyPlayer.connect();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Spotify player error:",
+                    error
+                );
+
+                spotifyReady =
+                    false;
+
+            }
+
+        };
 
 
     async function loadFavourites() {
@@ -199,7 +407,7 @@
 
 
             const favourites =
-                data.favourites;
+                data.favourites || [];
 
 
             songCount.textContent =
@@ -261,8 +469,17 @@
                         );
 
 
+                    const trackId =
+                        song.spotify_track_id
+                        || "";
+
+
                     card.className =
                         "song-card";
+
+
+                    card.dataset.trackId =
+                        trackId;
 
 
                     const image =
@@ -275,8 +492,7 @@
 
 
                     if (
-                        song.duration
-                        &&
+                        song.duration &&
                         song.duration > 0
                     ) {
 
@@ -295,6 +511,7 @@
                             ${index + 1}
                         </div>
 
+
                         <div class="album-wrapper">
 
                             <img
@@ -303,15 +520,16 @@
                                 class="album-image"
                             >
 
+
                             <button
                                 class="image-play-button"
-                                onclick="playSong('${escapeHtml(song.spotify_track_id)}')"
                                 title="Play"
                             >
                                 &#9654;
                             </button>
 
                         </div>
+
 
                         <div class="song-info">
 
@@ -329,27 +547,85 @@
 
                         </div>
 
+
                         <span class="duration">
                             ${songDuration}
                         </span>
 
+
                         <button
                             class="play-button"
-                            onclick="playSong('${escapeHtml(song.spotify_track_id)}')"
                             title="Play song"
                         >
                             &#9654;
                         </button>
 
+
                         <button
                             class="heart-button"
-                            onclick="removeFavourite('${escapeHtml(song.spotify_track_id)}', this)"
                             title="Remove from favourites"
                         >
                             &#9829;
                         </button>
 
                         `;
+
+
+                    const imagePlayButton =
+                        card.querySelector(
+                            ".image-play-button"
+                        );
+
+
+                    const playButton =
+                        card.querySelector(
+                            ".play-button"
+                        );
+
+
+                    const heartButton =
+                        card.querySelector(
+                            ".heart-button"
+                        );
+
+
+                    imagePlayButton.addEventListener(
+                        "click",
+                        function() {
+
+                            playSong(
+                                trackId,
+                                imagePlayButton
+                            );
+
+                        }
+                    );
+
+
+                    playButton.addEventListener(
+                        "click",
+                        function() {
+
+                            playSong(
+                                trackId,
+                                playButton
+                            );
+
+                        }
+                    );
+
+
+                    heartButton.addEventListener(
+                        "click",
+                        function() {
+
+                            removeFavourite(
+                                trackId,
+                                heartButton
+                            );
+
+                        }
+                    );
 
 
                     songList.appendChild(
@@ -393,6 +669,251 @@
     }
 
 
+    async function playSong(
+        spotifyTrackId,
+        button
+    ) {
+
+        if (!spotifyTrackId) {
+
+            alert(
+                "This song does not have a Spotify track ID."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !spotifyPlayer ||
+            !deviceId ||
+            !spotifyReady
+        ) {
+
+            alert(
+                "Please connect Spotify from the Music Player first."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            button.disabled =
+                true;
+
+
+            if (
+                currentPlayingTrack ===
+                spotifyTrackId
+            ) {
+
+                await spotifyPlayer.togglePlay();
+
+                button.disabled =
+                    false;
+
+                return;
+
+            }
+
+
+            const tokenResponse =
+                await fetch(
+                    "/spotify/token"
+                );
+
+
+            const tokenData =
+                await tokenResponse.json();
+
+
+            if (
+                !tokenResponse.ok ||
+                !tokenData.success
+            ) {
+
+                alert(
+                    "Spotify connection expired. Please connect Spotify again."
+                );
+
+                button.disabled =
+                    false;
+
+                return;
+
+            }
+
+
+            const playResponse =
+                await fetch(
+                    "https://api.spotify.com/v1/me/player/play?device_id="
+                    + encodeURIComponent(
+                        deviceId
+                    ),
+                    {
+
+                        method:
+                            "PUT",
+
+                        headers: {
+
+                            "Authorization":
+                                "Bearer "
+                                + tokenData.access_token,
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                uris: [
+
+                                    "spotify:track:"
+                                    + spotifyTrackId
+
+                                ]
+
+                            })
+
+                    }
+                );
+
+
+            if (!playResponse.ok) {
+
+                const errorText =
+                    await playResponse.text();
+
+
+                console.error(
+                    "Spotify play error:",
+                    errorText
+                );
+
+
+                alert(
+                    "Unable to play this song. Make sure Spotify is connected and your account has Premium."
+                );
+
+
+                button.disabled =
+                    false;
+
+                return;
+
+            }
+
+
+            currentPlayingTrack =
+                spotifyTrackId;
+
+            currentPlaying =
+                true;
+
+
+            updatePlayButtons(
+                spotifyTrackId,
+                false
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Play song error:",
+                error
+            );
+
+
+            alert(
+                "Unable to play the song."
+            );
+
+        }
+
+
+        button.disabled =
+            false;
+
+    }
+
+
+    function updatePlayButtons(
+        spotifyTrackId,
+        paused
+    ) {
+
+        const cards =
+            document.querySelectorAll(
+                ".song-card"
+            );
+
+
+        cards.forEach(
+            card => {
+
+                const buttons =
+                    card.querySelectorAll(
+                        ".image-play-button, .play-button"
+                    );
+
+
+                buttons.forEach(
+                    button => {
+
+                        button.innerHTML =
+                            "&#9654;";
+
+                    }
+                );
+
+            }
+        );
+
+
+        const currentCard =
+            Array.from(
+                cards
+            ).find(
+                card =>
+                    card.dataset.trackId ===
+                    spotifyTrackId
+            );
+
+
+        if (
+            currentCard &&
+            !paused
+        ) {
+
+            const buttons =
+                currentCard.querySelectorAll(
+                    ".image-play-button, .play-button"
+                );
+
+
+            buttons.forEach(
+                button => {
+
+                    button.innerHTML =
+                        "&#9208;";
+
+                }
+            );
+
+        }
+
+    }
+
+
     async function removeFavourite(
         spotifyTrackId,
         button
@@ -409,7 +930,8 @@
                     "/api/favourites/remove",
                     {
 
-                        method: "POST",
+                        method:
+                            "POST",
 
                         headers: {
 
@@ -418,12 +940,13 @@
 
                         },
 
-                        body: JSON.stringify({
+                        body:
+                            JSON.stringify({
 
-                            spotify_track_id:
-                                spotifyTrackId
+                                spotify_track_id:
+                                    spotifyTrackId
 
-                        })
+                            })
 
                     }
                 );
@@ -449,6 +972,20 @@
             }
 
 
+            if (
+                currentPlayingTrack ===
+                spotifyTrackId
+            ) {
+
+                currentPlayingTrack =
+                    null;
+
+                currentPlaying =
+                    false;
+
+            }
+
+
             loadFavourites();
 
         }
@@ -465,26 +1002,6 @@
                 false;
 
         }
-
-    }
-
-
-    function playSong(
-        spotifyTrackId
-    ) {
-
-        if (!spotifyTrackId) {
-
-            return;
-
-        }
-
-
-        window.location.href =
-            "/music-player?track="
-            + encodeURIComponent(
-                spotifyTrackId
-            );
 
     }
 
