@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Library - CHERI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/library.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            CHERI
+        </div>
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="/library" class="active">
+                Library
+            </a>
+
+            <a href="/profile">
+                Profile
+            </a>
+
+            <a href="{{ url_for('vibematch') }}">
+                VibeMatch
+            </a>
+
+            <a href="{{ url_for('chernome_page') }}">
+                CHERNOME
+            </a>
+
+        </div>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-btn"
+        >
+            Logout
+        </a>
+
+    </nav>
+
+
+    <main class="library-container">
+
+        <section class="library-hero">
+
+            <h1>
+                Your Library
+            </h1>
+
+            <p>
+                Your music, your history, your collection.
+            </p>
+
+        </section>
+
+
+        <section class="library-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Listening History
+                    </h2>
+
+                    <p>
+                        Songs you've recently listened to.
+                    </p>
+
+                </div>
+
+                <span class="section-icon">
+                    &#9835;
+                </span>
+
+            </div>
+
+
+            <div
+                class="song-list"
+                id="historyList"
+            >
+
+                <div class="loading-message">
+                    Loading your listening history...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="library-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Top Songs
+                    </h2>
+
+                    <p>
+                        The songs you listen to the most.
+                    </p>
+
+                </div>
+
+                <span class="section-icon">
+                    &#9733;
+                </span>
+
+            </div>
+
+
+            <div
+                class="song-grid"
+                id="topSongsList"
+            >
+
+                <div class="loading-message">
+                    Loading your top songs...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="library-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Recently Added
+                    </h2>
+
+                    <p>
+                        Songs you've recently added to your favourites.
+                    </p>
+
+                </div>
+
+                <span class="section-icon">
+                    &#9829;
+                </span>
+
+            </div>
+
+
+            <div
+                class="song-grid"
+                id="recentlyAddedList"
+            >
+
+                <div class="loading-message">
+                    Loading recently added songs...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        async function loadLibrary() {
+
+            const historyList =
+                document.getElementById(
+                    "historyList"
+                );
+
+            const topSongsList =
+                document.getElementById(
+                    "topSongsList"
+                );
+
+            const recentlyAddedList =
+                document.getElementById(
+                    "recentlyAddedList"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/library"
+                    );
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    historyList.innerHTML =
+                        '<div class="error-message">Unable to load your listening history.</div>';
+
+                    topSongsList.innerHTML =
+                        '<div class="error-message">Unable to load your top songs.</div>';
+
+                    recentlyAddedList.innerHTML =
+                        '<div class="error-message">Unable to load recently added songs.</div>';
+
+                    return;
+
+                }
+
+
+                const history =
+                    data.history || [];
+
+                const topSongs =
+                    data.top_songs || [];
+
+                const recentlyAdded =
+                    data.recently_added || [];
+
+
+                displayHistory(
+                    historyList,
+                    history
+                );
+
+
+                displaySongs(
+                    topSongsList,
+                    topSongs
+                );
+
+
+                displaySongs(
+                    recentlyAddedList,
+                    recentlyAdded
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Library error:",
+                    error
+                );
+
+                historyList.innerHTML =
+                    '<div class="error-message">Something went wrong while loading your library.</div>';
+
+                topSongsList.innerHTML =
+                    "";
+
+                recentlyAddedList.innerHTML =
+                    "";
+
+            }
+
+        }
+
+
+        function formatPlayedTime(
+            timestamp
+        ) {
+
+            if (!timestamp) {
+
+                return "";
+
+            }
+
+
+            const date =
+                new Date(
+                    timestamp
+                );
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return "";
+
+            }
+
+
+            const now =
+                new Date();
+
+
+            const today =
+                new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate()
+                );
+
+
+            const yesterday =
+                new Date(
+                    today
+                );
+
+
+            yesterday.setDate(
+                yesterday.getDate() - 1
+            );
+
+
+            const dateOnly =
+                new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate()
+                );
+
+
+            const time =
+                date.toLocaleTimeString(
+                    [],
+                    {
+                        hour: "numeric",
+                        minute: "2-digit"
+                    }
+                );
+
+
+            if (
+                dateOnly.getTime() ===
+                today.getTime()
+            ) {
+
+                return `Today, ${time}`;
+
+            }
+
+
+            if (
+                dateOnly.getTime() ===
+                yesterday.getTime()
+            ) {
+
+                return `Yesterday, ${time}`;
+
+            }
+
+
+            return date.toLocaleDateString(
+                [],
+                {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                }
+            ) + `, ${time}`;
+
+        }
+
+
+        function displayHistory(
+            container,
+            songs
+        ) {
+
+            if (
+                songs.length === 0
+            ) {
+
+                container.innerHTML =
+                    '<div class="empty-message">No listening history yet.</div>';
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                "";
+
+
+            songs.forEach(
+                (song, index) => {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+                    card.className =
+                        "history-card";
+
+
+                    const image =
+                        song.image ||
+                        "/static/images/default-album.png";
+
+
+                    card.innerHTML = `
+
+                        <div class="history-number">
+                            ${index + 1}
+                        </div>
+
+                        <img
+                            src="${image}"
+                            alt="${song.title}"
+                            class="history-image"
+                        >
+
+                        <div class="song-info">
+
+                            <h3>
+                                ${song.title}
+                            </h3>
+
+                            <p>
+                                ${song.artist}
+                            </p>
+
+                        </div>
+
+                        <div class="played-time">
+                            ${formatPlayedTime(
+                                song.played_at
+                            )}
+                        </div>
+
+                    `;
+
+
+                    container.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+        }
+
+
+        function displaySongs(
+            container,
+            songs
+        ) {
+
+            if (
+                songs.length === 0
+            ) {
+
+                container.innerHTML =
+                    '<div class="empty-message">Nothing here yet.</div>';
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                "";
+
+
+            songs.forEach(
+                song => {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+                    card.className =
+                        "song-card";
+
+
+                    const image =
+                        song.image ||
+                        "/static/images/default-album.png";
+
+
+                    card.innerHTML = `
+
+                        <img
+                            src="${image}"
+                            alt="${song.title}"
+                            class="song-image"
+                        >
+
+                        <div class="song-info">
+
+                            <h3>
+                                ${song.title}
+                            </h3>
+
+                            <p>
+                                ${song.artist}
+                            </p>
+
+                        </div>
+
+                    `;
+
+
+                    container.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+        }
+
+
+        loadLibrary();
+
+    </script>
+
+</body>
+
+</html>

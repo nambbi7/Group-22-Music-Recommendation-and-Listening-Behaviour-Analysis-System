@@ -854,3 +854,83 @@ body {
     }
 
 }
+
+.chernome-popup {
+    position: fixed;
+    right: 30px;
+    bottom: 120px;
+    display: none;
+    z-index: 9999;
+}
+
+.chernome-popup.show {
+    display: block;
+}
+
+.chernome-popup-card {
+    width: 300px;
+    padding: 20px;
+    border-radius: 14px;
+    text-align: center;
+    background: #111111;
+    border: 1px solid #333333;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.chernome-popup-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ffffff;
+}
+
+.chernome-song-name {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.chernome-popup-text {
+    margin-top: 12px;
+    color: #aaaaaa;
+    font-size: 13px;
+}
+
+.chernome-popup-question {
+    margin-top: 5px;
+    color: #dddddd;
+    font-size: 13px;
+}
+
+.chernome-popup-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.chernome-popup-buttons button {
+    padding: 8px 22px;
+    border: 1px solid #444444;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.chernome-yes {
+    background: #ffffff;
+    color: #111111;
+}
+
+.chernome-no {
+    background: #222222;
+    color: #dddddd;
+}
+
+.chernome-popup-buttons button:hover {
+    transform: translateY(-1px);
+    opacity: 0.85;
+}

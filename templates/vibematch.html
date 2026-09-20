@@ -16,12 +16,12 @@
             CHERI
         </div>
 
-        <div class="nav-links">
-            <a href="{{ url_for('dashboard') }}">Home</a>
-            <a href="{{ url_for('music_player') }}">Music Player</a>
-            <a href="{{ url_for('favourites') }}">Favourites</a>
-            <a href="{{ url_for('vibematch') }}" class="active">VibeMatch</a>
-        </div>
+    <div class="nav-links">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="/library">Library</a>
+    <a href="/profile">Profile</a>
+    <a href="{{ url_for('chernome_page') }}">CHERNOME</a>
+    </div>
 
         <a href="{{ url_for('logout') }}" class="logout-btn">
             Logout

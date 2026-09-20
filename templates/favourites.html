@@ -25,21 +25,12 @@
 
         <nav>
 
-            <a href="/dashboard">
-                Home
-            </a>
-
-            <a href="/search">
-                Search
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
             </a>
 
             <a href="/library">
                 Library
-            </a>
-
-            <a href="/favourites"
-               class="active">
-                Favourites
             </a>
 
             <a href="/profile">
@@ -49,6 +40,7 @@
         </nav>
 
     </header>
+
 
 
     <main class="container">
@@ -99,6 +91,7 @@
         </section>
 
 
+
         <section class="favourite-section">
 
             <div class="section-header">
@@ -120,6 +113,7 @@
                 </span>
 
             </div>
+
 
 
             <div
@@ -146,7 +140,9 @@
     </main>
 
 
+
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
 
 
     <script>
@@ -160,6 +156,7 @@
     let currentPlayingTrack = null;
 
     let currentPlaying = false;
+
 
 
     const songList =
@@ -178,6 +175,7 @@
         );
 
 
+
     window.onSpotifyWebPlaybackSDKReady =
         async function() {
 
@@ -190,6 +188,7 @@
 
                 const data =
                     await response.json();
+
 
 
                 if (
@@ -207,6 +206,7 @@
                     return;
 
                 }
+
 
 
                 spotifyPlayer =
@@ -230,6 +230,7 @@
                     });
 
 
+
                 spotifyPlayer.addListener(
                     "ready",
                     ({ device_id }) => {
@@ -249,6 +250,7 @@
                 );
 
 
+
                 spotifyPlayer.addListener(
                     "not_ready",
                     () => {
@@ -258,6 +260,7 @@
 
                     }
                 );
+
 
 
                 spotifyPlayer.addListener(
@@ -271,8 +274,10 @@
                         }
 
 
+
                         const track =
                             state.track_window.current_track;
+
 
 
                         if (!track) {
@@ -282,12 +287,15 @@
                         }
 
 
+
                         currentPlayingTrack =
                             track.id;
 
 
+
                         currentPlaying =
                             !state.paused;
+
 
 
                         updatePlayButtons(
@@ -297,6 +305,7 @@
 
                     }
                 );
+
 
 
                 spotifyPlayer.addListener(
@@ -315,6 +324,7 @@
                 );
 
 
+
                 spotifyPlayer.addListener(
                     "authentication_error",
                     ({ message }) => {
@@ -331,6 +341,7 @@
                 );
 
 
+
                 spotifyPlayer.addListener(
                     "account_error",
                     ({ message }) => {
@@ -345,6 +356,7 @@
 
                     }
                 );
+
 
 
                 await spotifyPlayer.connect();
@@ -366,6 +378,7 @@
         };
 
 
+
     async function loadFavourites() {
 
         try {
@@ -376,8 +389,10 @@
                 );
 
 
+
             const data =
                 await response.json();
+
 
 
             if (!data.success) {
@@ -406,8 +421,10 @@
             }
 
 
+
             const favourites =
                 data.favourites || [];
+
 
 
             songCount.textContent =
@@ -419,8 +436,10 @@
                 );
 
 
+
             favouriteCount.textContent =
                 favourites.length;
+
 
 
             if (favourites.length === 0) {
@@ -442,7 +461,7 @@
                         </p>
 
                         <a
-                            href="/search"
+                            href="{{ url_for('music_player') }}"
                             class="browse-button"
                         >
                             Find Music
@@ -456,8 +475,10 @@
             }
 
 
+
             songList.innerHTML =
                 "";
+
 
 
             favourites.forEach(
@@ -469,17 +490,21 @@
                         );
 
 
+
                     const trackId =
                         song.spotify_track_id
                         || "";
+
 
 
                     card.className =
                         "song-card";
 
 
+
                     card.dataset.trackId =
                         trackId;
+
 
 
                     const image =
@@ -487,8 +512,10 @@
                         || "https://placehold.co/500x500/15151d/ffffff?text=%E2%99%AA";
 
 
+
                     let songDuration =
                         "--:--";
+
 
 
                     if (
@@ -504,12 +531,14 @@
                     }
 
 
+
                     card.innerHTML =
                         `
 
                         <div class="song-number">
                             ${index + 1}
                         </div>
+
 
 
                         <div class="album-wrapper">
@@ -519,6 +548,7 @@
                                 alt="Album artwork"
                                 class="album-image"
                             >
+
 
 
                             <button
@@ -531,6 +561,7 @@
                         </div>
 
 
+
                         <div class="song-info">
 
                             <h3>
@@ -538,6 +569,8 @@
                                     song.title
                                 )}
                             </h3>
+
+
 
                             <p>
                                 ${escapeHtml(
@@ -548,9 +581,11 @@
                         </div>
 
 
+
                         <span class="duration">
                             ${songDuration}
                         </span>
+
 
 
                         <button
@@ -559,6 +594,7 @@
                         >
                             &#9654;
                         </button>
+
 
 
                         <button
@@ -571,10 +607,12 @@
                         `;
 
 
+
                     const imagePlayButton =
                         card.querySelector(
                             ".image-play-button"
                         );
+
 
 
                     const playButton =
@@ -583,10 +621,12 @@
                         );
 
 
+
                     const heartButton =
                         card.querySelector(
                             ".heart-button"
                         );
+
 
 
                     imagePlayButton.addEventListener(
@@ -602,6 +642,7 @@
                     );
 
 
+
                     playButton.addEventListener(
                         "click",
                         function() {
@@ -615,6 +656,7 @@
                     );
 
 
+
                     heartButton.addEventListener(
                         "click",
                         function() {
@@ -626,6 +668,7 @@
 
                         }
                     );
+
 
 
                     songList.appendChild(
@@ -643,6 +686,7 @@
                 "Favourite loading error:",
                 error
             );
+
 
 
             songList.innerHTML =
@@ -669,6 +713,7 @@
     }
 
 
+
     async function playSong(
         spotifyTrackId,
         button
@@ -683,6 +728,7 @@
             return;
 
         }
+
 
 
         if (
@@ -700,10 +746,12 @@
         }
 
 
+
         try {
 
             button.disabled =
                 true;
+
 
 
             if (
@@ -721,14 +769,17 @@
             }
 
 
+
             const tokenResponse =
                 await fetch(
                     "/spotify/token"
                 );
 
 
+
             const tokenData =
                 await tokenResponse.json();
+
 
 
             if (
@@ -746,6 +797,7 @@
                 return;
 
             }
+
 
 
             const playResponse =
@@ -786,10 +838,12 @@
                 );
 
 
+
             if (!playResponse.ok) {
 
                 const errorText =
                     await playResponse.text();
+
 
 
                 console.error(
@@ -798,9 +852,11 @@
                 );
 
 
+
                 alert(
                     "Unable to play this song. Make sure Spotify is connected and your account has Premium."
                 );
+
 
 
                 button.disabled =
@@ -811,11 +867,13 @@
             }
 
 
+
             currentPlayingTrack =
                 spotifyTrackId;
 
             currentPlaying =
                 true;
+
 
 
             updatePlayButtons(
@@ -833,6 +891,7 @@
             );
 
 
+
             alert(
                 "Unable to play the song."
             );
@@ -840,10 +899,12 @@
         }
 
 
+
         button.disabled =
             false;
 
     }
+
 
 
     function updatePlayButtons(
@@ -857,6 +918,7 @@
             );
 
 
+
         cards.forEach(
             card => {
 
@@ -864,6 +926,7 @@
                     card.querySelectorAll(
                         ".image-play-button, .play-button"
                     );
+
 
 
                 buttons.forEach(
@@ -879,6 +942,7 @@
         );
 
 
+
         const currentCard =
             Array.from(
                 cards
@@ -887,6 +951,7 @@
                     card.dataset.trackId ===
                     spotifyTrackId
             );
+
 
 
         if (
@@ -898,6 +963,7 @@
                 currentCard.querySelectorAll(
                     ".image-play-button, .play-button"
                 );
+
 
 
             buttons.forEach(
@@ -914,6 +980,7 @@
     }
 
 
+
     async function removeFavourite(
         spotifyTrackId,
         button
@@ -923,6 +990,7 @@
 
             button.disabled =
                 true;
+
 
 
             const response =
@@ -952,8 +1020,10 @@
                 );
 
 
+
             const data =
                 await response.json();
+
 
 
             if (!data.success) {
@@ -964,12 +1034,14 @@
                 );
 
 
+
                 button.disabled =
                     false;
 
                 return;
 
             }
+
 
 
             if (
@@ -986,6 +1058,7 @@
             }
 
 
+
             loadFavourites();
 
         }
@@ -998,12 +1071,14 @@
             );
 
 
+
             button.disabled =
                 false;
 
         }
 
     }
+
 
 
     function formatTime(
@@ -1016,14 +1091,17 @@
             );
 
 
+
         const minutes =
             Math.floor(
                 totalSeconds / 60
             );
 
 
+
         const remainingSeconds =
             totalSeconds % 60;
+
 
 
         return (
@@ -1040,6 +1118,7 @@
     }
 
 
+
     function escapeHtml(
         text
     ) {
@@ -1050,14 +1129,17 @@
             );
 
 
+
         div.textContent =
             text
             || "";
 
 
+
         return div.innerHTML;
 
     }
+
 
 
     loadFavourites();

@@ -28,6 +28,20 @@
 
             </div>
 
+
+            <nav class="main-nav">
+
+                <a href="{{ url_for('library') }}" class="nav-link">
+    Library
+</a>
+
+                <a href="#" class="nav-link">
+                    Profile
+                </a>
+
+            </nav>
+
+
             <div class="user-section">
 
                 <span>
@@ -107,6 +121,54 @@
                         class="dashboard-btn"
                     >
                         View Favourites
+                    </a>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <div class="card-icon">
+                        &#9733;
+                    </div>
+
+                    <h2>
+                        VibeMatch
+                    </h2>
+
+                    <p>
+                        Discover your music taste through your ratings.
+                    </p>
+
+                    <a
+                        href="{{ url_for('vibematch') }}"
+                        class="dashboard-btn"
+                    >
+                        View VibeMatch
+                    </a>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <div class="card-icon">
+                        &#9835;
+                    </div>
+
+                    <h2>
+                        CHERNOME
+                    </h2>
+
+                    <p>
+                        Explore the musical genome of your saved songs.
+                    </p>
+
+                    <a
+                        href="{{ url_for('chernome_page') }}"
+                        class="dashboard-btn"
+                    >
+                        View CHERNOME
                     </a>
 
                 </div>

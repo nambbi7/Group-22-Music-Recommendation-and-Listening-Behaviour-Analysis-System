@@ -71,6 +71,35 @@ body {
 }
 
 
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+
+    margin-left: auto;
+    margin-right: 35px;
+}
+
+
+.nav-link {
+    color: #d5ded9;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.3s;
+}
+
+
+.nav-link:hover {
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+
 .user-section {
     display: flex;
     align-items: center;
@@ -253,6 +282,18 @@ body {
 
     .topbar {
         padding: 10px 15px;
+    }
+
+
+    .main-nav {
+        gap: 12px;
+
+        margin-right: 15px;
+    }
+
+
+    .nav-link {
+        font-size: 12px;
     }
 
 

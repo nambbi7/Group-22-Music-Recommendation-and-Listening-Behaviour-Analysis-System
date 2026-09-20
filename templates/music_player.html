@@ -278,6 +278,56 @@
 
     </div>
 
+    <div
+        id="chernomePopup"
+        class="chernome-popup"
+    >
+
+        <div class="chernome-popup-card">
+
+            <div class="chernome-popup-title">
+                CHERNOME
+            </div>
+
+            <div
+                id="chernomeSongName"
+                class="chernome-song-name"
+            >
+                Current Song
+            </div>
+
+            <div class="chernome-popup-text">
+                You've listened for 30 seconds.
+            </div>
+
+            <div class="chernome-popup-question">
+                Want to discover this song's CHERNOME?
+            </div>
+
+            <div class="chernome-popup-buttons">
+
+                <button
+                    type="button"
+                    id="chernomeYes"
+                    class="chernome-yes"
+                >
+                    Yes
+                </button>
+
+                <button
+                    type="button"
+                    id="chernomeNo"
+                    class="chernome-no"
+                >
+                    No
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
@@ -301,6 +351,10 @@ let historyTimer = null;
 let progressTimer = null;
 
 let ratingTimer = null;
+
+let chernomeShown = false;
+
+let chernomeTimer = null;
 
 let lastStatePosition = 0;
 
@@ -376,6 +430,18 @@ const ratingMessage =
 
 const ratingButtons =
     ratingStars.querySelectorAll("button");
+
+const chernomePopup =
+    document.getElementById("chernomePopup");
+
+const chernomeSongName =
+    document.getElementById("chernomeSongName");
+
+const chernomeYes =
+    document.getElementById("chernomeYes");
+
+const chernomeNo =
+    document.getElementById("chernomeNo");
 
 searchInput.addEventListener(
     "keydown",
@@ -693,6 +759,8 @@ async function playTrack(
 
     hideRatingPopup();
 
+    hideChernomePopup();
+
     currentTrackIndex =
         index;
 
@@ -709,6 +777,9 @@ async function playTrack(
         false;
 
     ratingSubmitted =
+        false;
+
+    chernomeShown =
         false;
 
     favouriteButton.disabled =
@@ -1366,6 +1437,11 @@ function updatePlayerState(
 
         resetRatingSystem();
 
+        hideChernomePopup();
+
+        chernomeShown =
+            false;
+
     }
 
     currentTrack =
@@ -1899,6 +1975,144 @@ closeRating.addEventListener(
     }
 );
 
+function showChernomePopup() {
+
+    if (!currentTrack) {
+
+        return;
+
+    }
+
+    chernomeSongName.textContent =
+        currentTrack.name;
+
+    chernomePopup.classList.add(
+        "show"
+    );
+
+}
+
+function hideChernomePopup() {
+
+    chernomePopup.classList.remove(
+        "show"
+    );
+
+}
+
+chernomeYes.addEventListener(
+    "click",
+    async function() {
+
+        if (!currentTrack) {
+
+            return;
+
+        }
+
+        chernomeYes.disabled =
+            true;
+
+        chernomeYes.textContent =
+            "Saving...";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/chernome/save",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                track_id:
+                                    currentTrack.id,
+
+                                track_name:
+                                    currentTrack.name,
+
+                                artists:
+                                    currentTrack.artist,
+
+                                album_name:
+                                    currentTrack.album_name || "",
+
+                                image_url:
+                                    currentTrack.image || ""
+
+                            })
+
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                console.error(
+                    "CHERNOME SAVE ERROR:",
+                    data.error
+                );
+
+                chernomeYes.disabled =
+                    false;
+
+                chernomeYes.textContent =
+                    "Yes";
+
+                return;
+
+            }
+
+            hideChernomePopup();
+
+            chernomeYes.disabled =
+                false;
+
+            chernomeYes.textContent =
+                "Yes";
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "CHERNOME SAVE ERROR:",
+                error
+            );
+
+            chernomeYes.disabled =
+                false;
+
+            chernomeYes.textContent =
+                "Yes";
+
+        }
+
+    }
+);
+
+chernomeNo.addEventListener(
+    "click",
+    function() {
+
+        hideChernomePopup();
+
+    }
+);
+
 function getCurrentPosition() {
 
     if (!currentState) {
@@ -1974,6 +2188,18 @@ function startProgressTimer() {
 
                 const currentPosition =
                     getCurrentPosition();
+
+                if (
+                    currentPosition >= 30000 &&
+                    !chernomeShown
+                ) {
+
+                    chernomeShown =
+                        true;
+
+                    showChernomePopup();
+
+                }
 
                 progress.value =
                     (
@@ -2137,6 +2363,14 @@ window.addEventListener(
 
             clearTimeout(
                 ratingTimer
+            );
+
+        }
+
+        if (chernomeTimer) {
+
+            clearTimeout(
+                chernomeTimer
             );
 
         }

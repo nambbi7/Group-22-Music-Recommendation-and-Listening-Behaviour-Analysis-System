@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CHERNOME</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/chernome.css') }}"
+    >
+
+    <style>
+
+        .chernome-navbar {
+            position: relative;
+            z-index: 20;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(5, 5, 20, 0.75);
+            backdrop-filter: blur(14px);
+        }
+
+        .chernome-navbar .nav-logo {
+            color: white;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: 4px;
+        }
+
+        .chernome-navbar .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin-left: auto;
+            margin-right: 30px;
+        }
+
+        .chernome-navbar .nav-links a {
+            color: #b9b4c9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .chernome-navbar .nav-links a:hover {
+            color: white;
+        }
+
+        .chernome-navbar .logout-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 9px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .chernome-navbar .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .album-placeholder {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .album-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: inherit;
+        }
+
+        .album-placeholder.image-loaded {
+            background: #111;
+        }
+
+        .album-placeholder.image-loaded .album-note {
+            display: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="chernome-navbar">
+
+        <div class="nav-logo">
+            CHERI
+        </div>
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="/library">
+                Library
+            </a>
+
+            <a href="/profile">
+                Profile
+            </a>
+
+            <a href="{{ url_for('vibematch') }}">
+                VibeMatch
+            </a>
+
+        </div>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-btn"
+        >
+            Logout
+        </a>
+
+    </nav>
+
+
+    <div class="chernome-page">
+
+        <div class="chernome-overlay"></div>
+
+        <main class="chernome-content">
+
+            <section class="chernome-hero">
+
+                <div class="hero-logo">
+                    CHERNOME
+                </div>
+
+                <div class="hero-line"></div>
+
+                <p>
+                    THE MUSICAL GENOME OF EVERY SONG.
+                </p>
+
+                <div class="hero-quote">
+                    "Different songs.<br>
+                    Different DNA.<br>
+                    Same emotions."
+                </div>
+
+            </section>
+
+
+            <section class="saved-header">
+
+                <div>
+
+                    <h1>
+                        Your Saved CHERNOMEs
+                    </h1>
+
+                    <p>
+                        Explore the musical genomes you saved.
+                    </p>
+
+                </div>
+
+                <div
+                    class="song-count"
+                    id="songCount"
+                >
+                    &#9835;&nbsp; 0 SONGS SAVED
+                </div>
+
+            </section>
+
+
+            <div
+                class="loading"
+                id="loading"
+            >
+                Loading your CHERNOMEs...
+            </div>
+
+
+            <section
+                class="saved-list"
+                id="savedList"
+            ></section>
+
+
+            <section
+                class="empty-state"
+                id="emptyState"
+                style="display: none;"
+            >
+
+                <div class="empty-icon">
+                    &#9835;
+                </div>
+
+                <h2>
+                    Your CHERNOME collection is empty
+                </h2>
+
+                <p>
+                    Listen to your favourite songs and discover their musical DNA.
+                </p>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        async function loadChernomes() {
+
+            const loading =
+                document.getElementById(
+                    "loading"
+                );
+
+            const savedList =
+                document.getElementById(
+                    "savedList"
+                );
+
+            const emptyState =
+                document.getElementById(
+                    "emptyState"
+                );
+
+            const songCount =
+                document.getElementById(
+                    "songCount"
+                );
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/chernomes"
+                    );
+
+                const data =
+                    await response.json();
+
+                loading.style.display =
+                    "none";
+
+                if (
+                    !data.success
+                ) {
+
+                    emptyState.style.display =
+                        "block";
+
+                    emptyState.querySelector(
+                        "p"
+                    ).textContent =
+                        data.error
+                        || "Unable to load your CHERNOMEs.";
+
+                    return;
+
+                }
+
+                const chernomes =
+                    data.chernomes
+                    || [];
+
+                songCount.innerHTML =
+                    "&#9835;&nbsp; "
+                    + chernomes.length
+                    + " SONG"
+                    + (
+                        chernomes.length === 1
+                            ? ""
+                            : "S"
+                    )
+                    + " SAVED";
+
+                if (
+                    chernomes.length === 0
+                ) {
+
+                    emptyState.style.display =
+                        "block";
+
+                    return;
+
+                }
+
+                savedList.innerHTML =
+                    "";
+
+                for (
+                    const chernome
+                    of chernomes
+                ) {
+
+                    const card =
+                        await createChernomeCard(
+                            chernome
+                        );
+
+                    savedList.appendChild(
+                        card
+                    );
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "CHERNOME ERROR:",
+                    error
+                );
+
+                loading.style.display =
+                    "none";
+
+                emptyState.style.display =
+                    "block";
+
+                emptyState.querySelector(
+                    "p"
+                ).textContent =
+                    "Unable to load your saved CHERNOMEs.";
+
+            }
+
+        }
+
+
+        async function createChernomeCard(
+            saved
+        ) {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+            card.className =
+                "chernome-card";
+
+            card.innerHTML = `
+
+                <div class="track-section">
+
+                    <div class="album-placeholder">
+
+                        <div class="album-note">
+                            &#9835;
+                        </div>
+
+                    </div>
+
+                    <div class="track-details">
+
+                        <h2>
+                            ${escapeHtml(
+                                saved.track_name
+                            )}
+                        </h2>
+
+                        <h3>
+                            ${escapeHtml(
+                                saved.artists
+                                || "Unknown Artist"
+                            )}
+                        </h3>
+
+                        <div class="track-tags">
+
+                            <span>
+                                CHERNOME
+                            </span>
+
+                            <span>
+                                SAVED
+                            </span>
+
+                        </div>
+
+                        <p class="track-quote">
+                            Your unique musical fingerprint.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="radar-section">
+
+                    <div class="radar-title">
+                        MUSICAL GENOME
+                    </div>
+
+                    <div class="radar-wrapper">
+
+                        <svg
+                            class="radar"
+                            viewBox="0 0 300 300"
+                        >
+
+                            <g class="radar-grid">
+
+                                <polygon
+                                    points="150,35 231,94 200,189 100,189 69,94"
+                                ></polygon>
+
+                                <polygon
+                                    points="150,65 205,105 184,169 116,169 95,105"
+                                ></polygon>
+
+                                <polygon
+                                    points="150,95 179,116 168,150 132,150 121,116"
+                                ></polygon>
+
+                            </g>
+
+
+                            <g class="radar-lines">
+
+                                <line
+                                    x1="150"
+                                    y1="150"
+                                    x2="150"
+                                    y2="35"
+                                ></line>
+
+                                <line
+                                    x1="150"
+                                    y1="150"
+                                    x2="231"
+                                    y2="94"
+                                ></line>
+
+                                <line
+                                    x1="150"
+                                    y1="150"
+                                    x2="200"
+                                    y2="189"
+                                ></line>
+
+                                <line
+                                    x1="150"
+                                    y1="150"
+                                    x2="100"
+                                    y2="189"
+                                ></line>
+
+                                <line
+                                    x1="150"
+                                    y1="150"
+                                    x2="69"
+                                    y2="94"
+                                ></line>
+
+                            </g>
+
+
+                            <polygon
+                                class="radar-shape"
+                                data-radar
+                            ></polygon>
+
+                            <polygon
+                                class="radar-outline"
+                                data-radar-outline
+                            ></polygon>
+
+                            <g
+                                class="radar-points"
+                                data-radar-points
+                            ></g>
+
+                        </svg>
+
+
+                        <span class="radar-label label-top">
+                            Danceability
+                        </span>
+
+                        <span class="radar-label label-right-top">
+                            Energy
+                        </span>
+
+                        <span class="radar-label label-right-bottom">
+                            Valence
+                        </span>
+
+                        <span class="radar-label label-left-bottom">
+                            Acousticness
+                        </span>
+
+                        <span class="radar-label label-left-top">
+                            Liveness
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="metrics-section">
+
+                    <div class="tempo-box">
+
+                        <span>
+                            TEMPO
+                        </span>
+
+                        <strong data-tempo>
+                            --
+                        </strong>
+
+                        <div class="waveform">
+
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mini-metrics">
+
+                        <div>
+
+                            <span>
+                                DANCE
+                            </span>
+
+                            <strong data-dance>
+                                --
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                ENERGY
+                            </span>
+
+                            <strong data-energy>
+                                --
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                VALENCE
+                            </span>
+
+                            <strong data-valence>
+                                --
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            loadAlbumArtwork(
+                card,
+                saved
+            );
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/chernome/"
+                        + encodeURIComponent(
+                            saved.track_id
+                        )
+                    );
+
+                const data =
+                    await response.json();
+
+                if (
+                    data.success
+                    && data.features
+                ) {
+
+                    const features =
+                        data.features;
+
+                    buildRadar(
+                        card,
+                        features
+                    );
+
+                    card.querySelector(
+                        "[data-tempo]"
+                    ).textContent =
+                        Number(
+                            features.tempo
+                        ).toFixed(0)
+                        + " BPM";
+
+                    card.querySelector(
+                        "[data-dance]"
+                    ).textContent =
+                        Math.round(
+                            features.danceability
+                            * 100
+                        )
+                        + "%";
+
+                    card.querySelector(
+                        "[data-energy]"
+                    ).textContent =
+                        Math.round(
+                            features.energy
+                            * 100
+                        )
+                        + "%";
+
+                    card.querySelector(
+                        "[data-valence]"
+                    ).textContent =
+                        Math.round(
+                            features.valence
+                            * 100
+                        )
+                        + "%";
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "CARD ERROR:",
+                    error
+                );
+
+            }
+
+            return card;
+
+        }
+
+
+        function loadAlbumArtwork(
+            card,
+            saved
+        ) {
+
+            if (!saved.image_url) {
+
+                return;
+
+            }
+
+            const album =
+                card.querySelector(
+                    ".album-placeholder"
+                );
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+            image.className =
+                "album-cover";
+
+            image.alt =
+                saved.track_name
+                + " album artwork";
+
+            image.src =
+                saved.image_url;
+
+            image.onload =
+                function() {
+
+                    album.classList.add(
+                        "image-loaded"
+                    );
+
+                    album.innerHTML =
+                        "";
+
+                    album.appendChild(
+                        image
+                    );
+
+                };
+
+        }
+
+
+        function buildRadar(
+            card,
+            features
+        ) {
+
+            const values = [
+
+                features.danceability,
+
+                features.energy,
+
+                features.valence,
+
+                features.acousticness,
+
+                features.liveness
+
+            ];
+
+            const centerX =
+                150;
+
+            const centerY =
+                150;
+
+            const radius =
+                115;
+
+            const points =
+                [];
+
+            for (
+                let i = 0;
+                i < values.length;
+                i++
+            ) {
+
+                const angle =
+                    (
+                        -90
+                        + i * 72
+                    )
+                    * Math.PI
+                    / 180;
+
+                const value =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            Number(
+                                values[i]
+                            )
+                        )
+                    );
+
+                const x =
+                    centerX
+                    + Math.cos(angle)
+                    * radius
+                    * value;
+
+                const y =
+                    centerY
+                    + Math.sin(angle)
+                    * radius
+                    * value;
+
+                points.push(
+                    x + "," + y
+                );
+
+            }
+
+            const pointString =
+                points.join(" ");
+
+            card.querySelector(
+                "[data-radar]"
+            ).setAttribute(
+                "points",
+                pointString
+            );
+
+            card.querySelector(
+                "[data-radar-outline]"
+            ).setAttribute(
+                "points",
+                pointString
+            );
+
+            const pointsGroup =
+                card.querySelector(
+                    "[data-radar-points]"
+                );
+
+            pointsGroup.innerHTML =
+                "";
+
+            for (
+                let i = 0;
+                i < values.length;
+                i++
+            ) {
+
+                const angle =
+                    (
+                        -90
+                        + i * 72
+                    )
+                    * Math.PI
+                    / 180;
+
+                const value =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            Number(
+                                values[i]
+                            )
+                        )
+                    );
+
+                const x =
+                    centerX
+                    + Math.cos(angle)
+                    * radius
+                    * value;
+
+                const y =
+                    centerY
+                    + Math.sin(angle)
+                    * radius
+                    * value;
+
+                const circle =
+                    document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "circle"
+                    );
+
+                circle.setAttribute(
+                    "cx",
+                    x
+                );
+
+                circle.setAttribute(
+                    "cy",
+                    y
+                );
+
+                circle.setAttribute(
+                    "r",
+                    "5"
+                );
+
+                circle.classList.add(
+                    "radar-point"
+                );
+
+                pointsGroup.appendChild(
+                    circle
+                );
+
+            }
+
+        }
+
+
+        function escapeHtml(
+            text
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                text || "";
+
+            return div.innerHTML;
+
+        }
+
+
+        loadChernomes();
+
+    </script>
+
+</body>
+</html>

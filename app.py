@@ -3,6 +3,7 @@ import secrets
 import hashlib
 import base64
 import requests
+import pandas as pd
 
 from flask import (
     Flask,
@@ -19,9 +20,7 @@ from supabase import create_client
 
 from week4_recommendation.recommendation import recommend_songs_with_fallback
 
-
 load_dotenv()
-
 
 app = Flask(__name__)
 
@@ -29,7 +28,6 @@ app.secret_key = os.getenv(
     "FLASK_SECRET_KEY",
     "dev-secret-key"
 )
-
 
 supabase_url = os.getenv(
     "SUPABASE_URL"
@@ -39,12 +37,14 @@ supabase_key = os.getenv(
     "SUPABASE_KEY"
 )
 
-
 supabase = create_client(
     supabase_url,
     supabase_key
 )
 
+music_dataset = pd.read_csv(
+    "cleaned_data/clean_music.csv"
+)
 
 SPOTIFY_CLIENT_ID = os.getenv(
     "SPOTIFY_CLIENT_ID"
@@ -55,12 +55,14 @@ SPOTIFY_REDIRECT_URI = os.getenv(
 )
 
 
+
 @app.route("/")
 def home():
 
     return render_template(
         "home.html"
     )
+
 
 
 @app.route("/test-users")
@@ -76,6 +78,7 @@ def test_users():
     return str(
         response.data
     )
+
 
 
 @app.route(
@@ -133,6 +136,7 @@ def login():
     )
 
 
+
 @app.route("/logout")
 def logout():
 
@@ -146,7 +150,10 @@ def logout():
 
     session.clear()
 
-    return "Logged out successfully!"
+    return redirect(
+        url_for("home")
+    )
+
 
 
 @app.route(
@@ -206,6 +213,7 @@ def register():
     )
 
 
+
 @app.route("/dashboard")
 def dashboard():
 
@@ -218,6 +226,7 @@ def dashboard():
     return render_template(
         "dashboard.html"
     )
+
 
 
 @app.route("/music-player")
@@ -234,6 +243,7 @@ def music_player():
     )
 
 
+
 @app.route("/favourites")
 def favourites():
 
@@ -246,6 +256,7 @@ def favourites():
     return render_template(
         "favourites.html"
     )
+
 
 
 @app.route("/recommendations")
@@ -262,6 +273,7 @@ def recommendations():
     )
 
 
+
 @app.route("/vibematch")
 def vibematch():
 
@@ -274,6 +286,7 @@ def vibematch():
     return render_template(
         "vibematch.html"
     )
+
 
 
 @app.route(
@@ -544,6 +557,7 @@ def ratings():
     })
 
 
+
 @app.route("/admin-dashboard")
 def admin_dashboard():
 
@@ -635,6 +649,7 @@ def admin_dashboard():
             total_plays=0,
             total_minutes=0
         )
+
 
 
 @app.route(
@@ -780,6 +795,331 @@ def vibematch_ratings():
         }, 500
 
 
+
+@app.route(
+    "/api/chernome/<track_id>",
+    methods=["GET"]
+)
+def chernome(track_id):
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "success": False,
+            "error": "User is not logged in."
+        }), 401
+
+    try:
+
+        matches = music_dataset[
+            music_dataset["track_id"].astype(str)
+            == str(track_id)
+        ]
+
+        if matches.empty:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Song not found in music dataset."
+            }), 404
+
+        song = matches.iloc[0]
+
+        return jsonify({
+
+            "success":
+                True,
+
+            "track_id":
+                str(song["track_id"]),
+
+            "track_name":
+                str(song["track_name"]),
+
+            "artists":
+                str(song["artists"]),
+
+            "album_name":
+                str(song["album_name"]),
+
+            "features": {
+
+                "danceability":
+                    float(song["danceability"]),
+
+                "energy":
+                    float(song["energy"]),
+
+                "valence":
+                    float(song["valence"]),
+
+                "acousticness":
+                    float(song["acousticness"]),
+
+                "instrumentalness":
+                    float(song["instrumentalness"]),
+
+                "speechiness":
+                    float(song["speechiness"]),
+
+                "liveness":
+                    float(song["liveness"]),
+
+                "tempo":
+                    float(song["tempo"])
+
+            }
+
+        })
+
+    except Exception as e:
+
+        print(
+            "CHERNOME ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+
+            "success":
+                False,
+
+            "error":
+                str(e)
+
+        }), 500
+
+
+@app.route(
+    "/api/chernome/save",
+    methods=["POST"]
+)
+def save_chernome():
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "success": False,
+            "error":
+                "User is not logged in."
+        }), 401
+
+    try:
+
+        data = request.get_json() or {}
+
+        track_id = data.get(
+            "track_id"
+        )
+
+        track_name = data.get(
+            "track_name"
+        )
+
+        artists = data.get(
+            "artists"
+        )
+
+        album_name = data.get(
+            "album_name"
+        )
+
+        image_url = data.get(
+            "image_url"
+        )
+
+        if not track_id or not track_name:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Missing song information."
+            }), 400
+
+        database_user_id = (
+            get_database_user_id()
+        )
+
+        if not database_user_id:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Database user not found."
+            }), 404
+
+        existing = (
+            supabase
+            .table("chernomes")
+            .select("id")
+            .eq(
+                "user_id",
+                database_user_id
+            )
+            .eq(
+                "track_id",
+                track_id
+            )
+            .limit(1)
+            .execute()
+        )
+
+        if existing.data:
+
+            return jsonify({
+                "success": True,
+                "message":
+                    "CHERNOME already saved."
+            })
+
+        response = (
+            supabase
+            .table("chernomes")
+            .insert({
+
+                "user_id":
+                    database_user_id,
+
+                "track_id":
+                    track_id,
+
+                "track_name":
+                    track_name,
+
+                "artists":
+                    artists,
+
+                "album_name":
+                    album_name,
+
+                "image_url":
+                    image_url
+
+            })
+            .execute()
+        )
+
+        if not response.data:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Unable to save CHERNOME."
+            }), 500
+
+        return jsonify({
+
+            "success":
+                True,
+
+            "message":
+                "CHERNOME saved."
+
+        })
+
+    except Exception as e:
+
+        print(
+            "SAVE CHERNOME ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+
+            "success":
+                False,
+
+            "error":
+                str(e)
+
+        }), 500
+
+@app.route(
+    "/api/chernomes",
+    methods=["GET"]
+)
+def get_chernomes():
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "success": False,
+            "error":
+                "User is not logged in."
+        }), 401
+
+    try:
+
+        database_user_id = (
+            get_database_user_id()
+        )
+
+        if not database_user_id:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Database user not found."
+            }), 404
+
+        response = (
+            supabase
+            .table("chernomes")
+            .select("*")
+            .eq(
+                "user_id",
+                database_user_id
+            )
+            .order(
+                "created_at",
+                desc=True
+            )
+            .execute()
+        )
+
+        return jsonify({
+
+            "success":
+                True,
+
+            "chernomes":
+                response.data or []
+
+        })
+
+    except Exception as e:
+
+        print(
+            "GET CHERNOMES ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+
+            "success":
+                False,
+
+            "error":
+                str(e)
+
+        }), 500
+
+@app.route("/chernome")
+def chernome_page():
+
+    if "user_id" not in session:
+
+        return redirect(
+            url_for("login")
+        )
+
+    return render_template(
+        "chernome.html"
+    )
+
+
+
 @app.route("/spotify/login")
 def spotify_login():
 
@@ -821,6 +1161,7 @@ def spotify_login():
     return redirect(
         spotify_url
     )
+
 
 
 @app.route("/spotify/callback")
@@ -901,6 +1242,7 @@ def spotify_callback():
     return redirect(
         url_for("music_player")
     )
+
 
 
 @app.route(
@@ -1014,6 +1356,7 @@ def spotify_search():
     }
 
 
+
 @app.route("/spotify/token")
 def spotify_token():
 
@@ -1034,6 +1377,7 @@ def spotify_token():
         "access_token":
             access_token
     }
+
 
 
 @app.route(
@@ -1132,6 +1476,7 @@ def get_recommendations(
         }, 500
 
 
+
 def get_database_user_id():
 
     email = session.get(
@@ -1190,6 +1535,7 @@ def get_database_user_id():
         )
 
         return None
+
 
 
 @app.route(
@@ -1492,6 +1838,7 @@ def start_listening():
         }, 500
 
 
+
 @app.route(
     "/api/listening/update",
     methods=["POST"]
@@ -1625,6 +1972,7 @@ def update_listening():
             "error":
                 str(e)
         }, 500
+
 
 
 @app.route(
@@ -1958,6 +2306,7 @@ def add_favourite():
         }, 500
 
 
+
 @app.route(
     "/api/favourites/remove",
     methods=["POST"]
@@ -2066,6 +2415,7 @@ def remove_favourite():
             "error":
                 str(e)
         }, 500
+
 
 
 @app.route(
@@ -2193,6 +2543,171 @@ def get_favourites():
                 str(e)
 
         }, 500
+
+
+@app.route("/library")
+def library():
+    return render_template(
+        "library.html"
+    )
+
+@app.route("/api/library")
+def library_api():
+
+    user_id = get_database_user_id()
+
+    if not user_id:
+        return jsonify({
+            "success": False,
+            "error": "User not found."
+        }), 401
+
+    try:
+
+        history_response = (
+            supabase
+            .table("listening_history")
+            .select(
+                "song_id, played_at, Songs(tittle, artist, image_url)"
+            )
+            .eq(
+                "user_id",
+                user_id
+            )
+            .order(
+                "played_at",
+                desc=True
+            )
+            .limit(20)
+            .execute()
+        )
+
+        history_rows = (
+            history_response.data
+            or []
+        )
+
+        history = []
+
+        play_counts = {}
+
+        for row in history_rows:
+
+            song = row.get("Songs") or {}
+
+            song_id = row.get("song_id")
+
+            title = (
+                song.get("tittle")
+                or "Unknown Song"
+            )
+
+            artist = (
+                song.get("artist")
+                or "Unknown Artist"
+            )
+
+            image = (
+                song.get("image_url")
+                or "/static/images/default-album.png"
+            )
+
+            history.append({
+                "id": song_id,
+                "title": title,
+                "artist": artist,
+                "image": image,
+                "played_at": row.get("played_at")
+            })
+
+            if song_id:
+
+                if song_id not in play_counts:
+
+                    play_counts[song_id] = {
+                        "id": song_id,
+                        "title": title,
+                        "artist": artist,
+                        "image": image,
+                        "plays": 0
+                    }
+
+                play_counts[song_id]["plays"] += 1
+
+
+        top_songs = sorted(
+            play_counts.values(),
+            key=lambda song: song["plays"],
+            reverse=True
+        )[:8]
+
+
+        favourites_response = (
+            supabase
+            .table("favourites")
+            .select(
+                "song_id, created_at, Songs(tittle, artist, image_url)"
+            )
+            .eq(
+                "user_id",
+                user_id
+            )
+            .order(
+                "created_at",
+                desc=True
+            )
+            .limit(8)
+            .execute()
+        )
+
+        favourites_rows = (
+            favourites_response.data
+            or []
+        )
+
+        recently_added = []
+
+        for row in favourites_rows:
+
+            song = row.get("Songs") or {}
+
+            recently_added.append({
+                "id": row.get("song_id"),
+                "title": (
+                    song.get("tittle")
+                    or "Unknown Song"
+                ),
+                "artist": (
+                    song.get("artist")
+                    or "Unknown Artist"
+                ),
+                "image": (
+                    song.get("image_url")
+                    or "/static/images/default-album.png"
+                ),
+                "created_at": row.get("created_at")
+            })
+
+
+        return jsonify({
+            "success": True,
+            "history": history,
+            "top_songs": top_songs,
+            "recently_added": recently_added
+        })
+
+
+    except Exception as error:
+
+        print(
+            "LIBRARY API ERROR:",
+            error
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 500
 
 
 if __name__ == "__main__":
