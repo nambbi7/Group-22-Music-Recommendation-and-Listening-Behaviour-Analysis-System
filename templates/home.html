@@ -13,28 +13,38 @@
 
 <body>
 
+
 <header class="navbar">
 
     <div class="logo">
-    <a href="/">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="CHERI">
-    </a>
-</div>
 
-    <nav class="nav-links">
+        <a href="{{ url_for('home') }}">
 
-        <a href="#" class="active">Home</a>
-        <a href="#">Search</a>
-        <a href="#">Music Library</a>
-        <a href="#">Recommendations</a>
-        <a href="#">Favourites</a>
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="CHERI"
+            >
 
-    </nav>
+        </a>
+
+    </div>
+
 
     <div class="nav-account">
 
-        <a href="#" class="login-btn">Login</a>
-        <a href="#" class="register-btn">Register</a>
+        <a
+            href="{{ url_for('login') }}"
+            class="login-btn"
+        >
+            Login
+        </a>
+
+        <a
+            href="{{ url_for('register') }}"
+            class="register-btn"
+        >
+            Register
+        </a>
 
     </div>
 
@@ -45,202 +55,83 @@
 
     <div class="hero-content">
 
-    <p class="welcome-text">WELCOME TO CHERI</p>
+        <p class="welcome-text">
+            WELCOME TO CHERI
+        </p>
+
 
         <h1>
             Discover Music<br>
             Made For You
         </h1>
 
+
         <p class="hero-description">
             Explore songs, discover new artists, listen to your
-            favourite music and get personalized recommendations.
+            favourite music and experience your personal music journey.
         </p>
 
-        <div class="search-box">
-            <input
-            type="text"
-            placeholder="Search for songs, artists or genres..."
-        >
 
-        <button>Search</button>
+        <a
+            href="{{ url_for('music_player') }}"
+            class="hero-button"
+        >
+            Explore Music &#8594;
+        </a>
 
     </div>
 
-</div>
 
-<div class="floating-albums">
+    <div class="floating-albums">
 
-    <img
-        src="{{ url_for('static', filename='images/album1.jpg') }}"
-        class="album album-one"
-        alt="Album"
-    >
-
-    <img
-        src="{{ url_for('static', filename='images/album2.jpg') }}"
-        class="album album-two"
-        alt="Album"
-    >
-
-    <img
-        src="{{ url_for('static', filename='images/album3.jpg') }}"
-        class="album album-three"
-        alt="Album"
-    >
+        <img
+            src="{{ url_for('static', filename='images/album1.jpg') }}"
+            class="album album-one"
+            alt="Album"
+        >
 
 
-</div>
+        <img
+            src="{{ url_for('static', filename='images/album2.jpg') }}"
+            class="album album-two"
+            alt="Album"
+        >
+
+
+        <img
+            src="{{ url_for('static', filename='images/album3.jpg') }}"
+            class="album album-three"
+            alt="Album"
+        >
+
+    </div>
 
 </section>
 
 
 <main class="main-container">
 
-    <section class="section">
-
-        <div class="section-header">
-
-            <div>
-                <p class="section-label">FOR YOU</p>
-                <h2>Recommended Music</h2>
-            </div>
-
-            <a href="#" class="view-all">
-                View All &#8594;
-            </a>
-
-        </div>
-
-        <div class="music-grid">
-
-            <div class="music-card">
-
-                <div class="album-cover cover-one">
-
-                    <span class="play-button">&#9654;</span>
-
-                </div>
-
-                <div class="music-info">
-
-                    <h3>Midnight Drive</h3>
-                    <p>Nova Ray</p>
-
-                    <div class="music-meta">
-                        <span>Pop</span>
-                        <span>&#9733; 4.8</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="music-card">
-
-                <div class="album-cover cover-two">
-
-                    <span class="play-button">&#9654;</span>
-
-                </div>
-
-                <div class="music-info">
-
-                    <h3>After Dark</h3>
-                    <p>Kai Rivers</p>
-
-                    <div class="music-meta">
-                        <span>R&amp;B</span>
-                        <span>&#9733; 4.7</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="music-card">
-
-                <div class="album-cover cover-three">
-
-                    <span class="play-button">&#9654;</span>
-
-                </div>
-
-                <div class="music-info">
-
-                    <h3>Neon Dreams</h3>
-                    <p>Luna Vale</p>
-
-                    <div class="music-meta">
-                        <span>Electronic</span>
-                        <span>&#9733; 4.6</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="music-card">
-
-                <div class="album-cover cover-four">
-
-                    <span class="play-button">&#9654;</span>
-
-                </div>
-
-                <div class="music-info">
-
-                    <h3>City Lights</h3>
-                    <p>Milo Saint</p>
-
-                    <div class="music-meta">
-                        <span>Hip Hop</span>
-                        <span>&#9733; 4.5</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
 
     <section class="section">
 
         <div class="section-header">
 
             <div>
-                <p class="section-label">EXPLORE</p>
-                <h2>Music Features</h2>
-            </div>
 
-        </div>
-
-        <div class="feature-grid">
-
-            <div class="feature-card">
-
-                <div class="feature-icon">
-                    &#128269;
-                </div>
-
-                <h3>Search Music</h3>
-
-                <p>
-                    Find songs, artists and genres quickly
-                    using the music search.
+                <p class="section-label">
+                    EXPLORE
                 </p>
 
-                <a href="#">
-                    Explore Search &#8594;
-                </a>
+                <h2>
+                    Discover CHERI
+                </h2>
 
             </div>
+
+        </div>
+
+
+        <div class="feature-grid">
 
 
             <div class="feature-card">
@@ -249,14 +140,44 @@
                     &#127925;
                 </div>
 
-                <h3>Music Library</h3>
+
+                <h3>
+                    Music Player
+                </h3>
+
 
                 <p>
-                    Browse the available songs and discover
-                    different types of music.
+                    Explore songs, artists and listen to
+                    music through the CHERI music player.
                 </p>
 
-                <a href="#">
+
+                <a href="{{ url_for('music_player') }}">
+                    Explore Music &#8594;
+                </a>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    &#128218;
+                </div>
+
+
+                <h3>
+                    Music Library
+                </h3>
+
+
+                <p>
+                    View your listening history, top songs
+                    and recently added music.
+                </p>
+
+
+                <a href="{{ url_for('library') }}">
                     Open Library &#8594;
                 </a>
 
@@ -266,18 +187,23 @@
             <div class="feature-card">
 
                 <div class="feature-icon">
-                    &#127911;
+                    &#9829;
                 </div>
 
-                <h3>Recommendations</h3>
+
+                <h3>
+                    Favourites
+                </h3>
+
 
                 <p>
-                    Discover songs that match your musical
-                    interests and listening preferences.
+                    Save songs you love and easily access
+                    your favourite music.
                 </p>
 
-                <a href="#">
-                    View Recommendations &#8594;
+
+                <a href="{{ url_for('favourites') }}">
+                    View Favourites &#8594;
                 </a>
 
             </div>
@@ -286,305 +212,52 @@
             <div class="feature-card">
 
                 <div class="feature-icon">
-                    &#10084;
+                    &#9733;
                 </div>
 
-                <h3>Favourites</h3>
+
+                <h3>
+                    VibeMatch
+                </h3>
+
 
                 <p>
-                    Keep track of songs you like and create
-                    your own collection.
+                    Rate songs and discover your personal
+                    music taste profile.
                 </p>
 
-                <a href="#">
-                    View Favourites &#8594;
+
+                <a href="{{ url_for('vibematch') }}">
+                    View VibeMatch &#8594;
                 </a>
 
             </div>
 
-        </div>
 
-    </section>
+            <div class="feature-card">
 
-
-    <section class="section">
-
-        <div class="section-header">
-
-            <div>
-                <p class="section-label">DISCOVER</p>
-                <h2>Popular Genres</h2>
-            </div>
-
-            <a href="#" class="view-all">
-                All Genres &#8594;
-            </a>
-
-        </div>
-
-        <div class="genre-grid">
-
-            <div class="genre-card genre-pop">
-
-                <div>
-                    <span class="genre-icon">&#127908;</span>
-                    <h3>Pop</h3>
-                    <p>120 Songs</p>
+                <div class="feature-icon">
+                    &#9835;
                 </div>
 
-                <span class="genre-arrow">&#8594;</span>
+
+                <h3>
+                    CHERNOME
+                </h3>
+
+
+                <p>
+                    Discover the musical genome behind
+                    the songs you listen to.
+                </p>
+
+
+                <a href="{{ url_for('chernome_page') }}">
+                    Explore CHERNOME &#8594;
+                </a>
 
             </div>
 
-
-            <div class="genre-card genre-hiphop">
-
-                <div>
-                    <span class="genre-icon">&#127911;</span>
-                    <h3>Hip Hop</h3>
-                    <p>95 Songs</p>
-                </div>
-
-                <span class="genre-arrow">&#8594;</span>
-
-            </div>
-
-
-            <div class="genre-card genre-rnb">
-
-                <div>
-                    <span class="genre-icon">&#127926;</span>
-                    <h3>R&amp;B</h3>
-                    <p>87 Songs</p>
-                </div>
-
-                <span class="genre-arrow">&#8594;</span>
-
-            </div>
-
-
-            <div class="genre-card genre-rock">
-
-                <div>
-                    <span class="genre-icon">&#127928;</span>
-                    <h3>Rock</h3>
-                    <p>76 Songs</p>
-                </div>
-
-                <span class="genre-arrow">&#8594;</span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="section">
-
-        <div class="section-header">
-
-            <div>
-                <p class="section-label">TRENDING</p>
-                <h2>Popular Artists</h2>
-            </div>
-
-            <a href="#" class="view-all">
-                View Artists &#8594;
-            </a>
-
-        </div>
-
-        <div class="artist-grid">
-
-            <div class="artist-card">
-
-                <div class="artist-image artist-one">
-                    NR
-                </div>
-
-                <h3>Nova Ray</h3>
-                <p>24 Songs</p>
-
-            </div>
-
-
-            <div class="artist-card">
-
-                <div class="artist-image artist-two">
-                    KR
-                </div>
-
-                <h3>Kai Rivers</h3>
-                <p>18 Songs</p>
-
-            </div>
-
-
-            <div class="artist-card">
-
-                <div class="artist-image artist-three">
-                    LV
-                </div>
-
-                <h3>Luna Vale</h3>
-                <p>21 Songs</p>
-
-            </div>
-
-
-            <div class="artist-card">
-
-                <div class="artist-image artist-four">
-                    MS
-                </div>
-
-                <h3>Milo Saint</h3>
-                <p>16 Songs</p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="listening-section">
-
-        <div class="listening-content">
-
-            <p class="section-label">YOUR MUSIC JOURNEY</p>
-
-            <h2>Track Your Listening Behaviour</h2>
-
-            <p>
-                See your listening patterns, favourite genres,
-                most played songs and other music statistics.
-            </p>
-
-            <a href="#" class="analytics-btn">
-                Explore Analytics &#8594;
-            </a>
-
-        </div>
-
-
-        <div class="stats-preview">
-
-            <div class="stat-box">
-
-                <strong>42</strong>
-                <span>Songs Played</span>
-
-            </div>
-
-            <div class="stat-box">
-
-                <strong>8</strong>
-                <span>Top Genres</span>
-
-            </div>
-
-            <div class="stat-box">
-
-                <strong>16h</strong>
-                <span>Listening Time</span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="section">
-
-        <div class="section-header">
-
-            <div>
-                <p class="section-label">RECENTLY PLAYED</p>
-                <h2>Continue Listening</h2>
-            </div>
-
-            <a href="#" class="view-all">
-                View History &#8594;
-            </a>
-
-        </div>
-
-
-        <div class="recent-list">
-
-            <div class="recent-song">
-
-                <div class="small-cover cover-one">
-                    &#9654;
-                </div>
-
-                <div class="recent-info">
-
-                    <h3>Midnight Drive</h3>
-                    <p>Nova Ray</p>
-
-                </div>
-
-                <span class="song-duration">
-                    3:42
-                </span>
-
-                <button class="small-play">
-                    &#9654;
-                </button>
-
-            </div>
-
-
-            <div class="recent-song">
-
-                <div class="small-cover cover-two">
-                    &#9654;
-                </div>
-
-                <div class="recent-info">
-
-                    <h3>After Dark</h3>
-                    <p>Kai Rivers</p>
-
-                </div>
-
-                <span class="song-duration">
-                    4:01
-                </span>
-
-                <button class="small-play">
-                    &#9654;
-                </button>
-
-            </div>
-
-
-            <div class="recent-song">
-
-                <div class="small-cover cover-three">
-                    &#9654;
-                </div>
-
-                <div class="recent-info">
-
-                    <h3>Neon Dreams</h3>
-                    <p>Luna Vale</p>
-
-                </div>
-
-                <span class="song-duration">
-                    3:28
-                </span>
-
-                <button class="small-play">
-                    &#9654;
-                </button>
-
-            </div>
 
         </div>
 
@@ -596,74 +269,38 @@
         <div>
 
             <p class="section-label">
-                GET PERSONALIZED MUSIC
+                START YOUR MUSIC JOURNEY
             </p>
 
+
             <h2>
-                Create an account to unlock<br>
-                your personal music experience.
+                Discover music that feels like you.
             </h2>
 
+
             <p>
-                Save favourites, track your listening behaviour
-                and receive personalized recommendations.
+                Explore songs, listen to music and discover
+                everything CHERI has to offer.
             </p>
 
         </div>
 
-        <a href="#" class="cta-button">
-            Create Account
-        </a>
+
+        <div class="cta-buttons">
+
+            <a
+                href="{{ url_for('register') }}"
+                class="cta-button"
+            >
+                Create Account
+            </a>
+
+        </div>
 
     </section>
 
+
 </main>
-
-
-<div class="mini-player">
-
-    <div class="player-song">
-
-        <div class="player-cover cover-one">
-            &#9654;
-        </div>
-
-        <div>
-
-            <h4>Midnight Drive</h4>
-            <p>Nova Ray</p>
-
-        </div>
-
-    </div>
-
-
-    <div class="player-controls">
-
-        <button>&#9194;</button>
-
-        <button class="main-play">
-            &#9654;
-        </button>
-
-        <button>&#9193;</button>
-
-    </div>
-
-
-    <div class="player-progress">
-
-        <span>1:24</span>
-
-        <div class="progress-bar">
-            <div class="progress"></div>
-        </div>
-
-        <span>3:42</span>
-
-    </div>
-
-</div>
 
 
 <footer>
@@ -672,17 +309,11 @@
         CHERI
     </div>
 
+
     <p>
         Music Recommendation and Listening Behaviour Analysis System
     </p>
 
-    <div class="footer-links">
-
-        <a href="#">About</a>
-        <a href="#">Help</a>
-        <a href="#">Privacy</a>
-
-    </div>
 
     <p class="copyright">
         &#169; 2026 CHERI. All rights reserved.
@@ -692,4 +323,5 @@
 
 
 </body>
+
 </html>
