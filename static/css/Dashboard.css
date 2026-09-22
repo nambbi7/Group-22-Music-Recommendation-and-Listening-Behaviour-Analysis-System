@@ -12,7 +12,7 @@ body {
             rgba(0, 0, 0, 0.30),
             rgba(0, 0, 0, 0.40)
         ),
-        url("../images/Dashboard.jpg");
+        url("../images/Dashboard.png");
 
     background-size: cover;
     background-position: center;
@@ -317,4 +317,256 @@ body {
     }
 
 }
+/* Premium Dashboard Cards */
 
+.dashboard-card {
+    position: relative;
+    overflow: hidden;
+
+    background: rgba(8, 13, 13, 0.78);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    transition:
+        transform 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-8px);
+
+    border-color: rgba(180, 130, 255, 0.45);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.45),
+        0 0 35px rgba(130, 70, 190, 0.12);
+}
+
+.dashboard-card {
+    position: relative;
+
+    min-height: 230px;
+
+    padding: 30px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 18, 18, 0.92),
+            rgba(5, 8, 8, 0.96)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 28px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    transition:
+        transform 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+
+/* Decorative music symbol */
+
+.dashboard-card::before {
+    content: "♫";
+
+    position: absolute;
+
+    right: -20px;
+    bottom: -70px;
+
+    font-size: 190px;
+
+    color: rgba(180, 120, 230, 0.055);
+
+    transform: rotate(-12deg);
+
+    pointer-events: none;
+}
+
+
+/* Soft glow */
+
+.dashboard-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -90px;
+    top: -90px;
+
+    border-radius: 50%;
+
+    background: rgba(145, 70, 200, 0.12);
+
+    filter: blur(50px);
+
+    pointer-events: none;
+}
+
+
+/* Hover */
+
+.dashboard-card:hover {
+    transform: translateY(-8px);
+
+    border-color: rgba(190, 120, 240, 0.40);
+
+    box-shadow:
+        0 25px 55px rgba(0, 0, 0, 0.45),
+        0 0 35px rgba(135, 65, 190, 0.15);
+}
+
+
+/* Keep your card content above the decorative effects */
+
+.dashboard-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* Music icon */
+
+.card-icon {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 30px;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(145, 70, 195, 0.28),
+            rgba(60, 30, 85, 0.22)
+        );
+
+    border: 1px solid rgba(190, 110, 235, 0.18);
+
+    color: #d79aff;
+
+    font-size: 25px;
+
+    box-shadow:
+        0 8px 25px rgba(90, 35, 130, 0.15);
+
+    transition: 0.35s ease;
+}
+
+
+/* Icon animation */
+
+.dashboard-card:hover .card-icon {
+    transform: scale(1.08) rotate(-4deg);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(160, 80, 215, 0.38),
+            rgba(75, 35, 105, 0.30)
+        );
+
+    box-shadow:
+        0 0 30px rgba(160, 80, 215, 0.25);
+}
+
+
+/* Title */
+
+.dashboard-card h2 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 25px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.3px;
+}
+
+
+/* Description */
+
+.dashboard-card p {
+    max-width: 340px;
+
+    margin: 0 0 20px;
+
+    color: #a6a1aa;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* Keep your existing buttons functional,
+   but make them look like a small action */
+
+.dashboard-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 18px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+
+.dashboard-btn:hover {
+    background: rgba(157, 76, 210, 0.25);
+
+    border-color: rgba(190, 105, 235, 0.40);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(100, 40, 140, 0.20);
+}
