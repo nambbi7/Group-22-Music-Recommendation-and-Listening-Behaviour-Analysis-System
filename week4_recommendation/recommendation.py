@@ -70,28 +70,24 @@ def recommend_songs_by_id(
         used_tracks.add(
             recommended_track_id
         )
+        print("DISTANCE:", distance)
+        print("SIMILARITY:", (1 - float(distance)) * 100)
+       
 
         recommendations.append({
             "track_id": recommended_track_id,
-            "track_name": str(
-                df.loc[index, "track_name"]
-            ),
-            "artists": str(
-                df.loc[index, "artists"]
-            ),
-            "album_name": str(
-                df.loc[index, "album_name"]
-            ),
-            "similarity": round(
-                1 - float(distance),
-                4
-            )
+            "track_name": str(df.loc[index, "track_name"]),
+            "artists": str(df.loc[index, "artists"]),
+            "album_name": str(df.loc[index, "album_name"]),
+            "similarity": round(1 - float(distance), 4),
+            "similarity_percent": round((1 - float(distance)) * 100, 2)
         })
 
         if len(recommendations) >= number_of_recommendations:
             break
 
     return recommendations
+ 
 
 
 def recommend_songs_by_name(
@@ -210,7 +206,13 @@ def recommend_songs_with_fallback(
                         round(
                             1 - float(distance),
                             4
-                        )
+                        ),
+
+                        "similarity_percent": round(
+                            (1 - float(distance)) * 100,
+                           2
+                        
+)
 
                 })
 
@@ -220,3 +222,19 @@ def recommend_songs_with_fallback(
             return recommendations
 
     return []
+
+
+
+
+
+
+if __name__ == "__main__":
+    results = recommend_songs_by_name("Shape Of You")
+
+    for song in results:
+        print(
+            song["track_name"],
+            "-",
+            song["similarity_percent"],
+            "%"
+        )
