@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Profile - CHERI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/profile.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            CHERI
+        </div>
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('library') }}">
+                Library
+            </a>
+
+            <a href="/profile" class="active">
+                Profile
+            </a>
+
+            <a href="{{ url_for('vibematch') }}">
+                VibeMatch
+            </a>
+
+            <a href="{{ url_for('chernome_page') }}">
+                CHERNOME
+            </a>
+
+        </div>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-btn"
+        >
+            Logout
+        </a>
+
+    </nav>
+
+
+    <main class="profile-container">
+
+        <section class="profile-hero">
+
+            <div class="profile-avatar">
+                &#128100;
+            </div>
+
+            <div>
+
+                <p class="profile-label">
+                    YOUR CHERI PROFILE
+                </p>
+
+                <h1>
+                    {{ session.get("email") }}
+                </h1>
+
+                <p>
+                    Welcome back to CHERI.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <div class="section-title">
+
+                <h2>
+                    Your Music Activity
+                </h2>
+
+                <p>
+                    A quick look at your activity in CHERI.
+                </p>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <span class="stat-icon">
+                        &#9835;
+                    </span>
+
+                    <div>
+
+                        <p>
+                            Songs Played
+                        </p>
+
+                        <h3 id="songsPlayed">
+                            0
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span class="stat-icon">
+                        &#9829;
+                    </span>
+
+                    <div>
+
+                        <p>
+                            Favourite Songs
+                        </p>
+
+                        <h3 id="favouriteSongs">
+                            0
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span class="stat-icon">
+                        &#9733;
+                    </span>
+
+                    <div>
+
+                        <p>
+                            Songs Rated
+                        </p>
+
+                        <h3 id="songsRated">
+                            0
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <div class="section-title">
+
+                <h2>
+                    Quick Access
+                </h2>
+
+                <p>
+                    Continue exploring your CHERI experience.
+                </p>
+
+            </div>
+
+
+            <div class="quick-grid">
+
+                <a
+                    href="{{ url_for('favourites') }}"
+                    class="quick-card"
+                >
+
+                    <span>
+                        &#9829;
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Favourites
+                        </h3>
+
+                        <p>
+                            View your favourite songs.
+                        </p>
+
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('vibematch') }}"
+                    class="quick-card"
+                >
+
+                    <span>
+                        &#9733;
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            VibeMatch
+                        </h3>
+
+                        <p>
+                            Explore your music taste.
+                        </p>
+
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('chernome_page') }}"
+                    class="quick-card"
+                >
+
+                    <span>
+                        &#9835;
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            CHERNOME
+                        </h3>
+
+                        <p>
+                            Explore your musical genome.
+                        </p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <div class="section-title">
+
+                <h2>
+                    Profile Management
+                </h2>
+
+                <p>
+                    Manage your email and account password.
+                </p>
+
+            </div>
+
+
+            <div class="management-grid">
+
+
+                <div class="management-card">
+
+                    <div class="management-icon">
+                        &#9993;
+                    </div>
+
+                    <div class="management-content">
+
+                        <h3>
+                            Change Email
+                        </h3>
+
+                        <p>
+                            Update the email address connected to your CHERI account.
+                        </p>
+
+                        <div class="management-form">
+
+                            <input
+                                type="email"
+                                id="newEmail"
+                                placeholder="Enter new email"
+                            >
+
+                            <button
+                                type="button"
+                                onclick="changeEmail()"
+                            >
+                                Change Email
+                            </button>
+
+                        </div>
+
+                        <p
+                            id="emailMessage"
+                            class="management-message"
+                        ></p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="management-card">
+
+                    <div class="management-icon">
+                        &#128274;
+                    </div>
+
+                    <div class="management-content">
+
+                        <h3>
+                            Reset Password
+                        </h3>
+
+                        <p>
+                            Send a password reset link to your email address.
+                        </p>
+
+                        <div class="management-form">
+
+                            <input
+                                type="email"
+                                id="resetEmail"
+                                placeholder="Enter your email"
+                            >
+
+                            <button
+                                type="button"
+                                onclick="resetPassword()"
+                            >
+                                Send Reset Email
+                            </button>
+
+                        </div>
+
+                        <p
+                            id="passwordMessage"
+                            class="management-message"
+                        ></p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <section class="profile-section account-section">
+
+            <div class="section-title">
+
+                <h2>
+                    Account
+                </h2>
+
+                <p>
+                    Manage your CHERI account.
+                </p>
+
+            </div>
+
+
+            <div class="account-card">
+
+                <div>
+
+                    <span class="account-icon">
+                        &#9993;
+                    </span>
+
+                    <div>
+
+                        <p>
+                            Email
+                        </p>
+
+                        <strong>
+                            {{ session.get("email") }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="account-logout"
+                >
+                    Logout
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        async function loadProfileStats() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/profile"
+                    );
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    return;
+
+                }
+
+
+                document.getElementById(
+                    "songsPlayed"
+                ).textContent =
+                    data.songs_played || 0;
+
+
+                document.getElementById(
+                    "favouriteSongs"
+                ).textContent =
+                    data.favourite_songs || 0;
+
+
+                document.getElementById(
+                    "songsRated"
+                ).textContent =
+                    data.songs_rated || 0;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Profile error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        async function changeEmail() {
+
+            const emailInput =
+                document.getElementById(
+                    "newEmail"
+                );
+
+            const message =
+                document.getElementById(
+                    "emailMessage"
+                );
+
+            const email =
+                emailInput.value.trim();
+
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter a new email.";
+
+                return;
+
+            }
+
+
+            message.textContent =
+                "Updating email...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/profile/change-email",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    message.textContent =
+                        data.error ||
+                        "Unable to change email.";
+
+                    return;
+
+                }
+
+
+                message.textContent =
+                    data.message ||
+                    "Confirmation email sent.";
+
+                emailInput.value = "";
+
+
+            } catch (error) {
+
+                message.textContent =
+                    "Something went wrong.";
+
+            }
+
+        }
+
+
+        async function resetPassword() {
+
+            const emailInput =
+                document.getElementById(
+                    "resetEmail"
+                );
+
+            const message =
+                document.getElementById(
+                    "passwordMessage"
+                );
+
+            const email =
+                emailInput.value.trim();
+
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter your email.";
+
+                return;
+
+            }
+
+
+            message.textContent =
+                "Sending reset email...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/profile/reset-password",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    message.textContent =
+                        data.error ||
+                        "Unable to send reset email.";
+
+                    return;
+
+                }
+
+
+                message.textContent =
+                    data.message ||
+                    "Password reset email sent.";
+
+                emailInput.value = "";
+
+
+            } catch (error) {
+
+                message.textContent =
+                    "Something went wrong.";
+
+            }
+
+        }
+
+
+        loadProfileStats();
+
+    </script>
+
+</body>
+
+</html>

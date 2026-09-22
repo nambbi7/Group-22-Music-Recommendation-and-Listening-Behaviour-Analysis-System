@@ -2709,6 +2709,190 @@ def library_api():
             "error": str(error)
         }), 500
 
+@app.route("/update_password")
+def update_password():
+
+    return render_template(
+        "update_password.html",
+        supabase_url=os.getenv("SUPABASE_URL"),
+        supabase_anon_key=os.getenv("SUPABASE_KEY")
+    )
+
+@app.route("/profile")
+def profile():
+    return render_template(
+        "profile.html"
+    )
+
+
+@app.route("/api/profile")
+def profile_api():
+
+    user_id = get_database_user_id()
+
+    if not user_id:
+        return jsonify({
+            "success": False,
+            "error": "User not found."
+        }), 401
+
+    try:
+
+        history_response = (
+            supabase
+            .table("listening_history")
+            .select("id")
+            .eq(
+                "user_id",
+                user_id
+            )
+            .execute()
+        )
+
+        favourites_response = (
+            supabase
+            .table("favourites")
+            .select("id")
+            .eq(
+                "user_id",
+                user_id
+            )
+            .execute()
+        )
+
+        ratings_response = (
+            supabase
+            .table("ratings")
+            .select("id")
+            .eq(
+                "user_id",
+                user_id
+            )
+            .execute()
+        )
+
+        songs_played = len(
+            history_response.data
+            or []
+        )
+
+        favourite_songs = len(
+            favourites_response.data
+            or []
+        )
+
+        songs_rated = len(
+            ratings_response.data
+            or []
+        )
+
+        return jsonify({
+            "success": True,
+            "songs_played": songs_played,
+            "favourite_songs": favourite_songs,
+            "songs_rated": songs_rated
+        })
+
+    except Exception as error:
+
+        print(
+            "PROFILE API ERROR:",
+            error
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 500
+
+@app.route("/api/profile/change-email", methods=["POST"])
+def change_email():
+
+    data = request.get_json() or {}
+
+    new_email = (
+        data.get("email")
+        or ""
+    ).strip()
+
+    if not new_email:
+        return jsonify({
+            "success": False,
+            "error": "Please enter a new email."
+        }), 400
+
+    try:
+
+        response = supabase.auth.update_user({
+            "email": new_email
+        })
+
+        if response.user is None:
+            return jsonify({
+                "success": False,
+                "error": "Unable to change email."
+            }), 400
+
+        return jsonify({
+            "success": True,
+            "message": "A confirmation email has been sent."
+        })
+
+    except Exception as error:
+
+        print(
+            "CHANGE EMAIL ERROR:",
+            error
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 500
+
+
+@app.route("/api/profile/reset-password", methods=["POST"])
+def reset_password():
+
+    data = request.get_json() or {}
+
+    email = (
+        data.get("email")
+        or ""
+    ).strip()
+
+    if not email:
+        return jsonify({
+            "success": False,
+            "error": "Please enter your email."
+        }), 400
+
+    try:
+
+        supabase.auth.reset_password_for_email(
+            email,
+            {
+                "redirect_to":
+                "http://127.0.0.1:5000/update-password"
+            }
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "Password reset email sent."
+        })
+
+    except Exception as error:
+
+        print(
+            "RESET PASSWORD ERROR:",
+            error
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 500
 
 if __name__ == "__main__":
 

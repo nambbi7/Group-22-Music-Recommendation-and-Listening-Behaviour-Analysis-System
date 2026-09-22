@@ -1,0 +1,467 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(197, 92, 255, 0.14),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(80, 120, 255, 0.12),
+            transparent 35%
+        ),
+        #09090f;
+    color: white;
+}
+
+.navbar {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    background: rgba(10, 10, 18, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+.nav-links a {
+    color: #aaa8b8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+.nav-links a.active {
+    color: white;
+}
+
+.logout-btn {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 25px;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.profile-container {
+    width: min(1100px, 92%);
+    margin: 0 auto;
+    padding: 60px 0 80px;
+}
+
+.profile-hero {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 35px;
+    margin-bottom: 45px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    backdrop-filter: blur(12px);
+}
+
+.profile-avatar {
+    width: 85px;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(197, 92, 255, 0.14);
+    border: 1px solid rgba(197, 92, 255, 0.3);
+    font-size: 36px;
+}
+
+.profile-label {
+    color: #bfa1d4;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.profile-hero h1 {
+    font-size: 28px;
+    margin-bottom: 7px;
+    word-break: break-word;
+}
+
+.profile-hero p:last-child {
+    color: #8e8b99;
+    font-size: 14px;
+}
+
+.profile-section {
+    margin-bottom: 45px;
+}
+
+.section-title {
+    margin-bottom: 20px;
+}
+
+.section-title h2 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.section-title p {
+    color: #888694;
+    font-size: 14px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    transition: 0.25s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: rgba(197, 92, 255, 0.12);
+    color: #d9a5ff;
+    font-size: 21px;
+}
+
+.stat-card p {
+    color: #8e8b99;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.stat-card h3 {
+    font-size: 26px;
+}
+
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.quick-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px;
+    color: white;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    transition: 0.25s;
+}
+
+.quick-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.075);
+}
+
+.quick-card > span {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: rgba(197, 92, 255, 0.12);
+    color: #d9a5ff;
+    font-size: 19px;
+}
+
+.quick-card h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.quick-card p {
+    color: #888694;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.account-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 25px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+}
+
+.account-card > div {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.account-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: rgba(197, 92, 255, 0.12);
+    color: #d9a5ff;
+    font-size: 18px;
+}
+
+.account-card p {
+    color: #888694;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.account-card strong {
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.account-logout {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 22px;
+    transition: 0.3s;
+}
+
+.account-logout:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 900px) {
+
+    .nav-links {
+        gap: 15px;
+    }
+
+    .nav-links a {
+        font-size: 12px;
+    }
+
+    .stats-grid,
+    .quick-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .navbar {
+        padding: 0 18px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .profile-container {
+        width: 90%;
+        padding-top: 40px;
+    }
+
+    .profile-hero {
+        padding: 25px;
+        gap: 18px;
+    }
+
+    .profile-avatar {
+        width: 65px;
+        height: 65px;
+        font-size: 27px;
+    }
+
+    .profile-hero h1 {
+        font-size: 21px;
+    }
+
+    .account-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+.management-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.management-card {
+    display: flex;
+    gap: 18px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    transition: 0.25s;
+}
+
+.management-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.management-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: rgba(197, 92, 255, 0.12);
+    color: #d9a5ff;
+    font-size: 20px;
+}
+
+.management-content {
+    width: 100%;
+}
+
+.management-content h3 {
+    font-size: 17px;
+    margin-bottom: 6px;
+}
+
+.management-content > p {
+    color: #888694;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.management-form {
+    display: flex;
+    gap: 8px;
+}
+
+.management-form input {
+    min-width: 0;
+    flex: 1;
+    padding: 11px 13px;
+    color: white;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    outline: none;
+}
+
+.management-form input:focus {
+    border-color: rgba(197, 92, 255, 0.5);
+}
+
+.management-form button {
+    padding: 11px 15px;
+    color: white;
+    background: rgba(197, 92, 255, 0.2);
+    border: 1px solid rgba(197, 92, 255, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.25s;
+}
+
+.management-form button:hover {
+    background: rgba(197, 92, 255, 0.35);
+}
+
+.management-message {
+    margin-top: 10px !important;
+    margin-bottom: 0 !important;
+    color: #cda5e8 !important;
+    font-size: 12px !important;
+}
+
+@media (max-width: 900px) {
+
+    .management-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .management-form {
+        flex-direction: column;
+    }
+
+    .management-form button {
+        width: 100%;
+    }
+
+}
