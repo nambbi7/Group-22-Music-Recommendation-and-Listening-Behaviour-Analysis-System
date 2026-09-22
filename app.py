@@ -2575,6 +2575,7 @@ def library_api():
     user_id = get_database_user_id()
 
     if not user_id:
+
         return jsonify({
             "success": False,
             "error": "User not found."
@@ -2586,7 +2587,7 @@ def library_api():
             supabase
             .table("listening_history")
             .select(
-                "song_id, played_at, Songs(tittle, artist, image_url)"
+                "id, song_id, played_at, Songs(tittle, artist, image_url)"
             )
             .eq(
                 "user_id",
@@ -2596,7 +2597,6 @@ def library_api():
                 "played_at",
                 desc=True
             )
-            .limit(20)
             .execute()
         )
 
@@ -2631,11 +2631,22 @@ def library_api():
             )
 
             history.append({
-                "id": song_id,
-                "title": title,
-                "artist": artist,
-                "image": image,
-                "played_at": row.get("played_at")
+
+                "id":
+                    song_id,
+
+                "title":
+                    title,
+
+                "artist":
+                    artist,
+
+                "image":
+                    image,
+
+                "played_at":
+                    row.get("played_at")
+
             })
 
             if song_id:
@@ -2643,11 +2654,22 @@ def library_api():
                 if song_id not in play_counts:
 
                     play_counts[song_id] = {
-                        "id": song_id,
-                        "title": title,
-                        "artist": artist,
-                        "image": image,
-                        "plays": 0
+
+                        "id":
+                            song_id,
+
+                        "title":
+                            title,
+
+                        "artist":
+                            artist,
+
+                        "image":
+                            image,
+
+                        "plays":
+                            0
+
                     }
 
                 play_counts[song_id]["plays"] += 1
@@ -2678,10 +2700,12 @@ def library_api():
             .execute()
         )
 
+
         favourites_rows = (
             favourites_response.data
             or []
         )
+
 
         recently_added = []
 
@@ -2690,28 +2714,48 @@ def library_api():
             song = row.get("Songs") or {}
 
             recently_added.append({
-                "id": row.get("song_id"),
-                "title": (
-                    song.get("tittle")
-                    or "Unknown Song"
-                ),
-                "artist": (
-                    song.get("artist")
-                    or "Unknown Artist"
-                ),
-                "image": (
-                    song.get("image_url")
-                    or "/static/images/default-album.png"
-                ),
-                "created_at": row.get("created_at")
+
+                "id":
+                    row.get("song_id"),
+
+                "title":
+                    (
+                        song.get("tittle")
+                        or "Unknown Song"
+                    ),
+
+                "artist":
+                    (
+                        song.get("artist")
+                        or "Unknown Artist"
+                    ),
+
+                "image":
+                    (
+                        song.get("image_url")
+                        or "/static/images/default-album.png"
+                    ),
+
+                "created_at":
+                    row.get("created_at")
+
             })
 
 
         return jsonify({
-            "success": True,
-            "history": history,
-            "top_songs": top_songs,
-            "recently_added": recently_added
+
+            "success":
+                True,
+
+            "history":
+                history[:20],
+
+            "top_songs":
+                top_songs,
+
+            "recently_added":
+                recently_added
+
         })
 
 
@@ -2723,8 +2767,13 @@ def library_api():
         )
 
         return jsonify({
-            "success": False,
-            "error": str(error)
+
+            "success":
+                False,
+
+            "error":
+                str(error)
+
         }), 500
 
 @app.route("/update_password")

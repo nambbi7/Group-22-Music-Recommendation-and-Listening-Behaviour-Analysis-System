@@ -128,6 +128,7 @@ body {
         #ffffff
     );
     -webkit-background-clip: text;
+     background-clip: text;
     -webkit-text-fill-color: transparent;
     width: fit-content;
 }

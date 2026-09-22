@@ -198,10 +198,12 @@
                     "historyList"
                 );
 
+
             const topSongsList =
                 document.getElementById(
                     "topSongsList"
                 );
+
 
             const recentlyAddedList =
                 document.getElementById(
@@ -216,6 +218,7 @@
                         "/api/library"
                     );
 
+
                 const data =
                     await response.json();
 
@@ -228,11 +231,14 @@
                     historyList.innerHTML =
                         '<div class="error-message">Unable to load your listening history.</div>';
 
+
                     topSongsList.innerHTML =
                         '<div class="error-message">Unable to load your top songs.</div>';
 
+
                     recentlyAddedList.innerHTML =
                         '<div class="error-message">Unable to load recently added songs.</div>';
+
 
                     return;
 
@@ -242,8 +248,10 @@
                 const history =
                     data.history || [];
 
+
                 const topSongs =
                     data.top_songs || [];
+
 
                 const recentlyAdded =
                     data.recently_added || [];
@@ -257,35 +265,43 @@
 
                 displaySongs(
                     topSongsList,
-                    topSongs
+                    topSongs,
+                    true
                 );
 
 
                 displaySongs(
                     recentlyAddedList,
-                    recentlyAdded
+                    recentlyAdded,
+                    false
                 );
 
 
-            } catch (error) {
+            }
+
+            catch (error) {
 
                 console.error(
                     "Library error:",
                     error
                 );
 
+
                 historyList.innerHTML =
                     '<div class="error-message">Something went wrong while loading your library.</div>';
 
+
                 topSongsList.innerHTML =
-                    "";
+                    '<div class="error-message">Unable to load your top songs.</div>';
+
 
                 recentlyAddedList.innerHTML =
-                    "";
+                    '<div class="error-message">Unable to load recently added songs.</div>';
 
             }
 
         }
+
 
 
         function formatPlayedTime(
@@ -389,6 +405,7 @@
         }
 
 
+
         function displayHistory(
             container,
             songs
@@ -418,6 +435,7 @@
                             "div"
                         );
 
+
                     card.className =
                         "history-card";
 
@@ -433,23 +451,31 @@
                             ${index + 1}
                         </div>
 
+
                         <img
                             src="${image}"
-                            alt="${song.title}"
+                            alt="${escapeHtml(song.title)}"
                             class="history-image"
                         >
+
 
                         <div class="song-info">
 
                             <h3>
-                                ${song.title}
+                                ${escapeHtml(
+                                    song.title
+                                )}
                             </h3>
 
+
                             <p>
-                                ${song.artist}
+                                ${escapeHtml(
+                                    song.artist
+                                )}
                             </p>
 
                         </div>
+
 
                         <div class="played-time">
                             ${formatPlayedTime(
@@ -470,9 +496,11 @@
         }
 
 
+
         function displaySongs(
             container,
-            songs
+            songs,
+            showPlayCount
         ) {
 
             if (
@@ -499,6 +527,7 @@
                             "div"
                         );
 
+
                     card.className =
                         "song-card";
 
@@ -508,23 +537,61 @@
                         "/static/images/default-album.png";
 
 
+                    let playCountHTML =
+                        "";
+
+
+                    if (
+                        showPlayCount
+                        &&
+                        song.plays !== undefined
+                    ) {
+
+                        const playText =
+                            song.plays === 1
+                                ?
+                                "play"
+                                :
+                                "plays";
+
+
+                        playCountHTML = `
+
+                            <span class="play-count">
+                                ${song.plays} ${playText}
+                            </span>
+
+                        `;
+
+                    }
+
+
                     card.innerHTML = `
 
                         <img
                             src="${image}"
-                            alt="${song.title}"
+                            alt="${escapeHtml(song.title)}"
                             class="song-image"
                         >
+
 
                         <div class="song-info">
 
                             <h3>
-                                ${song.title}
+                                ${escapeHtml(
+                                    song.title
+                                )}
                             </h3>
 
+
                             <p>
-                                ${song.artist}
+                                ${escapeHtml(
+                                    song.artist
+                                )}
                             </p>
+
+
+                            ${playCountHTML}
 
                         </div>
 
@@ -539,6 +606,27 @@
             );
 
         }
+
+
+
+        function escapeHtml(
+            text
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.textContent =
+                text || "";
+
+
+            return div.innerHTML;
+
+        }
+
 
 
         loadLibrary();
