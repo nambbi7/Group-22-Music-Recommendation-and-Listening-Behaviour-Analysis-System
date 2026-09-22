@@ -2,49 +2,97 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Register - CHERI</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/login.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/login.css') }}"
+    >
+
 </head>
 
 <body>
 
-    <div class="floating-logo">
-        <img src="{{ url_for('static', filename='images/logo.png') }}"
-             alt="Cheri Logo">
+    {% if error %}
+
+    <div class="login-error">
+
+        <span>
+            &#9888;
+        </span>
+
+        <span>
+            {{ error }}
+        </span>
+
     </div>
+
+    {% endif %}
+
+
+    <div class="floating-logo">
+
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="Cheri Logo"
+        >
+
+    </div>
+
 
     <div class="login-container">
 
-        <h1>🎵 Cheri</h1>
+        <h1>
+            Cheri
+        </h1>
 
-        <p class="subtitle">Create your account</p>
+        <p class="subtitle">
+            Create your account
+        </p>
 
-        <form method="POST" action="/register">
 
-            <label>Username</label>
+        <form
+            method="POST"
+            action="/register"
+        >
+
+            <label>
+                Username
+            </label>
 
             <input
                 type="text"
                 name="username"
                 placeholder="Choose a username"
+                value="{{ username or '' }}"
                 required
             >
 
-            <label>Email</label>
+
+            <label>
+                Email
+            </label>
 
             <input
                 type="email"
                 name="email"
                 placeholder="Enter your email"
+                value="{{ email or '' }}"
                 required
             >
 
-            <label>Password</label>
+
+            <label>
+                Password
+            </label>
 
             <input
                 type="password"
@@ -54,29 +102,51 @@
                 required
             >
 
+
             <div class="password-requirements">
 
-                <p id="length">✗ At least 8 characters</p>
+                <p id="length">
+                    &#10007; At least 8 characters
+                </p>
 
-                <p id="uppercase">✗ At least 1 uppercase letter</p>
+                <p id="uppercase">
+                    &#10007; At least 1 uppercase letter
+                </p>
 
-                <p id="lowercase">✗ At least 1 lowercase letter</p>
+                <p id="lowercase">
+                    &#10007; At least 1 lowercase letter
+                </p>
 
-                <p id="number">✗ At least 1 number</p>
+                <p id="number">
+                    &#10007; At least 1 number
+                </p>
 
-                <p id="special">✗ At least 1 special character</p>
+                <p id="special">
+                    &#10007; At least 1 special character
+                </p>
 
             </div>
 
-            <button type="submit" id="register-button" disabled>
+
+            <button
+                type="submit"
+                id="register-button"
+                disabled
+            >
                 Create Account
             </button>
 
         </form>
 
+
         <div class="register">
+
             Already have an account?
-            <a href="/login">Login</a>
+
+            <a href="/login">
+                Login
+            </a>
+
         </div>
 
     </div>
@@ -84,86 +154,130 @@
 
     <script>
 
-        const password = document.getElementById("password");
-        const registerButton = document.getElementById("register-button");
-
-
-        password.addEventListener("input", function () {
-
-            const value = password.value;
-
-
-            // Check password requirements
-
-            const hasLength = value.length >= 8;
-            const hasUppercase = /[A-Z]/.test(value);
-            const hasLowercase = /[a-z]/.test(value);
-            const hasNumber = /[0-9]/.test(value);
-            const hasSpecial = /[^A-Za-z0-9]/.test(value);
-
-
-            // Update the ticks
-
-            updateRequirement(
-                "length",
-                hasLength,
-                "At least 8 characters"
+        const password =
+            document.getElementById(
+                "password"
             );
 
-            updateRequirement(
-                "uppercase",
-                hasUppercase,
-                "At least 1 uppercase letter"
-            );
-
-            updateRequirement(
-                "lowercase",
-                hasLowercase,
-                "At least 1 lowercase letter"
-            );
-
-            updateRequirement(
-                "number",
-                hasNumber,
-                "At least 1 number"
-            );
-
-            updateRequirement(
-                "special",
-                hasSpecial,
-                "At least 1 special character"
+        const registerButton =
+            document.getElementById(
+                "register-button"
             );
 
 
-            // Enable button only when ALL requirements are satisfied
+        password.addEventListener(
+            "input",
+            function () {
 
-            const strongPassword =
-                hasLength &&
-                hasUppercase &&
-                hasLowercase &&
-                hasNumber &&
-                hasSpecial;
+                const value =
+                    password.value;
 
 
-            registerButton.disabled = !strongPassword;
+                const hasLength =
+                    value.length >= 8;
 
-        });
+                const hasUppercase =
+                    /[A-Z]/.test(
+                        value
+                    );
+
+                const hasLowercase =
+                    /[a-z]/.test(
+                        value
+                    );
+
+                const hasNumber =
+                    /[0-9]/.test(
+                        value
+                    );
+
+                const hasSpecial =
+                    /[^A-Za-z0-9]/.test(
+                        value
+                    );
 
 
-        function updateRequirement(id, valid, text) {
+                updateRequirement(
+                    "length",
+                    hasLength,
+                    "At least 8 characters"
+                );
 
-            const requirement = document.getElementById(id);
+
+                updateRequirement(
+                    "uppercase",
+                    hasUppercase,
+                    "At least 1 uppercase letter"
+                );
+
+
+                updateRequirement(
+                    "lowercase",
+                    hasLowercase,
+                    "At least 1 lowercase letter"
+                );
+
+
+                updateRequirement(
+                    "number",
+                    hasNumber,
+                    "At least 1 number"
+                );
+
+
+                updateRequirement(
+                    "special",
+                    hasSpecial,
+                    "At least 1 special character"
+                );
+
+
+                const strongPassword =
+                    hasLength &&
+                    hasUppercase &&
+                    hasLowercase &&
+                    hasNumber &&
+                    hasSpecial;
+
+
+                registerButton.disabled =
+                    !strongPassword;
+
+            }
+        );
+
+
+        function updateRequirement(
+            id,
+            valid,
+            text
+        ) {
+
+            const requirement =
+                document.getElementById(
+                    id
+                );
 
 
             if (valid) {
 
-                requirement.textContent = "✓ " + text;
-                requirement.classList.add("valid");
+                requirement.textContent =
+                    "&#10003; " + text;
 
-            } else {
+                requirement.classList.add(
+                    "valid"
+                );
 
-                requirement.textContent = "✗ " + text;
-                requirement.classList.remove("valid");
+            }
+
+            else {
+
+                requirement.textContent =
+                    "&#10007; " + text;
+
+                requirement.classList.remove(
+                    "valid"
+                );
 
             }
 

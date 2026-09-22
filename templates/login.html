@@ -1,45 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Login - CHERI</title>
- <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">   
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/login.css') }}"
+    >
 
 </head>
 
 <body>
 
-    <body>
+    {% if error %}
+
+    <div class="login-error">
+        <span>&#9888;</span>
+        <span>{{ error }}</span>
+    </div>
+
+    {% endif %}
+
 
     <div class="floating-logo">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Cheri Logo">
+
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="Cheri Logo"
+        >
+
     </div>
+
 
     <div class="login-container">
 
-        <h1> Cheri </h1>
+        <h1>
+            Cheri
+        </h1>
 
-        <p class="subtitle">Login to your account</p>
+        <p class="subtitle">
+            Login to your account
+        </p>
 
-        <form method="POST" action="/login">
 
-            <label>Email</label>
-            <input type="email" name="email" placeholder="Enter your email" required>
+        <form
+            method="POST"
+            action="/login"
+        >
 
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password" required>
+            <label>
+                Email
+            </label>
 
-            <button type="submit">Login</button>
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value="{{ email or '' }}"
+                required
+            >
+
+
+            <label>
+                Password
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+
+            <button type="submit">
+                Login
+            </button>
 
         </form>
 
+
         <div class="register">
+
             Don't have an account?
-            <a href="/register">Register</a>
+
+            <a href="/register">
+                Register
+            </a>
+
         </div>
 
     </div>
 
 </body>
+
 </html>
