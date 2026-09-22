@@ -90,6 +90,7 @@ def login():
     if request.method == "POST":
 
         email = request.form["email"]
+
         password = request.form["password"]
 
         try:
@@ -127,14 +128,19 @@ def login():
                 repr(e)
             )
 
-            return (
-                f"Login failed: {str(e)}"
+            error_message = (
+                "Invalid email or password."
+            )
+
+            return render_template(
+                "login.html",
+                error=error_message,
+                email=email
             )
 
     return render_template(
         "login.html"
     )
-
 
 
 @app.route("/logout")
@@ -206,7 +212,17 @@ def register():
                 repr(e)
             )
 
-            raise
+            error_message = (
+                "Unable to create your account. "
+                "Please check your details and try again."
+            )
+
+            return render_template(
+                "register.html",
+                error=error_message,
+                username=username,
+                email=email
+            )
 
     return render_template(
         "register.html"
