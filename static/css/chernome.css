@@ -14,6 +14,60 @@ body {
     color: white;
 }
 
+.chernome-navbar {
+    position: relative;
+    z-index: 20;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(5, 5, 20, 0.75);
+    backdrop-filter: blur(14px);
+}
+
+.chernome-navbar .nav-logo {
+    color: white;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.chernome-navbar .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+.chernome-navbar .nav-links a {
+    color: #b9b4c9;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.chernome-navbar .nav-links a:hover {
+    color: white;
+}
+
+.chernome-navbar .logout-btn {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    transition: 0.3s;
+}
+
+.chernome-navbar .logout-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
 .chernome-page {
     min-height: 100vh;
     position: relative;
@@ -129,6 +183,12 @@ body {
     font-size: 16px;
 }
 
+.saved-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .song-count {
     border: 1px solid rgba(193, 102, 255, 0.8);
     border-radius: 30px;
@@ -141,6 +201,30 @@ body {
     font-size: 13px;
     font-weight: bold;
     letter-spacing: 1px;
+}
+
+.soundprint-key {
+    border: 1px solid rgba(193, 102, 255, 0.8);
+    border-radius: 30px;
+    padding: 13px 20px;
+    color: #e5c5ff;
+    background: rgba(115, 40, 180, 0.16);
+    box-shadow:
+        0 0 20px rgba(155, 70, 255, 0.18);
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.soundprint-key:hover {
+    background: rgba(145, 60, 220, 0.28);
+    border-color: rgba(220, 160, 255, 0.9);
+    box-shadow:
+        0 0 28px rgba(170, 80, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .loading {
@@ -214,6 +298,22 @@ body {
     box-shadow:
         0 15px 35px rgba(0, 0, 0, 0.5),
         0 0 30px rgba(130, 70, 255, 0.12);
+}
+
+.album-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: inherit;
+}
+
+.album-placeholder.image-loaded {
+    background: #111;
+}
+
+.album-placeholder.image-loaded .album-note {
+    display: none;
 }
 
 .album-note {
@@ -565,6 +665,182 @@ body {
     color: #9994a9;
 }
 
+.soundprint-section {
+    margin-top: 55px;
+    padding: 45px;
+    border-radius: 25px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(25, 18, 48, 0.96),
+            rgba(8, 8, 20, 0.98)
+        );
+    border: 1px solid rgba(180, 100, 255, 0.25);
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.5),
+        0 0 45px rgba(130, 70, 255, 0.08);
+    backdrop-filter: blur(20px);
+}
+
+.soundprint-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.soundprint-header .hero-logo {
+    margin: auto;
+    font-size: clamp(35px, 5vw, 60px);
+}
+
+.soundprint-header .hero-line {
+    margin: 15px auto;
+}
+
+.soundprint-header p {
+    margin: 0 0 8px;
+    color: #bbb6d0;
+    letter-spacing: 4px;
+    font-size: 12px;
+}
+
+.soundprint-header span {
+    color: #817b91;
+    font-size: 13px;
+}
+
+.soundprint-content {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 50px;
+}
+
+.soundprint-radar-wrapper {
+    position: relative;
+    width: min(430px, 100%);
+    height: 430px;
+    margin: auto;
+}
+
+.soundprint-radar {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.soundprint-grid polygon {
+    fill: none;
+    stroke: rgba(180, 140, 255, 0.16);
+    stroke-width: 1;
+}
+
+.soundprint-lines line {
+    stroke: rgba(180, 140, 255, 0.12);
+    stroke-width: 1;
+}
+
+.soundprint-shape {
+    fill: rgba(145, 75, 255, 0.25);
+    stroke: #c06cff;
+    stroke-width: 2.5;
+    filter:
+        drop-shadow(
+            0 0 12px rgba(180, 80, 255, 0.8)
+        );
+}
+
+.soundprint-outline {
+    fill: none;
+    stroke: rgba(225, 170, 255, 0.8);
+    stroke-width: 1;
+}
+
+.soundprint-point {
+    fill: #ead0ff;
+    stroke: #984fff;
+    stroke-width: 2;
+    filter:
+        drop-shadow(
+            0 0 8px rgba(200, 100, 255, 0.95)
+        );
+}
+
+.soundprint-label {
+    position: absolute;
+    color: #aaa2ba;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.soundprint-label-top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.soundprint-label-right {
+    right: -5px;
+    top: 27%;
+}
+
+.soundprint-label-bottom-right {
+    right: 30px;
+    bottom: 5%;
+}
+
+.soundprint-label-bottom-left {
+    left: 30px;
+    bottom: 5%;
+}
+
+.soundprint-label-left {
+    left: -5px;
+    top: 27%;
+}
+
+.soundprint-info {
+    padding: 30px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.soundprint-info h2 {
+    margin: 0 0 12px;
+    font-size: 30px;
+}
+
+.soundprint-info > p {
+    margin: 0 0 30px;
+    color: #9690a7;
+    line-height: 1.7;
+}
+
+.soundprint-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.soundprint-metrics div {
+    padding: 18px;
+    border-radius: 15px;
+    border: 1px solid rgba(170, 110, 255, 0.15);
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.soundprint-metrics span {
+    display: block;
+    color: #817b91;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.soundprint-metrics strong {
+    color: #d19aff;
+    font-size: 22px;
+}
+
 .chernome-footer {
     margin-top: 45px;
     min-height: 180px;
@@ -685,9 +961,37 @@ body {
         min-height: auto;
     }
 
+    .soundprint-content {
+        grid-template-columns: 1fr;
+    }
+
+    .soundprint-info {
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 30px 0 0;
+    }
+
 }
 
 @media (max-width: 700px) {
+
+    .chernome-navbar {
+        padding: 0 18px;
+    }
+
+    .chernome-navbar .nav-links {
+        gap: 12px;
+        margin-right: 15px;
+    }
+
+    .chernome-navbar .nav-links a {
+        font-size: 11px;
+    }
+
+    .chernome-navbar .logout-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
 
     .chernome-content {
         width: 94%;
@@ -701,6 +1005,15 @@ body {
     .saved-header {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .saved-header-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .soundprint-key {
+        font-size: 11px;
     }
 
     .chernome-card {
@@ -734,6 +1047,23 @@ body {
         grid-template-columns: repeat(3, 1fr);
     }
 
+    .soundprint-section {
+        padding: 25px 18px;
+    }
+
+    .soundprint-radar-wrapper {
+        width: 100%;
+        height: 330px;
+    }
+
+    .soundprint-info {
+        padding-top: 25px;
+    }
+
+    .soundprint-metrics {
+        grid-template-columns: 1fr 1fr;
+    }
+
     .chernome-footer {
         flex-direction: column;
         align-items: flex-start;
@@ -747,4 +1077,31 @@ body {
         margin-left: 0;
     }
 
+}
+
+.remove-chernome-btn {
+    margin-top: 18px;
+    padding: 9px 15px;
+    border: 1px solid rgba(255, 90, 130, 0.45);
+    border-radius: 20px;
+    background: rgba(180, 40, 80, 0.08);
+    color: #ff9ab5;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.remove-chernome-btn:hover {
+    background: rgba(220, 50, 100, 0.18);
+    border-color: rgba(255, 110, 150, 0.8);
+    color: #ffc1d0;
+    transform: translateY(-2px);
+}
+
+.remove-chernome-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
 }

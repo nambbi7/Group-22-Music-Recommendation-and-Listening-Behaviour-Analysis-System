@@ -1105,6 +1105,8 @@ def get_chernomes():
 
         }), 500
 
+    
+
 @app.route("/chernome")
 def chernome_page():
 
@@ -2893,6 +2895,278 @@ def reset_password():
             "success": False,
             "error": str(error)
         }), 500
+
+@app.route(
+    "/api/chernome/soundprint",
+    methods=["GET"]
+)
+def chernome_soundprint():
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "success": False,
+            "error":
+                "User is not logged in."
+        }), 401
+
+    try:
+
+        database_user_id = (
+            get_database_user_id()
+        )
+
+        if not database_user_id:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Database user not found."
+            }), 404
+
+        response = (
+            supabase
+            .table("chernomes")
+            .select(
+                "track_id, track_name, artists, image_url"
+            )
+            .eq(
+                "user_id",
+                database_user_id
+            )
+            .order(
+                "created_at",
+                desc=True
+            )
+            .execute()
+        )
+
+        saved_songs = (
+            response.data or []
+        )
+
+        song_count = len(
+            saved_songs
+        )
+
+        if song_count < 3:
+
+            return jsonify({
+
+                "success": True,
+
+                "unlocked":
+                    False,
+
+                "song_count":
+                    song_count,
+
+                "message":
+                    "Save 3 or more CHERNOMEs to unlock CHERI Soundprint."
+
+            })
+
+        feature_names = [
+            "danceability",
+            "energy",
+            "valence",
+            "acousticness",
+            "instrumentalness",
+            "speechiness",
+            "liveness",
+            "tempo"
+        ]
+
+        feature_values = {
+            feature: []
+            for feature in feature_names
+        }
+
+        valid_songs = []
+
+        for saved_song in saved_songs:
+
+            track_id = (
+                saved_song.get(
+                    "track_id"
+                )
+            )
+
+            matches = music_dataset[
+                music_dataset[
+                    "track_id"
+                ].astype(str)
+                == str(track_id)
+            ]
+
+            if matches.empty:
+                continue
+
+            song = matches.iloc[0]
+
+            valid_songs.append({
+                "track_id":
+                    str(track_id),
+
+                "track_name":
+                    saved_song.get(
+                        "track_name"
+                    ),
+
+                "artists":
+                    saved_song.get(
+                        "artists"
+                    ),
+
+                "image_url":
+                    saved_song.get(
+                        "image_url"
+                    )
+            })
+
+            for feature in feature_names:
+
+                feature_values[
+                    feature
+                ].append(
+                    float(
+                        song[feature]
+                    )
+                )
+
+        if len(valid_songs) < 3:
+
+            return jsonify({
+
+                "success": True,
+
+                "unlocked":
+                    False,
+
+                "song_count":
+                    song_count,
+
+                "valid_song_count":
+                    len(valid_songs),
+
+                "message":
+                    "At least 3 saved CHERNOMEs with available music data are required."
+
+            })
+
+        averages = {}
+
+        for feature in feature_names:
+
+            values = (
+                feature_values[
+                    feature
+                ]
+            )
+
+            averages[
+                feature
+            ] = sum(values) / len(values)
+
+        return jsonify({
+
+            "success":
+                True,
+
+            "unlocked":
+                True,
+
+            "song_count":
+                song_count,
+
+            "songs_used":
+                len(valid_songs),
+
+            "songs":
+                valid_songs,
+
+            "soundprint":
+                averages
+
+        })
+
+    except Exception as e:
+
+        print(
+            "SOUNDPRINT ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+
+            "success":
+                False,
+
+            "error":
+                str(e)
+
+        }), 500
+
+
+@app.route(
+    "/api/chernome/remove/<track_id>",
+    methods=["DELETE"]
+)
+def remove_chernome(track_id):
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "success": False,
+            "error": "User is not logged in."
+        }), 401
+
+    try:
+
+        database_user_id = (
+            get_database_user_id()
+        )
+
+        if not database_user_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Database user not found."
+            }), 404
+
+        (
+            supabase
+            .table("chernomes")
+            .delete()
+            .eq(
+                "user_id",
+                database_user_id
+            )
+            .eq(
+                "track_id",
+                track_id
+            )
+            .execute()
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "CHERNOME removed successfully."
+        })
+
+    except Exception as e:
+
+        print(
+            "REMOVE CHERNOME ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+    
 
 if __name__ == "__main__":
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
@@ -15,85 +16,6 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='css/chernome.css') }}"
     >
-
-    <style>
-
-        .chernome-navbar {
-            position: relative;
-            z-index: 20;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            padding: 0 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(5, 5, 20, 0.75);
-            backdrop-filter: blur(14px);
-        }
-
-        .chernome-navbar .nav-logo {
-            color: white;
-            font-size: 25px;
-            font-weight: 800;
-            letter-spacing: 4px;
-        }
-
-        .chernome-navbar .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            margin-left: auto;
-            margin-right: 30px;
-        }
-
-        .chernome-navbar .nav-links a {
-            color: #b9b4c9;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .chernome-navbar .nav-links a:hover {
-            color: white;
-        }
-
-        .chernome-navbar .logout-btn {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 9px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            transition: 0.3s;
-        }
-
-        .chernome-navbar .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .album-placeholder {
-            overflow: hidden;
-            position: relative;
-        }
-
-        .album-cover {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: inherit;
-        }
-
-        .album-placeholder.image-loaded {
-            background: #111;
-        }
-
-        .album-placeholder.image-loaded .album-note {
-            display: none;
-        }
-
-    </style>
 
 </head>
 
@@ -176,11 +98,24 @@
 
                 </div>
 
-                <div
-                    class="song-count"
-                    id="songCount"
-                >
-                    &#9835;&nbsp; 0 SONGS SAVED
+                <div class="saved-header-actions">
+
+                    <div
+                        class="song-count"
+                        id="songCount"
+                    >
+                        &#9835;&nbsp; 0 SONGS SAVED
+                    </div>
+
+                    <button
+                        class="soundprint-key"
+                        id="soundprintKey"
+                        style="display: none;"
+                        onclick="openSoundprint()"
+                    >
+                        &#10022;&nbsp; CHERI SOUNDPRINT
+                    </button>
+
                 </div>
 
             </section>
@@ -220,6 +155,228 @@
 
             </section>
 
+
+            <section
+                class="soundprint-section"
+                id="soundprint"
+                style="display: none;"
+            >
+
+                <div class="soundprint-header">
+
+                    <div class="hero-logo">
+                        CHERI SOUNDPRINT
+                    </div>
+
+                    <div class="hero-line"></div>
+
+                    <p>
+                        YOUR UNIQUE MUSICAL DNA
+                    </p>
+
+                    <span id="soundprintSongCount">
+                        Based on your saved CHERNOMEs
+                    </span>
+
+                </div>
+
+
+                <div class="soundprint-content">
+
+                    <div class="soundprint-radar-wrapper">
+
+                        <svg
+                            class="soundprint-radar"
+                            viewBox="0 0 400 400"
+                        >
+
+                            <g class="soundprint-grid">
+
+                                <polygon
+                                    points="200,45 347,152 291,325 109,325 53,152"
+                                ></polygon>
+
+                                <polygon
+                                    points="200,90 294,158 258,280 142,280 106,158"
+                                ></polygon>
+
+                                <polygon
+                                    points="200,135 242,165 226,235 174,235 158,165"
+                                ></polygon>
+
+                            </g>
+
+                            <g class="soundprint-lines">
+
+                                <line
+                                    x1="200"
+                                    y1="200"
+                                    x2="200"
+                                    y2="45"
+                                ></line>
+
+                                <line
+                                    x1="200"
+                                    y1="200"
+                                    x2="347"
+                                    y2="152"
+                                ></line>
+
+                                <line
+                                    x1="200"
+                                    y1="200"
+                                    x2="291"
+                                    y2="325"
+                                ></line>
+
+                                <line
+                                    x1="200"
+                                    y1="200"
+                                    x2="109"
+                                    y2="325"
+                                ></line>
+
+                                <line
+                                    x1="200"
+                                    y1="200"
+                                    x2="53"
+                                    y2="152"
+                                ></line>
+
+                            </g>
+
+                            <polygon
+                                class="soundprint-shape"
+                                id="soundprintShape"
+                            ></polygon>
+
+                            <polygon
+                                class="soundprint-outline"
+                                id="soundprintOutline"
+                            ></polygon>
+
+                            <g
+                                class="soundprint-points"
+                                id="soundprintPoints"
+                            ></g>
+
+                        </svg>
+
+                        <span class="soundprint-label soundprint-label-top">
+                            Energy
+                        </span>
+
+                        <span class="soundprint-label soundprint-label-right">
+                            Danceability
+                        </span>
+
+                        <span class="soundprint-label soundprint-label-bottom-right">
+                            Valence
+                        </span>
+
+                        <span class="soundprint-label soundprint-label-bottom-left">
+                            Acousticness
+                        </span>
+
+                        <span class="soundprint-label soundprint-label-left">
+                            Liveness
+                        </span>
+
+                    </div>
+
+
+                    <div class="soundprint-info">
+
+                        <h2>
+                            Your Musical DNA
+                        </h2>
+
+                        <p>
+                            Your Soundprint combines the musical characteristics of your saved CHERNOMEs.
+                        </p>
+
+                        <div class="soundprint-metrics">
+
+                            <div>
+
+                                <span>
+                                    ENERGY
+                                </span>
+
+                                <strong id="soundEnergy">
+                                    --
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    DANCEABILITY
+                                </span>
+
+                                <strong id="soundDanceability">
+                                    --
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    VALENCE
+                                </span>
+
+                                <strong id="soundValence">
+                                    --
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    ACOUSTICNESS
+                                </span>
+
+                                <strong id="soundAcousticness">
+                                    --
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    LIVENESS
+                                </span>
+
+                                <strong id="soundLiveness">
+                                    --
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    TEMPO
+                                </span>
+
+                                <strong id="soundTempo">
+                                    --
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
         </main>
 
     </div>
@@ -248,6 +405,22 @@
                 document.getElementById(
                     "songCount"
                 );
+
+            const soundprintKey =
+                document.getElementById(
+                    "soundprintKey"
+                );
+
+            const soundprint =
+                document.getElementById(
+                    "soundprint"
+                );
+
+            loading.style.display =
+                "block";
+
+            emptyState.style.display =
+                "none";
 
             try {
 
@@ -294,6 +467,35 @@
                     )
                     + " SAVED";
 
+
+                savedList.innerHTML =
+                    "";
+
+
+                if (
+                    chernomes.length >= 3
+                ) {
+
+                    soundprintKey.style.display =
+                        "block";
+
+                    await loadSoundprint();
+
+                }
+
+                else {
+
+                    soundprintKey.style.display =
+                        "none";
+
+                    soundprint.style.display =
+                        "none";
+
+                    clearSoundprint();
+
+                }
+
+
                 if (
                     chernomes.length === 0
                 ) {
@@ -305,8 +507,6 @@
 
                 }
 
-                savedList.innerHTML =
-                    "";
 
                 for (
                     const chernome
@@ -349,6 +549,387 @@
         }
 
 
+        function openSoundprint() {
+
+            const soundprint =
+                document.getElementById(
+                    "soundprint"
+                );
+
+            soundprint.style.display =
+                "block";
+
+            soundprint.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+
+
+        async function loadSoundprint() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/chernome/soundprint"
+                    );
+
+                const data =
+                    await response.json();
+
+                if (
+                    !data.success
+                    || !data.unlocked
+                ) {
+
+                    document.getElementById(
+                        "soundprint"
+                    ).style.display =
+                        "none";
+
+                    return;
+
+                }
+
+                const soundprint =
+                    document.getElementById(
+                        "soundprint"
+                    );
+
+                soundprint.style.display =
+                    "block";
+
+                const songCount =
+                    document.getElementById(
+                        "soundprintSongCount"
+                    );
+
+                songCount.textContent =
+                    "Based on "
+                    + data.songs_used
+                    + " saved CHERNOMEs";
+
+                const features =
+                    data.soundprint;
+
+
+                document.getElementById(
+                    "soundEnergy"
+                ).textContent =
+                    Math.round(
+                        features.energy
+                        * 100
+                    )
+                    + "%";
+
+
+                document.getElementById(
+                    "soundDanceability"
+                ).textContent =
+                    Math.round(
+                        features.danceability
+                        * 100
+                    )
+                    + "%";
+
+
+                document.getElementById(
+                    "soundValence"
+                ).textContent =
+                    Math.round(
+                        features.valence
+                        * 100
+                    )
+                    + "%";
+
+
+                document.getElementById(
+                    "soundAcousticness"
+                ).textContent =
+                    Math.round(
+                        features.acousticness
+                        * 100
+                    )
+                    + "%";
+
+
+                document.getElementById(
+                    "soundLiveness"
+                ).textContent =
+                    Math.round(
+                        features.liveness
+                        * 100
+                    )
+                    + "%";
+
+
+                document.getElementById(
+                    "soundTempo"
+                ).textContent =
+                    Math.round(
+                        features.tempo
+                    )
+                    + " BPM";
+
+
+                buildSoundprintRadar(
+                    features
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "SOUNDPRINT ERROR:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        function clearSoundprint() {
+
+            document.getElementById(
+                "soundEnergy"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "soundDanceability"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "soundValence"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "soundAcousticness"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "soundLiveness"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "soundTempo"
+            ).textContent =
+                "--";
+
+            document.getElementById(
+                "soundprintSongCount"
+            ).textContent =
+                "Based on your saved CHERNOMEs";
+
+            document.getElementById(
+                "soundprintShape"
+            ).setAttribute(
+                "points",
+                ""
+            );
+
+            document.getElementById(
+                "soundprintOutline"
+            ).setAttribute(
+                "points",
+                ""
+            );
+
+            document.getElementById(
+                "soundprintPoints"
+            ).innerHTML =
+                "";
+
+        }
+
+
+        function buildSoundprintRadar(
+            features
+        ) {
+
+            const values = [
+
+                features.energy,
+
+                features.danceability,
+
+                features.valence,
+
+                features.acousticness,
+
+                features.liveness
+
+            ];
+
+
+            const centerX =
+                200;
+
+            const centerY =
+                200;
+
+            const radius =
+                155;
+
+            const points =
+                [];
+
+
+            for (
+                let i = 0;
+                i < values.length;
+                i++
+            ) {
+
+                const angle =
+                    (
+                        -90
+                        + i * 72
+                    )
+                    * Math.PI
+                    / 180;
+
+                const value =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            Number(
+                                values[i]
+                            )
+                        )
+                    );
+
+                const x =
+                    centerX
+                    + Math.cos(angle)
+                    * radius
+                    * value;
+
+                const y =
+                    centerY
+                    + Math.sin(angle)
+                    * radius
+                    * value;
+
+                points.push(
+                    x + "," + y
+                );
+
+            }
+
+
+            const pointString =
+                points.join(" ");
+
+
+            document.getElementById(
+                "soundprintShape"
+            ).setAttribute(
+                "points",
+                pointString
+            );
+
+
+            document.getElementById(
+                "soundprintOutline"
+            ).setAttribute(
+                "points",
+                pointString
+            );
+
+
+            const pointsGroup =
+                document.getElementById(
+                    "soundprintPoints"
+                );
+
+
+            pointsGroup.innerHTML =
+                "";
+
+
+            for (
+                let i = 0;
+                i < values.length;
+                i++
+            ) {
+
+                const angle =
+                    (
+                        -90
+                        + i * 72
+                    )
+                    * Math.PI
+                    / 180;
+
+                const value =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            Number(
+                                values[i]
+                            )
+                        )
+                    );
+
+                const x =
+                    centerX
+                    + Math.cos(angle)
+                    * radius
+                    * value;
+
+                const y =
+                    centerY
+                    + Math.sin(angle)
+                    * radius
+                    * value;
+
+
+                const circle =
+                    document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "circle"
+                    );
+
+
+                circle.setAttribute(
+                    "cx",
+                    x
+                );
+
+                circle.setAttribute(
+                    "cy",
+                    y
+                );
+
+                circle.setAttribute(
+                    "r",
+                    "6"
+                );
+
+                circle.classList.add(
+                    "soundprint-point"
+                );
+
+
+                pointsGroup.appendChild(
+                    circle
+                );
+
+            }
+
+        }
+
+
         async function createChernomeCard(
             saved
         ) {
@@ -360,6 +941,7 @@
 
             card.className =
                 "chernome-card";
+
 
             card.innerHTML = `
 
@@ -403,6 +985,13 @@
                         <p class="track-quote">
                             Your unique musical fingerprint.
                         </p>
+
+                        <button
+                            class="remove-chernome-btn"
+                            type="button"
+                        >
+                            &#10005;&nbsp; REMOVE CHERNOME
+                        </button>
 
                     </div>
 
@@ -554,6 +1143,7 @@
                             <i></i>
                             <i></i>
                             <i></i>
+                            <i></i>
 
                         </div>
 
@@ -604,10 +1194,107 @@
 
             `;
 
+
             loadAlbumArtwork(
                 card,
                 saved
             );
+
+
+            const removeButton =
+                card.querySelector(
+                    ".remove-chernome-btn"
+                );
+
+
+            removeButton.addEventListener(
+                "click",
+                async function() {
+
+                    const confirmed =
+                        confirm(
+                            "Remove \""
+                            + saved.track_name
+                            + "\" from your CHERNOMEs?"
+                        );
+
+
+                    if (
+                        !confirmed
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    removeButton.disabled =
+                        true;
+
+                    removeButton.innerHTML =
+                        "&#10005;&nbsp; REMOVING...";
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/api/chernome/remove/"
+                                + encodeURIComponent(
+                                    saved.track_id
+                                ),
+                                {
+                                    method: "DELETE"
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (
+                            !data.success
+                        ) {
+
+                            throw new Error(
+                                data.error
+                                || "Unable to remove CHERNOME."
+                            );
+
+                        }
+
+
+                        await loadChernomes();
+
+
+                    }
+
+                    catch (error) {
+
+                        console.error(
+                            "REMOVE CHERNOME ERROR:",
+                            error
+                        );
+
+
+                        alert(
+                            error.message
+                            || "Unable to remove this CHERNOME."
+                        );
+
+
+                        removeButton.disabled =
+                            false;
+
+                        removeButton.innerHTML =
+                            "&#10005;&nbsp; REMOVE CHERNOME";
+
+                    }
+
+                }
+            );
+
 
             try {
 
@@ -619,8 +1306,10 @@
                         )
                     );
 
+
                 const data =
                     await response.json();
+
 
                 if (
                     data.success
@@ -630,10 +1319,12 @@
                     const features =
                         data.features;
 
+
                     buildRadar(
                         card,
                         features
                     );
+
 
                     card.querySelector(
                         "[data-tempo]"
@@ -642,6 +1333,7 @@
                             features.tempo
                         ).toFixed(0)
                         + " BPM";
+
 
                     card.querySelector(
                         "[data-dance]"
@@ -652,6 +1344,7 @@
                         )
                         + "%";
 
+
                     card.querySelector(
                         "[data-energy]"
                     ).textContent =
@@ -660,6 +1353,7 @@
                             * 100
                         )
                         + "%";
+
 
                     card.querySelector(
                         "[data-valence]"
@@ -683,6 +1377,7 @@
 
             }
 
+
             return card;
 
         }
@@ -693,31 +1388,39 @@
             saved
         ) {
 
-            if (!saved.image_url) {
+            if (
+                !saved.image_url
+            ) {
 
                 return;
 
             }
+
 
             const album =
                 card.querySelector(
                     ".album-placeholder"
                 );
 
+
             const image =
                 document.createElement(
                     "img"
                 );
 
+
             image.className =
                 "album-cover";
+
 
             image.alt =
                 saved.track_name
                 + " album artwork";
 
+
             image.src =
                 saved.image_url;
+
 
             image.onload =
                 function() {
@@ -726,8 +1429,10 @@
                         "image-loaded"
                     );
 
+
                     album.innerHTML =
                         "";
+
 
                     album.appendChild(
                         image
@@ -757,6 +1462,7 @@
 
             ];
 
+
             const centerX =
                 150;
 
@@ -769,6 +1475,7 @@
             const points =
                 [];
 
+
             for (
                 let i = 0;
                 i < values.length;
@@ -783,6 +1490,7 @@
                     * Math.PI
                     / 180;
 
+
                 const value =
                     Math.max(
                         0,
@@ -794,11 +1502,13 @@
                         )
                     );
 
+
                 const x =
                     centerX
                     + Math.cos(angle)
                     * radius
                     * value;
+
 
                 const y =
                     centerY
@@ -806,14 +1516,17 @@
                     * radius
                     * value;
 
+
                 points.push(
                     x + "," + y
                 );
 
             }
 
+
             const pointString =
                 points.join(" ");
+
 
             card.querySelector(
                 "[data-radar]"
@@ -822,6 +1535,7 @@
                 pointString
             );
 
+
             card.querySelector(
                 "[data-radar-outline]"
             ).setAttribute(
@@ -829,13 +1543,16 @@
                 pointString
             );
 
+
             const pointsGroup =
                 card.querySelector(
                     "[data-radar-points]"
                 );
 
+
             pointsGroup.innerHTML =
                 "";
+
 
             for (
                 let i = 0;
@@ -851,6 +1568,7 @@
                     * Math.PI
                     / 180;
 
+
                 const value =
                     Math.max(
                         0,
@@ -862,11 +1580,13 @@
                         )
                     );
 
+
                 const x =
                     centerX
                     + Math.cos(angle)
                     * radius
                     * value;
+
 
                 const y =
                     centerY
@@ -874,30 +1594,36 @@
                     * radius
                     * value;
 
+
                 const circle =
                     document.createElementNS(
                         "http://www.w3.org/2000/svg",
                         "circle"
                     );
 
+
                 circle.setAttribute(
                     "cx",
                     x
                 );
+
 
                 circle.setAttribute(
                     "cy",
                     y
                 );
 
+
                 circle.setAttribute(
                     "r",
                     "5"
                 );
 
+
                 circle.classList.add(
                     "radar-point"
                 );
+
 
                 pointsGroup.appendChild(
                     circle
@@ -917,8 +1643,10 @@
                     "div"
                 );
 
+
             div.textContent =
                 text || "";
+
 
             return div.innerHTML;
 
@@ -930,4 +1658,5 @@
     </script>
 
 </body>
+
 </html>
