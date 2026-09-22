@@ -121,6 +121,14 @@
                 &#9835; Get Recommendations
             </a>
 
+            <button
+                type="button"
+                id="musicSurpriseButton"
+                class="music-surprise-button"
+            >
+                &#10024; Surprise Me
+            </button>
+
         </div>
 
         <div class="progress-container">
@@ -368,6 +376,8 @@ let ratingDismissed = false;
 
 let ratingSubmitted = false;
 
+let surpriseSongLoaded = false;
+
 const title =
     document.getElementById("song-title");
 
@@ -413,6 +423,9 @@ const favouriteStatus =
 const recommendationButton =
     document.getElementById("recommendationButton");
 
+const musicSurpriseButton =
+    document.getElementById("musicSurpriseButton");
+
 const ratingPopup =
     document.getElementById("ratingPopup");
 
@@ -442,6 +455,280 @@ const chernomeYes =
 
 const chernomeNo =
     document.getElementById("chernomeNo");
+
+async function loadSurpriseSong() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const isSurprise =
+        params.get("surprise");
+
+    const surpriseTitle =
+        params.get("title");
+
+    const surpriseArtist =
+        params.get("artist");
+
+    if (
+        isSurprise !== "true" ||
+        !surpriseTitle ||
+        surpriseSongLoaded
+    ) {
+
+        return;
+
+    }
+
+    surpriseSongLoaded =
+        true;
+
+    searchInput.value =
+        surpriseTitle + " " + surpriseArtist;
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/spotify/search?q="
+                + encodeURIComponent(
+                    surpriseTitle
+                    + " "
+                    + surpriseArtist
+                )
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !data.success ||
+            !data.tracks ||
+            data.tracks.length === 0
+        ) {
+
+            spotifyStatus.textContent =
+                "Unable to find the surprise song.";
+
+            return;
+
+        }
+
+        const titleLower =
+            surpriseTitle
+                .toLowerCase()
+                .trim();
+
+        const artistLower =
+            surpriseArtist
+                .toLowerCase()
+                .trim();
+
+        let selectedTrack =
+            data.tracks.find(
+                track =>
+                    track.name
+                        .toLowerCase()
+                        .trim() ===
+                    titleLower
+                    &&
+                    track.artist
+                        .toLowerCase()
+                        .trim() ===
+                    artistLower
+            );
+
+        if (!selectedTrack) {
+
+            selectedTrack =
+                data.tracks[0];
+
+        }
+
+        spotifyTracks =
+            data.tracks;
+
+        currentTrackIndex =
+            data.tracks.indexOf(
+                selectedTrack
+            );
+
+        await playTrack(
+            selectedTrack,
+            currentTrackIndex
+        );
+
+        window.history.replaceState(
+            {},
+            document.title,
+            "/music-player"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Surprise song error:",
+            error
+        );
+
+        spotifyStatus.textContent =
+            "Unable to load surprise song.";
+
+    }
+
+}
+
+async function surpriseMe() {
+
+    if (!deviceId) {
+
+        alert(
+            "Please connect Spotify first."
+        );
+
+        return;
+
+    }
+
+    musicSurpriseButton.disabled =
+        true;
+
+    musicSurpriseButton.innerHTML =
+        "&#8987; Finding your song...";
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/surprise"
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !data.success ||
+            !data.song
+        ) {
+
+            alert(
+                data.error ||
+                "No surprise song available."
+            );
+
+            return;
+
+        }
+
+        const song =
+            data.song;
+
+        const searchResponse =
+            await fetch(
+                "/api/spotify/search?q="
+                + encodeURIComponent(
+                    song.title
+                    + " "
+                    + song.artist
+                )
+            );
+
+        const searchData =
+            await searchResponse.json();
+
+        if (
+            !searchData.success ||
+            !searchData.tracks ||
+            searchData.tracks.length === 0
+        ) {
+
+            alert(
+                "CHERI could not find this song on Spotify."
+            );
+
+            return;
+
+        }
+
+        const titleLower =
+            song.title
+                .toLowerCase()
+                .trim();
+
+        const artistLower =
+            song.artist
+                .toLowerCase()
+                .trim();
+
+        let selectedTrack =
+            searchData.tracks.find(
+                track =>
+                    track.name
+                        .toLowerCase()
+                        .trim() ===
+                    titleLower
+                    &&
+                    track.artist
+                        .toLowerCase()
+                        .trim() ===
+                    artistLower
+            );
+
+        if (!selectedTrack) {
+
+            selectedTrack =
+                searchData.tracks[0];
+
+        }
+
+        spotifyTracks =
+            searchData.tracks;
+
+        currentTrackIndex =
+            searchData.tracks.indexOf(
+                selectedTrack
+            );
+
+        await playTrack(
+            selectedTrack,
+            currentTrackIndex
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Surprise Me error:",
+            error
+        );
+
+        alert(
+            "Something went wrong. Please try again."
+        );
+
+    }
+
+    finally {
+
+        musicSurpriseButton.disabled =
+            false;
+
+        musicSurpriseButton.innerHTML =
+            "&#10024; Surprise Me";
+
+    }
+
+}
+
+musicSurpriseButton.addEventListener(
+    "click",
+    surpriseMe
+);
 
 searchInput.addEventListener(
     "keydown",
@@ -513,6 +800,8 @@ window.onSpotifyWebPlaybackSDKReady =
 
                     connectSpotifyButton.style.display =
                         "none";
+
+                    loadSurpriseSong();
 
                 }
             );
@@ -988,7 +1277,6 @@ async function saveListeningHistory(
     catch (error) {
 
         console.error(
-            "History request error:",
             error
         );
 

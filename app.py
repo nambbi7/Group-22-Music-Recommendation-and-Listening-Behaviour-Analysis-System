@@ -3231,6 +3231,68 @@ def remove_chernome(track_id):
             "error": str(e)
         }), 500
 
+@app.route(
+    "/api/surprise",
+    methods=["GET"]
+)
+def surprise_song():
+
+    if "user_id" not in session:
+
+        return {
+            "success": False,
+            "error":
+                "User is not logged in."
+        }, 401
+
+    try:
+
+        available_songs = (
+            music_dataset[
+                music_dataset["track_id"].notna()
+            ]
+        )
+
+        if available_songs.empty:
+
+            return {
+                "success": False,
+                "error":
+                    "No songs available."
+            }, 404
+
+        song = (
+            available_songs
+            .sample(1)
+            .iloc[0]
+        )
+
+        return {
+            "success": True,
+            "song": {
+                "track_id":
+                    str(song["track_id"]),
+
+                "title":
+                    str(song["track_name"]),
+
+                "artist":
+                    str(song["artists"])
+            }
+        }
+
+    except Exception as e:
+
+        print(
+            "SURPRISE SONG ERROR:",
+            repr(e)
+        )
+
+        return {
+            "success": False,
+            "error":
+                str(e)
+        }, 500
     
 
 if __name__ == "__main__":
