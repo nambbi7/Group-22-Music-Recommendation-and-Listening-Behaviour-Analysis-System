@@ -212,10 +212,7 @@ def register():
                 repr(e)
             )
 
-            error_message = (
-                "Unable to create your account. "
-                "Please check your details and try again."
-            )
+            error_message = str(e)
 
             return render_template(
                 "register.html",
@@ -227,7 +224,6 @@ def register():
     return render_template(
         "register.html"
     )
-
 
 
 @app.route("/dashboard")
@@ -572,99 +568,6 @@ def ratings():
         "rating": rating
     })
 
-
-
-@app.route("/admin-dashboard")
-def admin_dashboard():
-
-    if "user_id" not in session:
-
-        return redirect(
-            url_for("login")
-        )
-
-    try:
-
-        users_response = (
-            supabase
-            .table("users")
-            .select(
-                "id",
-                count="exact"
-            )
-            .execute()
-        )
-
-        songs_response = (
-            supabase
-            .table("Songs")
-            .select(
-                "id",
-                count="exact"
-            )
-            .execute()
-        )
-
-        history_response = (
-            supabase
-            .table("listening_history")
-            .select(
-                "id, duration_played",
-                count="exact"
-            )
-            .execute()
-        )
-
-        total_users = (
-            users_response.count or 0
-        )
-
-        total_songs = (
-            songs_response.count or 0
-        )
-
-        total_plays = (
-            history_response.count or 0
-        )
-
-        total_minutes = 0
-
-        for item in history_response.data:
-
-            duration = (
-                item.get(
-                    "duration_played"
-                ) or 0
-            )
-
-            total_minutes += duration
-
-        total_minutes = round(
-            total_minutes / 60
-        )
-
-        return render_template(
-            "admin_dashboard.html",
-            total_users=total_users,
-            total_songs=total_songs,
-            total_plays=total_plays,
-            total_minutes=total_minutes
-        )
-
-    except Exception as e:
-
-        print(
-            "ADMIN DASHBOARD ERROR:",
-            repr(e)
-        )
-
-        return render_template(
-            "admin_dashboard.html",
-            total_users=0,
-            total_songs=0,
-            total_plays=0,
-            total_minutes=0
-        )
 
 
 
