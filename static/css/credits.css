@@ -1,0 +1,380 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            rgba(8, 7, 15, 0.72),
+            rgba(8, 7, 15, 0.82)
+        ),
+        url("../images/background.png");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+
+.navbar {
+    width: 100%;
+    height: 82px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 60px;
+
+    background: rgba(8, 7, 15, 0.72);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+
+.logo img {
+    width: 78px;
+    height: 78px;
+    object-fit: contain;
+    display: block;
+}
+
+
+.back-button {
+    padding: 10px 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.3s ease;
+}
+
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.28);
+
+    transform: translateY(-1px);
+}
+
+
+.credits-container {
+    width: min(1100px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 90px 0 70px;
+}
+
+
+.credits-hero {
+    text-align: center;
+
+    max-width: 750px;
+
+    margin: 0 auto 60px;
+}
+
+
+.section-label,
+.card-label {
+    color: #b88cff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 4px;
+}
+
+
+.credits-hero h1 {
+    margin-top: 14px;
+
+    font-size: 42px;
+    font-weight: 700;
+
+    letter-spacing: -1px;
+}
+
+
+.credits-hero > p:last-child {
+    margin-top: 18px;
+
+    color: #a7a6b7;
+
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+
+.credit-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 22px;
+}
+
+
+.credit-card {
+    min-height: 360px;
+
+    padding: 32px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 23, 38, 0.88),
+            rgba(13, 12, 21, 0.78)
+        );
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    transition: 0.3s ease;
+}
+
+
+.credit-card:hover {
+    transform: translateY(-5px);
+
+    border-color: rgba(190, 140, 255, 0.28);
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.35);
+}
+
+
+.credit-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 25px;
+
+    border-radius: 14px;
+
+    background: rgba(167, 103, 255, 0.14);
+
+    border: 1px solid rgba(190, 140, 255, 0.20);
+
+    color: #d2b1ff;
+
+    font-size: 22px;
+}
+
+
+.card-label {
+    margin-bottom: 10px;
+
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+
+.credit-card h2 {
+    margin-bottom: 18px;
+
+    font-size: 22px;
+    font-weight: 600;
+}
+
+
+.credit-card p {
+    margin-bottom: 15px;
+
+    color: #a9a8b8;
+
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+.credit-card strong {
+    color: #ffffff;
+}
+
+
+.source-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 10px;
+    margin-right: 6px;
+
+    padding: 10px 15px;
+
+    border: 1px solid rgba(190, 140, 255, 0.25);
+    border-radius: 10px;
+
+    background: rgba(167, 103, 255, 0.12);
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.3s ease;
+}
+
+
+.source-button:hover {
+    background: rgba(167, 103, 255, 0.24);
+
+    border-color: rgba(210, 175, 255, 0.45);
+
+    transform: translateY(-2px);
+}
+
+
+.secondary-button {
+    margin-top: 8px;
+}
+
+
+.technology-list {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+
+    margin-top: 22px;
+}
+
+
+.technology-list span {
+    padding: 8px 11px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.045);
+
+    color: #c5c3d1;
+
+    font-size: 11px;
+}
+
+
+.project-credit {
+    margin-top: 65px;
+
+    padding: 45px 20px;
+
+    text-align: center;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.project-credit h2 {
+    margin-top: 12px;
+
+    font-size: 30px;
+
+    letter-spacing: 5px;
+}
+
+
+.project-credit > p:not(.section-label):not(.copyright) {
+    margin-top: 12px;
+
+    color: #8f8d9e;
+
+    font-size: 13px;
+}
+
+
+.divider {
+    width: 45px;
+    height: 1px;
+
+    margin: 25px auto;
+
+    background: rgba(255, 255, 255, 0.20);
+}
+
+
+.copyright {
+    color: #686777;
+
+    font-size: 11px;
+}
+
+
+@media (max-width: 900px) {
+
+    .credit-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .credit-card {
+        min-height: auto;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .navbar {
+        height: 72px;
+
+        padding: 0 25px;
+    }
+
+
+    .logo img {
+        width: 65px;
+        height: 65px;
+    }
+
+
+    .credits-container {
+        width: min(100% - 30px, 550px);
+
+        padding-top: 60px;
+    }
+
+
+    .credits-hero h1 {
+        font-size: 32px;
+    }
+
+
+    .credit-card {
+        padding: 25px;
+    }
+
+}

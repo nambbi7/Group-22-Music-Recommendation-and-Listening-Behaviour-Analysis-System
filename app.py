@@ -3207,6 +3207,12 @@ def forgot_password():
         forgot_mode=True
     )
 
+@app.route("/credits")
+def credits():
+    return render_template(
+        "credits.html"
+    )
+
 if __name__ == "__main__":
 
     print(

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CHERI Credit</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/credits.css') }}"
+    >
+
+</head>
+
+<body>
+
+
+<header class="navbar">
+
+    <div class="logo">
+
+        <a href="{{ url_for('home') }}">
+
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="CHERI"
+            >
+
+        </a>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('home') }}"
+        class="back-button"
+    >
+        &#8592; Home
+    </a>
+
+</header>
+
+
+<main class="credits-container">
+
+
+    <section class="credits-hero">
+
+        <p class="section-label">
+            CHERI
+        </p>
+
+        <h1>
+            Credits
+        </h1>
+
+        <p>
+            Sources and resources used in the development
+            of the CHERI Music Recommendation and Listening
+            Behaviour Analysis System.
+        </p>
+
+    </section>
+
+
+    <section class="credit-grid">
+
+
+        <div class="credit-card">
+
+            <div class="credit-icon">
+                &#128202;
+            </div>
+
+            <p class="card-label">
+                DATASET
+            </p>
+
+            <h2>
+                Spotify Tracks Dataset
+            </h2>
+
+            <p>
+                Dataset created by
+                <strong>Yash Dev</strong>
+                and published on Kaggle.
+            </p>
+
+            <p>
+                Used by CHERI for music recommendation
+                and listening behaviour analysis.
+            </p>
+
+            <a
+                href="https://www.kaggle.com/datasets/yashdev01/spotify-tracks-dataset"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="source-button"
+            >
+                View Dataset &#8594;
+            </a>
+
+        </div>
+
+
+        <div class="credit-card">
+
+            <div class="credit-icon">
+                &#127925;
+            </div>
+
+            <p class="card-label">
+                MUSIC SERVICES
+            </p>
+
+            <h2>
+                Spotify
+            </h2>
+
+            <p>
+                Spotify Web API is used for music search,
+                track information and Spotify metadata.
+            </p>
+
+            <p>
+                Spotify Web Playback SDK is used for
+                browser-based music playback.
+            </p>
+
+            <a
+                href="https://developer.spotify.com/documentation/web-api"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="source-button"
+            >
+                Spotify Web API &#8594;
+            </a>
+
+            <a
+                href="https://developer.spotify.com/documentation/web-playback-sdk"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="source-button secondary-button"
+            >
+                Web Playback SDK &#8594;
+            </a>
+
+        </div>
+
+
+        <div class="credit-card">
+
+            <div class="credit-icon">
+                &#9881;
+            </div>
+
+            <p class="card-label">
+                TECHNOLOGIES
+            </p>
+
+            <h2>
+                Development Tools
+            </h2>
+
+            <div class="technology-list">
+
+                <span>Python</span>
+                <span>Flask</span>
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>Supabase</span>
+                <span>PostgreSQL</span>
+                <span>Pandas</span>
+                <span>Matplotlib</span>
+                <span>GitHub</span>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    <section class="project-credit">
+
+        <p class="section-label">
+            PROJECT
+        </p>
+
+        <h2>
+            CHERI
+        </h2>
+
+        <p>
+            Music Recommendation and Listening Behaviour
+            Analysis System
+        </p>
+
+        <div class="divider"></div>
+
+        <p class="copyright">
+            &#169; 2026 CHERI. All rights reserved.
+        </p>
+
+    </section>
+
+
+</main>
+
+
+</body>
+
+</html>
