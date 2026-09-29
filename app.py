@@ -2843,7 +2843,7 @@ def reset_password():
             email,
             {
                 "redirect_to":
-                "http://127.0.0.1:5000/update-password"
+                "http://127.0.0.1:5000/update_password"
             }
         )
 
@@ -3196,7 +3196,16 @@ def surprise_song():
             "error":
                 str(e)
         }, 500
-    
+
+@app.route("/forgot-password")
+def forgot_password():
+
+    return render_template(
+        "update_password.html",
+        supabase_url=os.getenv("SUPABASE_URL"),
+        supabase_anon_key=os.getenv("SUPABASE_KEY"),
+        forgot_mode=True
+    )
 
 if __name__ == "__main__":
 
