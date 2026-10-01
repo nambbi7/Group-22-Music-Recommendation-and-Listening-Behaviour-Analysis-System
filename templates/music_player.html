@@ -1822,97 +1822,80 @@ function updatePlayerState(
 
 }
 
+
 function startRatingTimer() {
 
     if (
         ratingTimer ||
         ratingDismissed ||
         ratingSubmitted ||
-        !currentTrack
+        !currentTrack ||
+        !currentState ||
+        currentState.paused
     ) {
-
         return;
-
     }
 
-    ratingTimer =
-        setTimeout(
-            async function() {
+    const timerTrackId = currentTrack.id;
 
-                ratingTimer =
-                    null;
+    ratingTimer = setTimeout(async function() {
 
-                if (
-                    !currentState ||
-                    currentState.paused ||
-                    !currentTrack
-                ) {
+        ratingTimer = null;
 
-                    return;
+        if (
+            !currentTrack ||
+            currentTrack.id !== timerTrackId ||
+            !currentState ||
+            currentState.paused
+        ) {
+            return;
+        }
 
-                }
+        const alreadyRated = await checkExistingRating(timerTrackId);
 
-                const alreadyRated =
-                    await checkExistingRating(
-                        currentTrack.id
-                    );
+        if (
+            !currentTrack ||
+            currentTrack.id !== timerTrackId ||
+            !currentState ||
+            currentState.paused
+        ) {
+            return;
+        }
 
-                if (alreadyRated) {
+        if (alreadyRated) {
+            ratingSubmitted = true;
+            return;
+        }
 
-                    ratingSubmitted =
-                        true;
+        ratingSongName.textContent = currentTrack.name;
+        resetRatingStars();
+        ratingPopup.classList.add("show");
 
-                    return;
-
-                }
-
-                ratingSongName.textContent =
-                    currentTrack.name;
-
-                resetRatingStars();
-
-                ratingPopup.classList.add(
-                    "show"
-                );
-
-            },
-            15000
-        );
-
+    }, 15000);
 }
+
 
 function resetRatingSystem() {
 
     if (ratingTimer) {
-
-        clearTimeout(
-            ratingTimer
-        );
-
-        ratingTimer =
-            null;
-
+        clearTimeout(ratingTimer);
+        ratingTimer = null;
     }
 
     hideRatingPopup();
 
-    ratingDismissed =
-        false;
-
-    ratingSubmitted =
-        false;
+    ratingDismissed = false;
+    ratingSubmitted = false;
 
     resetRatingStars();
 
     if (
         currentState &&
-        !currentState.paused
+        !currentState.paused &&
+        currentTrack
     ) {
-
         startRatingTimer();
-
     }
-
 }
 
 function hideRatingPopup() {

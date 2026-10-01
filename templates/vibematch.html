@@ -572,98 +572,67 @@
 
 
         function updateDonutChart(
-            oneStar,
-            twoStar,
-            threeStar,
-            fourStar,
-            fiveStar
-        ) {
+    oneStar,
+    twoStar,
+    threeStar,
+    fourStar,
+    fiveStar
+) {
+    const total =
+        oneStar +
+        twoStar +
+        threeStar +
+        fourStar +
+        fiveStar;
 
-            const total =
-                oneStar +
-                twoStar +
-                threeStar +
-                fourStar +
-                fiveStar;
+    const chart =
+        document.querySelector(".donut-chart");
 
+    if (!chart) {
+        return;
+    }
 
-            const chart =
-                document.querySelector(
-                    ".donut-chart"
-                );
+    if (total === 0) {
+        chart.style.background =
+            "conic-gradient(#333 0deg 360deg)";
+        return;
+    }
 
+    const ratings = [
+        { count: fiveStar, color: "#ffd166" },
+        { count: fourStar, color: "#c084fc" },
+        { count: threeStar, color: "#60a5fa" },
+        { count: twoStar, color: "#fb923c" },
+        { count: oneStar, color: "#f87171" }
+    ];
 
-            if (total === 0) {
+    let currentDegree = 0;
+    const gradientParts = [];
 
-                chart.style.background =
-                    "conic-gradient(#333 0deg 360deg)";
-
-                return;
-
-            }
-
-
-            const oneDegree =
-                (
-                    oneStar /
-                    total
-                ) * 360;
-
-
-            const twoDegree =
-                (
-                    twoStar /
-                    total
-                ) * 360;
-
-
-            const threeDegree =
-                (
-                    threeStar /
-                    total
-                ) * 360;
-
-
-            const fourDegree =
-                (
-                    fourStar /
-                    total
-                ) * 360;
-
-
-            const oneEnd =
-                oneDegree;
-
-
-            const twoEnd =
-                oneEnd +
-                twoDegree;
-
-
-            const threeEnd =
-                twoEnd +
-                threeDegree;
-
-
-            const fourEnd =
-                threeEnd +
-                fourDegree;
-
-
-            chart.style.background =
-                `conic-gradient(
-                    #777 0deg ${oneEnd}deg,
-                    #999 ${oneEnd}deg ${twoEnd}deg,
-                    #bbb ${twoEnd}deg ${threeEnd}deg,
-                    #ddd ${threeEnd}deg ${fourEnd}deg,
-                    #fff ${fourEnd}deg 360deg
-                )`;
-
+    ratings.forEach(rating => {
+        if (rating.count === 0) {
+            return;
         }
 
+        const degrees =
+            (rating.count / total) * 360;
 
-        loadRatings();
+        const endDegree =
+            currentDegree + degrees;
 
+        gradientParts.push(
+            `${rating.color} ${currentDegree}deg ${endDegree}deg`
+        );
+
+        currentDegree = endDegree;
+    });
+
+    chart.style.background =
+        `conic-gradient(${gradientParts.join(", ")})`;
+}
+
+loadRatings();
+       
     </script>
 
 </body>
